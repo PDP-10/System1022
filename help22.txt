@@ -1,0 +1,4776 @@
+
+This is System 1022, a database management system.  The 1022 HELP command
+provides online information about the 1022 features and commands listed below.
+To read the HELP information for a given feature or command, type HELP and then
+a space and then the topic keyword followed by a <RETURN>.  For example, to
+read about the FIND command, type:
+  
+  HELP FIND<RET> 
+
+&HELP
+The HELP command provides on-line information about 1022 features and commands.
+To read the information for a given feature or command, type HELP, then a 
+space, then the topic keyword followed by a <RETURN>.  For example, to read
+about the INFORM command, type:
+
+  HELP INFORM<RET>
+
+Additional information may be found under the subtopics listed at the end of
+individual HELP messages.  To read this information, type HELP, a space, the
+topic keyword, a space, and then the subtopic keyword followed by a <RETURN>.
+For example, to learn about the BASE subtopic listed at the end of the INFORM
+message, type:
+
+  HELP INFORM BASE<RET>
+
+For a list of the 1022 features and commands for which there are HELP messages,
+type:
+
+  HELP<RET>
+
+&117
+Version 117 of System 1022 introduces major internal changes that make it 
+possible to support the Large Data Sets Module. As a result, data sets
+created under 117 have an internal format that is different from that of data 
+sets created under previous versions of 1022. 117 supports both formats but 
+operates more efficiently on data sets in new format than on data sets in 
+pre-117 format. Until the old format structures are converted, data sets 
+cannot exceed the block and record maxima of previous versions of System 1022.
+Conversion from old format to new is therefore strongly recommended.
+
+Conversion from old to new format is accomplished with two commands.  First,
+the user issues an UPTO 117 command.  If there are key tables or delete
+lists in the old format, UPTO issues a warning. The user then issues an
+OPTIMIZE ALL command, which performs the actual conversion.
+
+For further details, see the document 117B.MEM.
+
+&@
+The @-construction may be used to supply portions of commands or command blocks
+provided in disk files, supplied in text variables, or typed directly by the 
+user at the time of execution.  If no extension is specified in the
+file-descriptor following @, DMC is assumed first, then a null extension.  The
+syntax is:
+
+    { file-descriptor }
+  @ { =variable-name  }
+    { TTY:            }
+
+See also USE
+
+&ADD
+The ADD command adds a new record to the current data set.  The simple use of
+ADD prompts the user for the value of each attribute.  ADD with a list allows
+the user to enter data for a new record by listing each attribute followed by
+its value.  The syntax is:
+	
+  ADD [attribute-name value [attribute-name value] [NUL] ]
+
+For example:
+
+ADD TITLE 'APOCALYPSE NOW' YEAR 1979 NUL - adds the value APOCALYPSE NOW for
+                                           the attribute TITLE, the value
+                                           1979 for the attribute YEAR, and
+                                           null values for all the other
+                                           attributes of a new record in the
+                                           current data set.
+
+&APPEND
+The APPEND command adds a group of new records to the current data set.  The new
+records are read from a data file or data set.  Unlike ADD,  APPEND postpones
+updating the key tables until all the data records have been appended to the
+data set.  The syntax is:
+
+         { DATA file-descriptor1 [DESC file-descriptor2] } 
+  APPEND {                                               }
+	 { SET data-set-descriptor                       }  
+
+	[NOMSG]  [NODME] [CUSTDMI] [LRECL option]
+     
+     	[FORMFEED option]  [CORE option]  [BUFFER n]
+
+For example:
+
+APPEND DATA CINE DESC FILMS - reads the data file CINE.DMI according to the
+		              format specified in FILMS.DMD and appends the
+		              records to the current data set, ignoring any
+                              attributes in FILMS.DMD not found in the data
+                              description of the current set.
+
+&CHANGE
+The CHANGE command changes the value of an attribute in a currently selected
+record or records to a new value specified by the user.   A change to a keyed
+attribute automatically updates the key tables.  The changed record is
+immediately retrievable using its new values.  The syntax is:
+	
+  CHANGE attribute-name expression [attribute-name expression]...
+
+where an expression is an attribute, variable, or value (or a string thereof
+containing one or more arithmetical operators).
+
+For example:
+
+CHANGE S1FN MARLON   - changes the value of the attribute S1FN in the currently
+                       selected record(s) to MARLON.
+
+CHANGE GROSS 2*GROSS - changes the value of the attribute GROSS to two times
+                       GROSS in the currently selected record(s).
+
+&CLEAR
+The CLEAR command removes certain user-assigned definitions.  By itself, CLEAR
+removes all previously defined variables; when followed by COLLECT or JOIN,
+CLEAR removes previously defined collections or joins, respectively.  The
+syntax is:
+
+          { COLLECT }
+  CLEAR [ {         } ]
+          { JOIN    }
+
+&CLEAR JOIN
+The CLEAR JOIN command removes JOIN definitions.  If no join names are
+specified in issuing the command, CLEAR JOIN will clear all defined joins.
+The syntax is:
+	
+	CLEAR JOIN [join-name-1]...[[,]join-name-n]
+
+See also DISABLE, ENABLE,  JOIN
+
+&CLEAR COLLECT
+The CLEAR COLLECT command releases data sets from collections defined by
+COLLECT commands.  It does not alter the selection groups or the current
+data set.  When no collection name is specified all currently defined 
+collections are cleared.  The syntax is:
+
+     CLEAR COLLECT [collection-name-1] ... [ [,] collection-name-n]
+
+See also COLLECT
+
+&CLOSE
+The CLOSE command closes the current data set.  A closed data set is unavailable
+for retrieval or modification until it is opened again.  The syntax is:
+
+  CLOSE
+
+&COLLECT
+The COLLECT command groups one or more open data sets into a collection which
+is then treated in most respects as a single data set containing all the
+records of the constituent data sets.  All of the data sets in the collection
+must share identical structure and ADMIT specifications and may be referenced
+and accessed only as part of the collection.  Collections are referenced by
+their unique collection names.  The syntax is:
+
+           { set-1 ... [set-n] AS collection-name }
+   COLLECT {                                      } [ADD set]
+           { ALL [AS] collection-name             }
+
+The ADD set clause allows you to specify which of the data sets in the
+collection subsequent ADD or APPEND commands should apply. The default is
+the last data set named in the COLLECT command.
+
+For example:
+
+COLLECT FILMS CINE as A - forms a collection named A from the identically 
+                          structured open data sets FILMS and CINE and names.
+
+See also CLEAR COLLECT, INFORM COLLECT
+     
+&CREATE
+The CREATE command forms an unbundled data set from an existing data file.  That
+is, the CREATE command forms a data set in which the data records are kept
+in a separate file from the key tables and other 1022 information.  The syntax
+is:
+
+  CREATE DESC file-desc1 [DATA file-desc2] [SET data-set-desc]
+  
+    [NOMSG] [LRECL n]
+
+where DESC file-descriptor1 names a file containing a data set description,
+DATA file-descriptor2 names the corresponding data input file, and SET data-
+set-descriptor names the data set being built.
+
+For example:
+
+CREATE DESC FILMS DATA FILMS SET CINE - builds the (unbundled) data set
+                                        CINE.DMS from the description file
+                                        FILMS.DMD and the data file FILMS.DMI.
+
+See also LOAD
+
+&DBSET
+The DBSET command establishes a specified open data set as the current one.
+The syntax is:
+
+        { data-set-descriptor }
+  DBSET { alias               }
+        { number              }
+
+For example:
+
+OPEN FILMS DIRECT - opens the data sets FILMS and DIRECT.
+DBSET DIRECT      - specifies DIRECT as the current data set.
+DBSET 1           - specifies FILMS (which is the first of the two data sets
+                    named in the OPEN command) as the current data set.
+
+See also INFORM BASE, INFORM SET
+
+&DELETE
+DELETE removes selected records from the current data set.  These records are
+still present in the data set, but cannot be selected by FIND commands.  The
+syntax is:
+	
+	DELETE
+
+For example:
+
+FIND CTRY USA - selects the records in the current data set with the value
+                USA for the attribute CTRY.
+DELETE        - removes those records from the current data set.
+
+See also DFIND, UNDELETE
+
+&DFIND
+The DFIND command forms a selection group using keyed attributes of records
+that have been deleted from the current data set.  The syntax is:
+
+        { ALL                                            }
+  DFIND {                                                }
+        { rel-expr [ [NOT] logical-operator rel-expr]... }
+
+where a relational expression is:
+
+  { attribute                                   }
+  {             [NOT] relational-operator value }               
+  { SYSID                                       }
+  { LAST                                        }
+  { FILE file-descriptor                        }
+
+For example:
+
+FIND ALL  - forms a selection set of all of the records in the data set.
+DELETE    - deletes those records from the data set.
+DFIND ALL - forms a selection set of all of the just deleted records.
+
+See also DELETE, UNDELETE, FIND
+
+&DISABLE
+The DISABLE JOIN command turns off previously defined join definitions in
+a PL1022 or report program.  If no join name is specified, DISABLE JOIN
+disables all currently defined joins.  The syntax is:
+
+  DISABLE JOIN [join-name-1]...[[,]join-name-n]
+
+See also CLEAR JOIN, ENABLE, JOIN
+
+&DROP
+The DROP command removes the current record, selected by GETREC, from  a 
+selection group.  The record is still part of the data set and can be
+retrieved with a new FIND command.  DROP does not alter or delete any records.
+The syntax is:
+
+  DROP
+
+For example:
+
+FIND ALL  - forms a selection group containing all the records in the data set.
+GETREC 20 - selects the 20th record in the selection group.
+DROP      - removes the 20th record from the selection group.
+
+See also DELETE, GETREC
+
+&ENABLE
+The ENABLE JOIN command turns on previously defined join definitions in a 
+PL1022 or report program.  It can be used conditionally.  If no join name is
+specified, ENABLE JOIN enables all previously defined joins.  The syntax is:
+
+  ENABLE JOIN [join-name-1]...[[,]join-name-n]
+
+See also CLEAR JOIN, DISABLE, JOIN
+
+&EXIT
+The EXIT command ends a System 1022 session and returns the user to operating
+system level, closing any data sets and output files.  EXIT is identical to
+QUIT.  The syntax is:
+
+  EXIT
+
+&FILE
+The FILE command manipulates disk files from System 1022.  The four
+options which may be used with FILE are COPY, DELETE, RENAME, and TYPE.
+A file name and extension must be given, as no wildcards are accepted in the
+FILE commands.  The syntax is: 
+
+	{ COPY   }
+	{ DELETE }
+  FILE	{ RENAME }
+	{ TYPE   }
+
+&FILE COPY
+The FILE COPY command copies a disk file.  The syntax is:
+
+  FILE COPY file-descriptor1 [TO] file-descriptor2  [BUFFERS n]
+
+where file-descriptor1 names the source file and file-descriptor2 names the
+destination file.
+
+For example:
+
+FILE COPY FILMS.DMD MYFIL.DMD - makes a copy of the file FILMS.DMD and names
+                                the new file MYFIL.DMD
+
+&FILE DELETE
+The FILE DELETE command deletes the named disk file.  The syntax is:
+
+  FILE DELETE file-descriptor
+
+For example:
+
+FILE DELETE TEST.DMS - deletes the file TEST.DMS
+
+&FILE RENAME
+The FILE RENAME command renames a disk file.  The syntax is:
+
+  FILE RENAME file-descriptor1 [TO] file-descriptor2
+
+where file-descriptor1 is the original name of the file and file-descriptor2
+is the file's new name.
+
+For example:
+
+FILE RENAME DIRECT.DMD MENS.DMD - takes the file DIRECT.DMD and renames it
+                                  MENS.DMD
+
+&FILE TYPE
+The FILE TYPE command prints a disk file at the user's terminal.
+The syntax is:
+
+  FILE TYPE file-descriptor
+
+For example:
+
+FILE TYPE PRIZE.DMI		- displays the contents of this file on
+				  the terminal.
+
+&FIND
+The FIND command forms a selection group of active records from the current data
+set using keyed attributes.  The syntax is:
+
+       { ALL                                           }
+  FIND {                                               }
+       { rel-expr [ [NOT] logical-operator rel-expr]...}
+
+where a relational expression is:
+
+  {{ attribute1 }                                 }
+  {               [NOT] relational-operator value }
+  {{ SYSID      }                                 }
+  { LAST                                          }
+  { FILE file-descriptor                          }
+
+For example:
+
+FIND YEAR LT 1979 - forms a selection group of the records in which the
+                    value for the keyed attribute YEAR is less than 1979.
+
+&GETREC
+The GETREC command selects a single record from the current selection group. 
+The simple GETREC command will single out the first record in the group.
+Succeeding GETREC commands will select succeeding records, one at a time.  A 
+record can also be selected by its SYSRECNO with GETREC.   The $LOCK option
+allows you to deny other users access to the selected record if the data set
+is ENQ and RECLOCK. The syntax is:
+
+  GETREC [$LOCK] [n]
+
+For example:
+
+FIND YEAR BET 1950 1960 - forms a selection group of the records in which the
+                          value for the attribute YEAR is between 1950 and 1960.
+GETREC                  - selects the first record in the selection group.
+GETREC                  - selects the next record in the selection group.
+GETREC 5                - selects the fifth record in the selection group.
+
+&JOIN
+The JOIN command  performs automatic mapping between two open data sets or
+collections by matching locator attribute values.  Each join relation created
+by the JOIN command is unidirectional (from set1 to set2) if the UNI option is
+used and bidirectional otherwise.  The syntax is:
+
+  JOIN set1 [TO] set2 [VIA] attr1 [[TO] attr2] [AS name] [UNI] [NOMSG]
+
+where set1 and set2 are the data sets to be joined; attr1 is the attribute
+in set1 which is used as a locator to relate the two sets (and must be
+keyed unless UNI is in effect); attr2 is the (keyed) locator in set2; and
+name is the user-assigned name or system-assigned number which uniquely
+identifies the join.
+
+For example:
+
+OPEN FILMS DIRECT                    - opens the data sets FILMS and DIRECT.
+JOIN FILMS DIRECT VIA DIR TO SURNAME - joins the data sets FILMS and DIRECT
+                                       using the keyed attributes DIR (in FILMS)
+                                       and SURNAME (in DIRECT) as locators.
+
+See also: CLEAR JOIN, ENABLE, DISABLE, INFORM JOIN, MAP 
+
+&INFORM
+The INFORM command displays information about the structure and condition
+of the current data set at the user's terminal or, if the ON option is
+used, writes this information into a file.  The syntax is:
+
+                              { ADMIT [user-id]                   }
+                              { ATTRIBUTE attribute-name [LENGTH] }
+			      { AUDIT                             }
+			      { BASE                              }
+                              { { COLLECT } { [NAME] }            }
+                              { { JOIN    } { NUMBER }            }
+		              { DAMAGE                            }
+  INFORM [ON file-descriptor] { DATA                              }
+                              { DMX                               }
+                              { FILES                             }
+                              { NAMES                             }
+                              { SET                               }
+                              { STATUS                            }
+                              { STRUCTURE [LENGTH]                }
+                              { VERSION                           }
+
+&INFORM ADMIT
+The ADMIT option of the INFORM command displays ADMIT information about the 
+security structure of the current data set.  If user-id is specified, only
+the ADMIT information applying to that user is given.  Otherwise, all ADMIT
+specifications for the data set are given.  This command is restricted to use
+by the System Administrator or data set owner.  The syntax is:
+
+  INFORM [ON file-descriptor] ADMIT [user-id]
+
+&INFORM ATTRIBUTE
+The ATTRIBUTE option of the INFORM command displays information about the
+structure of specified attributes in the current data set.  The LENGTH option
+gives the attribute length rather than column position.  The syntax is:
+
+  INFORM [ON file-descriptor] ATTRIBUTE attribute-name [LENGTH]
+
+For example:
+
+OPEN FILMS                  - opens the FILMS data set.
+INFORM ATTRIBUTE S1S LENGTH - displays the following  information:
+                              ATTRIBUTE STAR_1_SURNAME ABBREV S1S TEXT
+                              KEYED LENGTH 12 !PRE-117
+
+ See also INFORM STRUCTURE
+
+&INFORM AUDIT
+The AUDIT option of the INFORM command displays information concerning the
+status of the audit trail for the current data set.  The syntax is:
+
+  INFORM [ON file-descriptor] AUDIT
+
+&INFORM BASE
+The BASE option of the INFORM command displays the full data set descriptors
+of all open data sets and identifies the current data set with an arrow
+(<=).  The syntax is:
+
+  INFORM [0N file-descriptor] BASE
+
+For example:
+
+OPEN FILMS DIRECT - opens the data sets FILMS and DIRECT.
+INFORM BASE       - displays the following information:
+                    FILMS2 in FILMS.DMS  !is set #1 <=
+                    DIRECT in DIRECT.DMS  !is set
+See also INFORM SET
+
+&INFORM COLLECT
+The COLLECT option of the INFORM command displays all the current
+collection names together with the names or numbers of their constituent
+data sets.  The syntax is:
+
+                                      { [NAME] }
+  INFORM [ON file-descriptor] COLLECT {        }
+                                      { NUMBER }
+
+For example:
+
+COLLECT FILMS CINE AS A - forms a collection of the data sets FILMS and CINE.
+INFORM COLLECT          - displays the following information:
+                          COLLECT FILMS CINE as A.
+INFORM COLLECT NAME     - displays the following information:
+                          COLLECT FILMS CINE as A.
+INFORM COLLECT NUMBER   - displays the following information:
+                          COLLECT 1 2 AS A.
+
+&INFORM DAMAGE
+The DAMAGE option of the INFORM command displays the DAMAGE information for
+each open data set.  No message prints for open data sets which are
+undamaged.  When a set is damaged, the message lists the data set name,
+number, user-ids, and the date and time when the data set was first damaged.
+The syntax is:
+
+  INFORM [ON file-descriptor] DAMAGE
+
+&INFORM DATA
+The DATA option of the INFORM command displays the data file descriptor of the
+current unbundled data set.  The syntax is:
+
+  INFORM [ON file-descriptor] DATA
+
+See also CREATE
+
+&INFORM DMX
+The DMX option of the INFORM command displays information about the run-time
+environment that must exist for the execution of a precompiled PL1022 or
+report program with the PERFORM command or for the recompilation of the 
+source file with the COMPILE command. The information returned by INFORM DMX
+includes the full name of the specified DMX file, the major and minor version
+of 1022 under which the file was compiled, a warning that the version under
+which the file was compiled is incompatible with the current version (if that
+is so), the full name of the source file, a descriptive list of all user-
+defined variables referenced by the program, and a descriptive list of all
+data sets, collections, and join relations referenced, explicitly or implicitly,
+by the program. The syntax is:
+
+  INFORM [ON file-descriptor-1] DMX file-descriptor-2
+
+&INFORM FILES
+The FILES option of the INFORM command displays a list of all of the 1022 I/O
+channels (in TOPS-10) or JFNs (in TOPS-20) in use and the file specification
+associated with each.  If the channel or JFN is reserved by a background 1022
+function, the message "(reserved)" is given.  The syntax is:
+
+  INFORM [ON file-descriptor] FILES
+
+&INFORM JOIN
+The JOIN option of the INFORM command displays a list of all currently defined
+joins.  The list gives the name or number of each join and
+each constituent data set, identifies the locators, and labels all disabled
+joins.  The syntax is:
+
+                                   { [NAME] }
+  INFORM [ON file-descriptor] JOIN {        }
+                                   { NUMBER }
+
+For example:
+
+JOIN FILMS DIRECT VIA DIR TO SURNAME - joins the data sets FILMS and DIRECT
+                                       using the attributes DIR (IN FILMS) and
+                                       SURNAME (in DIRECT) as locators.
+INFORM JOIN                          - displays the following information:
+                                       JOIN FILMS TO DIRECT VIA DIR TO 
+                                       SURNAME ! AS 10000.
+
+&INFORM NAMES
+The NAMES option of the INFORM command displays a list of all the attribute
+names in the current data set.  The syntax is:
+
+  INFORM [ON file-descriptor] NAMES
+
+For example:
+
+OPEN DIRECT  - opens the data set DIRECT.
+INFORM NAMES - displays the following information:  DIRECTOR_ID
+                                                    FIRST_NAME
+                                                    SURNAME
+                                                    YEAR_OF_BIRTH
+                                                    BIRTHPLACE
+
+&INFORM SET
+The SET option of the INFORM command displays the full data set descriptor
+of the current data set. The syntax is:
+
+  INFORM [ON file-descriptor] SET
+
+For example:
+
+OPEN DIRECT FILMS - opens the data sets DIRECT and FILMS with DIRECT as
+                    the current data set.
+INFORM SET        - displays the following information:
+                    DIRECT in DIRECT.DMS !is set #1
+
+See also INFORM BASE
+
+&INFORM STATUS
+The STATUS option of the INFORM command displays information concerning the
+status of the current data set.  The display contains:
+  The name of the data file (for unbundled data sets).
+  The mode (if unbundled).
+  The blocking factor and data mode of the data file (if unbundled).
+  The version of 1022 under which it was created.
+  UPDATE status (ON, PREVENTed, or blank).
+  The message "Default update mode is ENQ" if that is so.
+  The message "Dataset is RECLOCK" if that is so.
+  The specification "Dataset opened readonly" if that is so.
+  The message "data set damaged" if that is so.
+  Compatibility information.
+  The total number of records, both active and deleted.
+  The statement "dataset damaged" if damage has occurred.
+  The number of records allocated to the data set.
+  The date and time of the last update.
+  The user-id of the last update.
+  The number of disk reads since startup (Rd0) (for all open data sets).
+  The number of requests of a disk block (Rd1) (for all open data sets).
+  The number of disk writes since startup (Wd0) (for all open data sets).
+
+The syntax is: 
+               INFORM [ON file-descriptor] STATUS
+
+&INFORM STRUCTURE
+The STRUCTURE option of the INFORM command lists all of the attributes in the
+current data set and describes the structure of each as it appears in the
+set's description (DMD) file.  If the data set is in pre-version 117A format,
+the comment !PRE-117 follows each keyed or keyed inactive attribute.  The
+LENGTH option gives the number of columns (rather than the column positions) 
+which the values for each attribute may occupy and shows filler lines where
+they exist.  The syntax is:
+
+  INFORM [ON file-descriptor] STRUCTURE [LENGTH]
+
+For example:
+
+OPEN DIRECT      - opens the data set DIRECT.
+INFORM STRUCTURE - displays the following information:
+                   ATTRIBUTE DIRECTOR_ID INTEGER_OF_IDENTIFICATION KEYED
+                    COL 1 3 !PRE-117
+                   ATTRIBUTE FIRST_NAME ABBREV FN TEXT COL 4 18
+                   ATTRIBUTE SURNAME ABBREV SN TEXT COL 19 33
+                   ATTRIBUTE YEAR_OF_BIRTH ABBREV YOB INTEGER KEYED
+                    RANGE 1870 1990 COL 34 37 !PRE-117
+                   ATTRIBUTE BIRTHPLACE ABBREV B TEXT COL 38 67
+
+&INFORM VERSION
+The VERSION option of the INFORM command displays information concerning the
+current version of System 1022. The display contains:
+
+    A version banner, e.g., "System 1022B 116A (402)".
+    A list of the optional 1022 modules licensed by your site. Modules
+     not licenses by your site appear in parentheses, e.g.,
+     "System Options: Security, Audit Trails, LDS, HLI (no Accounting)"
+    The file name of the current high segment, e.g., 
+     "Segment origin: <V116I.20>QN1600".
+    A list of all patches installed (if any).
+    The system generation date.
+
+&DUMP
+The DUMP command creates a new data set or file from the records
+in the current selection group.  The syntax is:
+
+     { [SET] data-set-desc                             }
+DUMP { [UNBUNDLED SET data-set-desc] [DATA file-desc1] }
+     { DATA file-desc1                                 }
+
+      [DESC file-desc2]
+
+      [BUFFER n] [SORTED [BY] sort-clause]
+
+For example:
+
+DUMP SET NEWSET               - creates the data set NEWSET.DMS
+
+DUMP DATA OLDFIL              - creates the data file OLDFIL.DMI
+
+DUMP SET NEWSET DESC OLDSET   - creates the data set NEWSET with
+                                the structure of OLDSET.DMD.
+
+&VALUES
+The VALUES command displays the value distributions of a specified keyed
+attribute in the current selection group.  The syntax is:
+
+  VALUES [ON file-desc] attribute [VALUES] [SYSID] [COUNT] [COLUMN]
+
+For example:
+
+FIND YEAR BET 1947 1951 - creates a selection group of the records in 
+                          which the value for the (keyed) attribute YEAR
+                          is between 1947 and 1951.                            
+VALUES YEAR             - displays the following information:
+                           1947 (4)
+                           1948 (1)
+                           1949 (2)
+                           1950 (2)
+                           1951 (3)
+
+&USE
+The USE command executes a set of 1022 commands stored in a disk file.  The
+syntax is:
+
+  USE file-descriptor
+
+where the file-descriptor names the file which contains the commands to be
+executed.
+
+For example:
+
+USE PUB:PRM1 - executes the commands in the file PUB:PRM1.DMC
+
+See also @
+
+&UNKEY
+The UNKEY command deletes key tables for specified attributes.  The syntax is:
+
+  UNKEY attribute-list
+
+where each entry in the attribute list is:
+
+        { [REUSE] }   { attribute }
+        { NOREUSE }   {           }
+        { REMOVE  }   { ALL       }
+
+For example:
+
+UNKEY STUDIO CTRY            - deletes the key tables for the attributes STUDIO
+                               and COUNTRY.
+
+UNKEY REMOVE GROSS REUSE ALL - deletes the key table for the attribute GROSS,
+                               exempting it from rekeying by a future KEY ALL
+                               command, and deletes the key tables for all the
+                               other  attributes (which may be rekeyed by KEY
+                               ALL). 
+                               
+See also KEY
+
+&UNDELETE
+The UNDELETE command reactivates previously deleted records selected by the
+DFIND command.  The syntax is:
+
+  UNDELETE
+
+For example:
+
+DFIND ALL - finds all of the previously deleted records in the current 
+            selection group.
+UNDELETE  - restores those records to the selection group.
+
+See also DELETE, DFIND
+
+&TYPE
+The TYPE command directs output to the terminal.  The syntax is:
+
+  TYPE output-list [FORMAT format END]
+
+where an output list may contain, singly or in combination: ALL, attribute
+names, quoted literals, user-defined or system variables, arithmetical
+expressions, and totals functions.
+
+For example:
+
+TYPE TITLE    - displays the values for the attribute TITLE in the current
+                selection group at the user's terminal.
+
+TYPE "TITLE"  - displays the quoted literal TITLE at the user's terminal. 
+
+See also FORMAT, PRINT
+
+&STARTREC
+The STARTREC command returns to selection-group (global) mode from single-
+record (local) mode, preserving the original (or sorted) order of records in
+the selection group but omitting any records dropped while in local mode.  The
+syntax is:
+
+  STARTREC
+
+For example:
+
+FIND YEAR 1945  - creates a selection group
+GETREC          - accesses the first record in that selection group
+DROP            - drops that record
+STARTREC        - returns to the original selection group (from which the first
+                  record has been dropped).
+
+See also GETREC
+
+&SPSS
+The SPSS command produces files to be analyzed with the Statistical Package
+for the Social Sciences.  The syntax is:
+
+  SPSS FILE file-name [SUBFILE file-name] [option(s)]
+
+where the available options are: 
+
+  ATTRIBUTES attr1 attr2 attr3...
+  NOTEXT
+  INFORM
+  VARNUM
+  CASWGT expression
+  GO [USING command-string]
+
+&SORT
+The SORT command arranges the records in a selection group alphabetically,
+numerically, or by date.  The syntax is:
+
+  SORT [CORE n] [USING structure] [BY] expr seq-desc [ [BY] expr seq-desc ]...
+
+where an expression is an attribute or sequence of attributes (which may be
+linked by arithmetical symbols or operated on by string functions), and a
+sequence-descriptor is one of the following:
+  
+  [ASCENDING] (or [UP])
+  DESCENDING (or DOWN)
+
+For example:
+
+SORT YEAR DOWN TITLE - arranges the records in the selection group by their
+                       values for the attribute YEAR, from the most recent to
+                       the least recent, and arranges those records sharing the
+                       same value for YEAR in alphabetical order by value for
+                       the attribute TITLE.
+
+&SEARCH
+The SEARCH command is used to narrow a selection group created by a prior FIND
+command.  Unlike FIND, SEARCH works on both keyed and unkeyed attributes.  The
+syntax is:
+
+  SEARCH rel-expr [ [NOT] logical-operator rel-expr ]...
+
+where a relational-expression is:
+
+{{ attribute1 }                            { attribute2 }}
+{               [NOT] relational-operator                }
+{{ SYSID      }                            { value      }}
+{ LAST                                                   }
+
+For example:
+
+FIND CTRY EQ USA    - creates a selection group
+SEARCH DIR EQ WRITE - selects the records from that group in which the value
+                      for the attribute DIR is the same as that for WRITE.
+
+See also FIND, SELECT
+
+&SELECT
+The SELECT command narrows a selection group created by a prior FIND
+command.  SELECT differs from SEARCH only in that it does not take effect until
+record retrieval time.  The syntax is:
+
+  SELECT rel-expr [ [NOT] logical-operator rel-expr]...
+
+where a relational-expression is:
+
+  {{ attribute1 }                           { attribute2 }}
+  {               [NOT] relational-operator               }
+  {{ SYSID      }                           { value      }}
+  { LAST                                                  }
+
+For example:
+
+SELECT MUSIC EQ AURIC - locates the records in the current selection group in
+                        which the value of the attribute MUSIC is AURIC.
+PRINT TITLE           - retrieves those records and prints their values for the
+                        attribute TITLE.
+
+See also FIND, SEARCH
+
+&SAVE
+The SAVE command stores the record numbers of the current selection group in a
+disk file, preserving the sorted order of the records.  The saved selection
+group may be retrieved with a FIND FILE command.  The syntax is:
+
+  SAVE file-descriptor
+
+See also FIND, DFIND
+
+&QUIT
+The QUIT command ends a System 1022 session and returns to the operating system.
+QUIT is identical to EXIT.  The syntax is:
+
+  QUIT
+
+&PUSH
+The PUSH command suspends System 1022 operations and goes to TOPS-20 EXEC level
+while preserving the 1022 environment.  The TOPS-20 POP command returns the user
+to 1022.  The syntax is:
+
+  PUSH [USING string END]
+
+where string is a list of commands to be executed at TOPS-20 EXEC level.
+
+For example:
+
+PUSH USING DEL MEMO.* END - leaves 1022, preserving the environment, goes to 
+                            TOPS-20 EXEC level, and deletes the MEMO files.
+POP                       - returns to 1022 environment.
+
+&PRINT
+The PRINT command directs output to the terminal or, with the ON option, to a
+disk file.  The syntax is:
+
+            { file-desc }  {             }
+  PRINT [ON {           }] { output-list } [FORMAT format END]
+            { channel-n }  {             }
+
+where an ouput list may contain, singly or in combination: ALL, attribute
+names, quoted literals, user-defined or system variables, arithmetical
+expressions, and totals functions.
+
+For example:
+
+PRINT ON TY.OUT TITLE  - writes the values for the attribute TITLE in the
+                         current selection group into a file TY.OUT.
+
+PRINT TITLE YEAR       - displays the values for the attributes TITLE and 
+                         YEAR of the current selection group.
+
+See also FORMAT, INIT, RELEASE, TYPE
+
+&OPEN
+The OPEN command opens one or more data sets, closing any previously opened
+files unless the NOCLOSE option is used.  The $MISSING keyword is used to
+open a multifile data set after one or more of its auxiliary files have
+been lost.  The syntax is:
+
+  OPEN [NOCLOSE] item-1 [$MISSING] [item-2 [$MISSING]...]
+
+where an item is:
+                                                           { ENQ     }
+[data-set-desc IN] file-name [PASS pswd] [RO] [AS alias] [ {         } ]
+                                                           { NOENQ   }
+For example:
+
+OPEN FILMS RO DIRECT RO - opens the data sets in the FILMS and DIRECT files
+                          which the user may read but not update (Read Only).
+
+OPEN CAST NOCLOSE       - opens the data sets in the CAST file without closing
+                          other open files.
+OPEN MYFILE $MISSING    - opens the multifile data set MYFILE one of whose
+                          auxiliary files is missing.
+
+&MAP
+The MAP command locates the records in a second open data set that share
+attribute values with records in the current selection group.  The syntax is:
+
+          {  KEY   }           { AND   }
+  MAP [BY {        }] [LOGICAL { OR    }] [TO] ds-desc [VIA] attr1 [ [TO] attr2]
+          { GETREC }           { CLEAR }
+
+              [AND [VIA] attr3 [ [TO] attr4] ]...
+
+where ds-desc is the name, alias, or number of the target (second) data set in
+which records are to be located by matching values for attribute1 in the source 
+(current) data set with values for (keyed) attribute2 in the second.
+
+For example:
+
+MAP TO FILMS VIA SURNAME TO S1S - locates the records in the FILMS data set
+                                  in which the value of the attribute S1S is
+                                  the same as that for SURNAME in the current
+                                  selection group (of the source data set).
+
+&LOAD
+The LOAD command builds a bundled data set.  The syntax is:
+
+  LOAD [DESC] file-desc1 [DATA file-desc2] [SET data-set-desc] [NOKEYS] [MAX n]
+
+   [NOMSG] [NODME] [CUSTDMI] [CORE n] [BUFFER n]
+
+          {  n  }             { TERMINATOR }
+   [LRECL {     } ] [FORMFEED {            } ]
+          { [V] }             {   IGNORE   }
+
+where DESC file-descriptor1 names a file containing a data set description, 
+DATA file-descriptor2 names the corresponding data input file, and SET data-set-
+descriptor names the data set being built.
+
+For example:
+
+LOAD DESC FILMS DATA FILMS SET CINE - builds the data set CINE.DMS from the
+                                      description file FILMS.DMD and the data
+                                      file FILMS.DMI.
+
+See also CREATE
+
+&KEY
+The KEY command creates or rebuilds key tables for specified attributes for
+fast retrieval.  The syntax is:
+
+  KEY [NOMSG] [USING structure] [BUFFER n] attribute-list
+
+where each entry in the attribute-list is:
+
+                  { [REUSE]  } { attribute-name }
+[NULL n] [CORE n] {          } {                }
+                  { NOREUSE  } { ALL            }
+
+For example:
+
+KEY NOREUSE MUSIC S1FN  - builds key tables for the attributes MUSIC and S1FN
+                          on new disk space (rather than on blocks previously
+                          occupied by old key tables).
+
+See also UNKEY
+
+&KEY $CHECKSUM
+The KEY $CHECKSUM command informs the user whether or not the key tables for
+specified attributes have been damaged.  The syntax is:
+
+               { attribute [ attribute... ] }
+  KEY $CHECKSUM {                            }
+               { ALL                        }
+
+If the key table for a specified attribute has been damaged, the message
+
+  <attribute>
+  ? checksums differ
+
+is returned.  If there has been no damage, the message
+
+  <attribute> verified
+
+is returned.
+
+See also KEY $VERIFY
+
+&KEY $VERIFY
+The KEY $VERIFY command informs the user whether or not the key tables for
+specified attributes have been damaged and, if so, where the damage has
+occurred.  The syntax is:
+
+             { attribute [ attribute... ] }
+  KEY $VERIFY {                            }
+             { ALL                        }
+
+If the key table for a specified attribute has been damaged, a message
+appears listing the attribute name, its value and SYSID in the data set,
+and its value and SYSID in the key table.  If there has been no damage, the
+message
+
+  <attribute> verified
+
+is returned.
+
+See also KEY $CHECKSUM
+
+&#T
+The #T command activates the TRACE mode that allows the user to read a command
+file as it executes after a USE command.  #T may appear as a discrete command in
+a command file or may be used in conjunction with the USE command during a 1022
+session.  The syntax is:
+
+  #T
+
+For example:
+
+#T USE PUB:PRM3 - displays the contents of the PUB:PRM3 command file (namely,
+                  the command FILE COPY PUB:DIRECT.DMS DIRECT.DMS) during
+                  execution.
+
+&#TYPE
+The #TYPE command displays a text message at the terminal when the command
+line is scanned during the execution of a command file.  The syntax is:
+
+  #TYPE
+
+&#Z
+The #Z command aborts execution of a multi-line command.  The syntax is:
+
+  #Z
+
+&TRANSACT
+The TRANSACT command updates the current (master) data set by using transaction
+records stored in a separate data set or file.  The syntax is:
+
+           { DATA file-desc1  DESC file-desc2 }
+  TRANSACT {                                  } 
+           { SET data-set-desc                }
+
+     [SORTED [SYNC [MESSAGE] [TTYMSG] ] ] LOCATOR attr [, attr]...
+     
+     [NOCHANGE BLANKS] [NODME] [CUSTDMI]
+     
+     [unapplied-clause] [applied-clause]
+
+     [duplicates-transact-clause] [duplicates-master-clause] [LRECL option]
+
+     [NOMSG] [FORMFEED option] [BUFFER n] [CORE n]
+
+
+&TRANSACT UNAPPLIED
+The UNAPPLIED clause of the TRANSACT command covers the case in which no match
+is found in the master data set for a given transaction record.  The syntax is:
+ 
+                               { APPEND }
+  UNAPPLIED [MESSAGE] [TTYMSG] {        } 
+                               { IGNORE }
+
+where the UNAPPLIED APPEND option appends the unmatched transaction record to 
+the master data set as a new record, the UNAPPLIED IGNORE option causes the
+unmatched transaction record to be ignored, MESSAGE writes an error message
+on an error log file, and TTYMSG displays the error message at the user's
+terminal.                                 
+
+See also TRANSACT APPLIED
+
+&TRANSACT APPLIED
+The APPLIED clause of the TRANSACT command covers the case in which a 
+transaction record matches at least one record in the master data set.  
+The syntax is:
+
+                              { IGNORE }
+   APPLIED [MESSAGE] [TTYMSG] { APPLY  } 
+                              { DELETE }
+
+where the APPLIED IGNORE option causes matching transactions to be ignored
+(and nonmatching transactions to be automatically added to the master data
+set as new records unless the UNAPPLIED IGNORE clause has been specified); the
+APPLIED APPLY option causes master records to be updated in accord with the
+values of the matching transaction fields; the APPLIED DELETE option causes
+matching master records to be deleted, subject to the conditions for multiple
+matches; MESSAGE writes an error message on an error file; and TTYMSG displays
+the error message at the user's terminal.
+
+See also TRANSACT UNAPPLIED, TRANSACT DUPLICATES
+
+&TRANSACT DUPLICATES
+The DUPLICATES clause of the TRANSACT command specifies the manner in which
+multiple transactions with the same locator values are to be applied against
+matching master records and the manner in which multiple matching master
+records are to be affected by transactions.  The syntax is:
+
+             { TRANSACT }                    { FIRST  }
+  DUPLICATES {          } [MESSAGE] [TTYMSG] { LAST   }
+             { MASTER   }                    { ALL    }
+                                             { IGNORE }
+
+&TRANSACT DUPLICATES MASTER
+The DUPLICATES MASTER clause of the TRANSACT command specifies which master
+records (if any) are to be updated when more than one of them matches a given
+transaction record.  The syntax is:
+
+                                        { FIRST  }
+   DUPLICATES MASTER [MESSAGE] [TTYMSG] { LAST   } 
+                                        { ALL    } 
+                                        { IGNORE }
+
+where the FIRST option applies all transactions only to the first matching 
+master record, the LAST option applies only to the last matching master record,
+ALL applies to all matching master records, and IGNORE applies to none.  The
+MESSAGE option writes an error message on an error log file, and the TTYMSG
+option displays the error message at the user's terminal.
+
+See also TRANSACT DUPLICATES TRANSACT
+
+&TRANSACT DUPLICATES TRANSACT
+The DUPLICATES TRANSACT clause of the TRANSACT command specifies which
+transaction records (if any) are to be applied to matching master records when
+multiple transaction records share the same locator value.  The syntax is:
+
+                                          { FIRST  }
+   DUPLICATES TRANSACT [MESSAGE] [TTYMSG] { LAST   }
+                                          { ALL    }
+                                          { IGNORE }
+
+where the FIRST option applies only the first transaction to the matching 
+master record(s), the LAST option applies only the last transaction, the ALL
+option applies all transactions, and the IGNORE option applies none.  The
+MESSAGE option writes an error message on an error log file, and the TTYMSG
+option displays the error message at the user's terminal.
+
+See also TRANSACT DUPLICATES MASTER
+
+&DEFINE
+The DEFINE command creates a variable of specified data type and name
+to be referenced later by the user.  The syntax is:
+
+  DEFINE  [var-type-1] var [var]...[var-type-2 var [var]...]...
+
+where variable type is one of the 1022 data types--INTEGER, DOUBLE
+INTEGER, REAL, DATE, and TEXT--and variable is a variable or array name to be
+defined as that data type.  Var-type-1 need not be expressed if it is INTEGER
+or REAL and FORTRAN variable type conventions are followed.  When the data
+type is TEXT, a value for name length must be expressed.  Subscript dimensions
+must be expressed in the definition of array names.
+
+For example:
+
+DEFINE TEXT 15 SURNAME           - defines SURNAME as type TEXT of length 15.
+DEFINE INTEGER JAR(-5:-1) REAL X - defines the array JAR with subscript bounds
+                                   between -5 and -1 as INTEGER and X as REAL.
+
+&EDIT
+The EDIT command is identical to the SOS command.  On TOPS-10, the EDIT command
+accesses the SOS text editor internal to System 1022 while preserving the
+1022 environment.  On TOPS-20, EDIT accesses the text editor which has been
+defined as EDITOR: to EXEC while preserving the 1022 environment.  The
+syntax is:
+
+  EDIT [ [FILE] file-descriptor]
+
+See also SOS
+
+&INIT
+The INIT command assigns output channels which are referenced by 1022 
+commands (such as PRINT) to generate or control output.  The user may
+assign up to eight output channels.   The syntax is:
+
+       { [ 123 ] [ options ]  }   { file-descriptor }
+  INIT { [ APPEND ]           } n {    	            }
+       { [ DIF ] [ options ]  }   { TTY:            }
+
+where n is an integer from 1 to 8. The 123 option allows a Lotus WKS file
+to be produced. The DIF option allows a DIF file to be produced. The
+APPEND option opens a file in APPEND mode rather than rewriting the file.
+
+For example:
+
+INIT 3 ITALY.OUT   - assigns the output file ITALY.OUT to channel 3
+PRINT ON 3 TITLE   - writes the values for the attribute TITLE in the records
+                     of the current selection group into the file ITALY.OUT on
+                     channel 3.
+
+See also RELEASE
+
+&MODIFY
+The MODIFY command changes the name or abbreviation of an attribute, an 
+internal data set name, or the ENQ access to the current data set.
+The syntax is:
+
+                	                 { NAME new-name           }
+          { [$ATTRIBUTE] attr-descriptor { ABBREVIATION new-abbrev } }
+   MODIFY {                              { [NON]ADDITIVE           }
+          { $DSNAME internal-name			             }
+          { $ACCESS { ENQ       }                                    }
+	            { NOENQ     }
+                    { RECLOCK   }
+                    { NORECLOCK }
+
+where $ATTRIBUTE specifies the attribute name, abbreviation, or additive
+or nonadditive status of a real, integer, or double integer to be changed.
+This change takes place immediately. $DSNAME specifies the new internal name
+for a data set and $ACCESS specifies its ENQ/NOENQ, RECLOCK/NORECKLOCK status.
+The $DSNAME and $ACCESS ENQ/NOENQ changes go into effect the next time the
+data set is opened. If the data set is ENQ, $ACCESS RECLOCK/NORECLOCK changes
+take effect immediately.
+
+&RELEASE
+The RELEASE command closes output channels that have been assigned by
+the INIT or PRINT ON command.  The syntax is:
+
+  RELEASE [n]
+ 
+where n is the channel to be released.  If n is omitted, all assigned 
+channels are released.
+
+See also INIT, PRINT
+
+&SORT KEY
+The SORT KEY command is a special SORT function which quickly sorts on a 
+single keyed attribute.  The records are always sorted in ascending order.
+The syntax is:
+
+  SORT KEY keyed-attribute-name
+
+For example:
+
+SORT KEY YEAR - arranges the records in the current selection group by their
+                values for the keyed attribute YEAR from the least recent to
+                the most recent.
+
+See also SORT
+
+&SOS
+On TOPS-10, the SOS command accesses the SOS text editor internal to System
+1022 while preserving the 1022 environment.  On TOPS-20, SOS accesses the 
+text editor which has been defined as EDITOR: on EXEC while preserving the
+1022 environment.  The syntax is:
+
+  SOS [FILE] file-descriptor
+
+See also EDIT
+
+&TECO
+The TECO command accesses the TECO text editor from within 1022,
+preserving the 1022 environment.  The syntax is:
+
+         { [FILE] file-descriptor }
+  TECO [ {                        } ] [ USING teco commands END ]
+         { ATTRIBUTE attribute    }
+
+where file-descriptor names a disk file to be edited.  The ATTRIBUTE option
+allows an attribute to be edited in a single currently selected record. The EC
+command exits TECO and changes the attribute to its new value.  The EQ command
+exits TECO without performing any changes.  The USING clause specifies a string
+of TECO commands to be executed  automatically upon invoking TECO.  The
+commands are terminated with two <ESC>s.
+
+For example:
+
+TECO ATTRIBUTE NAMES USING FSJAHN<ESC>JOHN<ESC>EC<ESC><ESC> END
+
+edits the attribute NAMES, replacing the characters JAHN by JOHN.
+
+&UPDATE
+The UPDATE command controls the update access to the current data set.
+The syntax is:
+
+         { [ON]    }
+  UPDATE { OFF     }
+         { PREVENT }
+         { ALLOW   }
+
+UPDATE ON causes the current data set to be opened for writing and is 
+most efficient for making a long series of updates.  UPDATE OFF closes
+the dataset following updates.  UPDATE PREVENT  prevents updates to the current
+data set, even by the user who gives the command.  UPDATE ALLOW turns off
+UPDATE PREVENT.  PREVENT and ALLOW work only for ENQ data sets.
+
+&ADMIT
+The ADMIT commands allow the data set owner to regulate other users' access
+to the data set.  Data set ownership is defined by the directory string or
+project, programmer number (p,pn) under which the data set was first created
+or loaded.  ADMIT commands that establish data set security consist of a
+global clause and an optional FOR clause:
+
+        { CLASS PASSWORD password-1 [ access-1 ]       }
+  ADMIT {                                              }
+        { user-id [ access-1 ] [ PASSWORD password-1 ] }
+
+           [ FOR attribute [ access-2 ] [ PASSWORD password-2 ] ]...
+
+The provisions of the global clause define user access to the data set as a
+whole, and a FOR clause may broaden or narrow that access for individual
+attributes in the data set.  A password specified in a global clause must be
+given by the user when issuing the OPEN command; access to attributes that are
+password-protected in a FOR clause is gained by issuing the PERMIT command. 
+
+&ADMIT CLASS
+The ADMIT CLASS PASSWORD command restricts access to the data set to users
+with a specified password.  The syntax is:
+
+  ADMIT CLASS PASSWORD password-1 [ access-1 ]
+
+    [ FOR attribute [ access-2 ] [ PASSWORD password-2 ] ]...
+
+where password is an alphanumeric string of up to five characters that the
+user must type when giving the OPEN command, and access is LOCKED (no access),
+READONLY (examination privileges only), or UPDATE (read and write privileges),
+which is the default.  The optional FOR clause lets the data set owner further
+restrict or broaden access to individual attributes in the data set.  The
+command takes effect the next time anyone tries to open the data set.
+
+For example:
+
+ADMIT CLASS PASSWORD ABC RO - allows only users with the password ABC to
+                              open the data set and limits their access
+                              to examination privileges only.
+
+&ADMIT CLASS CLEAR
+The ADMIT CLASS PASSWORD CLEAR command allows the data set owner to cancel a
+prior ADMIT CLASS PASSWORD command with a matching password.  The syntax is:
+
+  ADMIT CLASS PASSWORD password CLEAR
+
+where password is the same alphanumeric string that was specified in the
+ADMIT CLASS PASSWORD command that the data set owner wants to cancel.  The 
+effect of canceling the prior ADMIT command is to lock those users previously
+covered by the command out of the data set unless they are granted access 
+under the provisions of some other ADMIT command.  The command takes effect
+the next time anyone tries to open the data set.
+
+For example:
+
+ADMIT CLASS PASSWORD AZ CLEAR - cancels the command ADMIT CLASS PASSWORD AZ
+                                which allowed users with the password AZ to
+                                open the data set with update privileges.
+
+See also ADMIT CLEAR
+
+&ADMIT CLEAR
+The ADMIT CLEAR command cancels all prior ADMIT commands, removing all previous
+access restrictions to the data set.  Like all other ADMIT commands, ADMIT CLEAR
+may only be issued by the data set owner or the System Administrator.  The
+command takes effect the next time the data set is opened.  The syntax is:
+
+  ADMIT CLEAR
+
+&ADMIT 10-USER-ID
+The ADMIT user-id command on TOPS-10 allows the data set owner to restrict 
+access to the data set to individual users or user groups by specifying user-
+identification numbers.  The syntax is:
+
+  ADMIT user-id [ access-1 ] [ PASSWORD password-1 ]
+   
+    [ FOR attribute [ access-2 ] [ PASSWORD password-2 ] ]...
+
+where user-id is a project, programmer number (p,pn), a project number plus a
+wildcard (p,*), a wildcard plus a programmer number (*,pn), or two wildcards
+(*,*); access is LOCKED (no access), READONLY (examination privileges only),
+or UPDATE (read and write privileges), which is the default; and password is
+an alphanumeric string of up to five characters that may be required to open
+the data set.  The FOR clause lets the data set owner broaden or limit access
+to individual data set attributes.  The command takes effect the next time
+anyone tries to open the data set.  When multiple ADMIT user-id commands are
+given, a user is covered by the one that most precisely specifies his or her
+user-id: p,pn is most precise, then p,* or *,pn, and then *,* which is the
+least precise.
+
+&ADMIT OWNER
+The ADMIT user-id OWNER command allows the data set owner to transfer
+ownership of the data set to another user, thereby conferring all privileges of
+ownership on that user.  The syntax is:
+
+  ADMIT user-id OWNER
+
+where user-id is a full project, programmer number (p,pn) or, on TOPS-20, a full
+directory string.  Like all other ADMIT commands, ADMIT user-id OWNER takes
+effect the next time anyone tries to open the data set.
+
+For example:
+
+ADMIT 4,104 OWNER    - transfers ownership of the data set to the user whose
+                       p,pn is 4,104.
+
+ADMIT <ANDREA> OWNER - transfers ownership of the (TOPS-20) data set to the
+                       user whose directory name is <ANDREA>.
+
+&ADMIT 10-USER-ID CLEAR
+The ADMIT user-id CLEAR command on TOPS-10 allows the data set owner to cancel
+a previous ADMIT user-id command in which the specified user-id exactly matches
+the one given in the ADMIT user-id CLEAR command.  The syntax is:
+
+  ADMIT user-id CLEAR
+
+where user-id can be a project, programmer number (p,pn), a project number plus
+a wildcard (p,*), a wildcard plus a programmer number (*,pn), or two wildcards
+(*,*).  The effect of canceling a previous ADMIT user-id command with an ADMIT
+user-id CLEAR is to lock the users previously covered by the ADMIT command out
+of the data set unless they are granted access under the provisions of some
+other ADMIT command.  Like all other ADMIT commands, ADMIT user-id CLEAR takes
+effect the next time anyone tries to open the data set.
+
+For example:
+
+ADMIT 4,* CLEAR - cancels a previous ADMIT 4,* command, thereby locking every
+                  user whose project number is 4 (and whose programmer number
+                  can be any number) out of the data set unless the user is
+                  still covered by some other ADMIT command.
+
+&ADMIT 20-USER-ID
+The ADMIT user-id command on TOPS-20 allows the data set owner to restrict
+access to the data set to individual users or user groups by specifying user-
+identification numbers or directory strings.  ADMIT user-id commands are only
+useful when the system variable SYSADMCDIR has been set to 1 or directories are
+password-protected at monitor level.  The syntax is:
+
+  ADMIT user-id [ access-1 ] [ PASSWORD password-1 ]
+
+    [ FOR attribute [ access-2 ] [ PASSWORD password-2 ] ]...
+
+where user-id is a directory string (enclosed in angled brackets), a project, 
+programmer number (p,pn), a project number plus a wildcard (p,*), a wildcard
+plus a programmer number (*,pn), or two wildcards (*,*); access is LOCKED (no
+access), READONLY (examination privileges only), or UPDATE (read and write 
+privileges), which is the default; password is an alphanumeric string of up to
+five characters that may be required to open the data set.  The FOR clause
+allows the owner to broaden or limit access to individual data set attributes.  
+When multiple ADMIT user-id commands are given, a user is covered by the one
+that most precisely specifies his or her user-id: directory string is most
+precise, then p,pn, then p,* or *,pn, and then *,* which is the least precise.
+
+&ADMIT 20-USER-ID CLEAR
+The ADMIT user-id CLEAR command on TOPS-20 allows the data set owner to cancel
+a previous ADMIT user-id command in which the specified user-id exactly matches
+the one given in the ADMIT user-id CLEAR command.  The syntax is:
+
+  ADMIT user-id CLEAR
+
+where user-id is a directory string (enclosed in angled brackets), a project,
+programmer number (p,pn), a wildcard plus a project number (*,pn), a programmer
+number plus a wildcard (p,*), or two wildcards (*,*).  The effect of canceling
+a previous ADMIT user-id command with an ADMIT user-id CLEAR is to lock the
+users previously covered by the ADMIT out of the data set unless they are
+granted access under the provisions of some other ADMIT command.  Like all
+other ADMIT commands, ADMIT user-id CLEAR takes effect the next time anyone
+tries to open the data set.  
+
+For example:
+
+ADMIT 4,* CLEAR - cancels a previous ADMIT 4,* command, thereby locking every
+                  user whose project number is 4 (and whose programmer number
+                  can be any number) out of the data set unless the user is
+                  still covered by some other ADMIT command.
+
+&ALLOCATE
+The ALLOCATE command adds additional space to a data set file for adding
+many more records.  The syntax is:
+
+  ALLOCATE n
+
+where n is the number of additional records to be added.
+
+&AUDIT
+The AUDIT commands maintain journal files, called audit trails, that 
+recover data sets in the event of a computer crash or software failure
+and restore them to their previous condition.  
+
+&AUDIT BACKUP
+The AUDIT BACKUP command restores a data set to its previous condition using
+pre-images.  Give an AUDIT LIST command with a SINCE or FROM clause to gain
+information about a backup before issuing the AUDIT BACKUP command.  The syntax
+is:
+
+                                                     { FIRST {     n        }
+  AUDIT BACKUP [FILE file] [NOVERIFY] [NOMSG]  [FROM { LAST  { [CHECKPOINT] }] 
+                                                     { check                }
+
+where file is the name of the audit trail file.  NOVERIFY disables verification
+of the backup process.  NOMSG suppresses routine 1022 messages.  The FROM clause
+lists only those entries made from the specified checkpoint to the end of the
+audit trail.  If the FROM clause is omitted, backup takes place to a point just
+prior to the first entry in the audit trail.
+
+&AUDIT CHECKPOINT
+The AUDIT CHECKPOINT command generates a checkpoint for later use in restoring
+a damaged data set to its current state.  The syntax is:
+
+        { CHECKPOINT }
+  AUDIT {            } checkpoint-name
+        { CHECK      }
+
+The checkpoint name may be up to 10 ASCII characters long and may not begin
+with a digit.  The user must be have update access to the current data set to
+issue the AUDIT CHECKPOINT command.
+
+&AUDIT CLEAR
+The AUDIT CLEAR command  turns off the AUTO option specified in the
+AUDIT START command.  The syntax is:
+
+  AUDIT CLEAR
+
+Note that AUDIT CLEAR does not turn off the audit trail: the audit trail is
+turned off when the data set is closed.
+
+&AUDIT COMMENT
+The AUDIT COMMENT command places comments into the audit trail.  
+The syntax is:
+  
+  AUDIT COMMENT delimiter string delimiter
+
+where delimiter is any non-blank delimiter character, and string is any sequence
+of characters (including <RET>) not containing a delimiter.
+
+For example:
+
+AUDIT COMMENT "WEEKLY PAYROLL UPDATES MADE 11AM 12/12/83"
+
+&AUDIT FIX
+The AUDIT FIX command restores the current data set to to its previous
+condition at the last audit trail pre-image checkpoint.  The syntax is:
+
+  AUDIT FIX [NOMSG]
+
+This is equivalent to:
+
+  AUDIT BACKUP FILE audit-file FROM LAST CHECKPOINT [NOMSG]
+
+See also AUDIT BACKUP
+
+&AUDIT FORWARD
+The AUDIT FORWARD command restores the current data set to a previous
+condition using an archive copy of the data set and post-images.
+First give an AUDIT LIST command with a POST clause to obtain information
+about rolling forward before using some of the options listed below.  The syntax
+is:
+
+  AUDIT FORWARD [FILE file] [NOVERIFY] [NOMSG]
+
+	      { FIRST {	     n       } }
+	[THRU { LAST  { [CHECKPOINT] } } ] 
+	      { check                  }
+
+where file is the audit trail file name, NOVERIFY disables verification of
+the recovery process, NOMSG disables printing of all routine 1022 messages
+and THRU lists only those entries made from the beginning of the audit 
+trail through the specified checkpoint.
+
+&AUDIT LIST
+The AUDIT LIST command displays the contents of the audit file.  The syntax 
+is:
+
+  AUDIT LIST [ALL] [FILE file1] [ON file2]
+
+	{ [SINCE date-time]                               }
+
+                { FIRST {       n      } }                
+	{ [FROM { LAST  { [CHECKPOINT] } } ] [PRE] [POST] }
+                { check                  }
+
+        { [TILL date-time]                                }
+
+                { FIRST {       n      } }                
+        { [THRU { LAST  { [CHECKPOINT] } } ] [PRE] [POST] }
+                { check                  }
+
+&AUDIT MERGE
+The AUDIT MERGE command merges separate audit files which have been maintained
+for the same data set.  The AUDIT MERGE command must be issued before any
+recovery can be done for that data set.  The syntax is:
+
+AUDIT MERGE file1 [FROM] file2 [file3] ...
+
+where file1 is the resulting merged audit file and file2 and file3 are
+names of the audit files to be merged.  1022 generated checkpoint
+numbers may change after the merge.  
+
+&AUDIT RECOVERY
+The AUDIT RECOVERY command specifies the automatic treatment of a damaged
+data set.  The syntax is:
+
+		       { AUTO    }          { QUERIES }
+  AUDIT RECOVERY [MODE {	 } ] [ALLOW { UPDATES } ] [NOSMG]
+		       { MANUAL  }          { NOTHING }
+
+where AUTO directs 1022 to automatically recover to a checkpoint using the
+audit trail that was in use when the damage occurred.  MANUAL, which is the
+default, indicates that no automatic recovery will be done.  The ALLOW clause
+specifies the type of access permitted to the damaged data set.  QUERIES, which
+is the default, permits read access but no updates.  UPDATES permits access if
+no damage exists.  NOTHING prevents access to a damaged data set.
+
+&AUDIT START
+The AUDIT START command turns on the audit trail.  The syntax is:
+
+  AUDIT START [FILE file] [PRE] [POST] [AUTO] [NOREAD] [LOCK] [JOB]
+
+	[BUFFERS n] [NOMSG]
+
+where file is the file descriptor for the audit trail.  If no file name
+is specified, the default file-name is that of the currently open data set,
+with a .DML extension.  PRE starts an audit trail that writes pre-images, which
+is the default, and POST starts an audit trail that writes post-images.
+PRE POST starts an audit trail that writes pre-images and post-images.
+AUTO starts the audit trail automatically  every time the current 
+data set is opened. NOREAD does not record READONLY openings of the data set
+and is used with AUTO.  LOCK gives the user exclusive access to the audit file.
+JOB changes the .DML extension to the user's job number.  BUFFERS sets the 
+number of blocks used in buffering the audit trail.  The default is 2.
+NOMSG suppresses printing of the 1022 message when AUDIT START creates
+a new audit trail file.
+
+&BACKTO
+The BACKTO command reformats the current data set to make it compatible with
+a specified earlier version of System 1022.  The syntax is:
+
+  BACKTO n
+
+where n is the integer version number. 
+
+For example:
+
+OPEN FILMS       - opens the data set FILMS (built under a post-114 version
+                   of System 1022).
+BACKTO 114	 - converts the current data set to a version-114 data set.
+
+See also UPTO	
+
+&IGNORE
+The IGNORE DAMAGE command cancels a damaged condition flag of data set and
+resets the system variable SYSDAMAGE to 0.  The syntax is:
+
+  IGNORE DAMAGE
+
+&OPTIMIZE
+The OPTIMIZE command reformats a key table and reclaims space for a key.
+The command works only on attributes with undamaged keys.  The syntax is:
+
+                            { attribute-name }
+  OPTIMIZE [NOMSG] [NULL n] {                }
+			    {	   ALL       }
+
+where n specifies the percentage of the total key table space which is to
+remain empty to hold new values on later changes and additions, and attribute-
+name is the attribute name or abbreviation of the attribute whose key is to be
+reformatted.
+
+&PERMIT
+The PERMIT command allows the user who has opened the data set to gain access
+for a single session to attributes that have been password-protected in the FOR
+clause of an ADMIT command.  The syntax is:
+
+  PERMIT attribute  PASSWORD password-1  [ ACCESS READONLY ]
+ 
+     [ FOR attribute  PASSWORD password-2  [ ACCESS READONLY ] ]...
+
+where the password is compared to the password assigned in the ADMIT structure.
+ACCESS READONLY restricts any attempt to change the value of that attribute.
+
+For example:
+
+PERMIT AGE PASS XYZ, SALARY PASS LMN ACC RO - permits readonly access to
+					      the attributes AGE and SALARY
+				   	      with the corresponding passwords
+					      XYZ and LMN.
+
+See also ADMIT
+
+&RELOCATE
+The RELOCATE DATA command modifies the information in the current unbundled
+data set about the location and name of its associated data file.
+The syntax is:
+
+  RELOCATE DATA file-descriptor
+
+where file-descriptor is the file containing the data.  Only the data set
+owner may issue the RELOCATE DATA command.
+
+See also CREATE
+
+&RUN
+The RUN command exits from 1022 and simultaneously starts up another 
+program.  The syntax is:
+
+  RUN file-descriptor [core-size] [S start-address-offset]
+
+where file descriptor is the name of the program to be run, core size
+specifies core allocation (on TOPS-10), and S start address offset
+allows the user to offset the normal starting address of the program
+by 1, with the legal values being 0 and 1.
+
+For example:
+
+RUN LOADER 15 S 1 - runs the LOADER program using a core size of 15K
+		    and offsets the normal starting address by +1.
+
+&SET
+The SET command controls some 1022 options, including the number of I/O
+buffers used in updates, error responses, and command level prompt
+messages.  The syntax is:
+
+	{ BUFFER  }
+	{ ERRCHAR }
+	{ ERROR   }
+  	{ FERR    }	
+   SET	{ FILERR  }   argument ... argument
+	{ FMSG    }
+	{ PROMPT  }
+        { SCRATCH }
+	{ TAPE    }
+
+&SET BUFFER
+The SET BUFFER option sets up additional internal I/O buffers for the current
+data set to increase 1022 efficiency for heavy updating. 
+The syntax is:
+
+  SET BUFFER n
+
+where n is the number of buffers to be allocated for use.
+
+&SET ERRCHAR
+The SET ERRCHAR option supplies the character to be displayed before all
+error messages.  The syntax is:
+
+  SET ERRCHAR character
+
+where character is any printing ASCII character.
+
+For example:
+
+SET CHARR ?  - causes a ? to print out before any error message.
+
+&SET ERROR
+The SET ERROR option controls how 1022 handles error recovery.
+The syntax is:
+
+   	    { ABORT    }
+  SET ERROR {          }
+    	    { CONTINUE }
+
+where ABORT causes 1022 to return to monitor level following an error,
+closing and saving any open files.  CONTINUE causes a return to command 
+level.
+
+&SET FERR
+The SET FERR command determines whether or not the error character specified in
+the SET ERRCHAR command will print at the beginning of the error messages
+enabled by the SET FMSG command.  The syntax is:
+
+  SET FERR option [option]...
+
+where the options are:  ON  - enables all messages.
+                        OFF - suppresses all messages.
+                        0   - enables the NOT FOUND message.
+                        1   - enables the FOUND message.
+                        M - enables the n RECS FOUND message.
+
+See also SET ERRCHAR, SET FMSG
+
+&SET FILERR
+The SET FILERR option controls how 1022 handles error recovery when reading
+commands from a file.  The syntax is:
+	     
+	     { ABORT    }
+	SET  {          }
+	     { CONTINUE }
+
+where ABORT resets 1022 back to its default operating mode and
+CONTINUE causes recovery from a command file error and continues to read 
+commands from the file.  The recovery procedure scans the file for the
+next terminating period and the next command is read from that position.
+
+&SET FMSG
+The SET FMSG option controls the messages printed after FIND, DFIND, SEARCH,
+and MAP commands.  Normally, after executing these commands, 1022 types one
+of the following messages:
+
+NOT FOUND.
+FOUND.
+n RECS FOUND.
+
+SET FMSG suppresses or enables the printing of these messages.  The syntax is:
+
+  SET FMSG option [option]...
+
+where the options are:  ON  - enables all messages.
+                        OFF - suppresses all messages.
+                        0   - enables the NOT FOUND message.
+                        1   - enables the FOUND message.
+                        M   - enables the nRECS FOUND message.
+
+&SET PROMPT
+The SET PROMPT command expands the 1022 command prompt (*) to include 
+information on resource usage of the commands.  The syntax is:
+
+	SET PROMPT [TIME] [CLOCK] [CPU] [DISK] [TEXT message]
+
+where TIME types the current time of day, CLOCK types the number of 
+minutes and seconds elapsed since the start of execution of the last
+command, CPU types the number of CPU seconds used by the last command
+executed, DISK types the number of disk reads and writes executed by
+the last command (on TOPS-10), and TEXT message types a specified
+message, rather than the asterisk, to prompt for a new command.  If
+the message contains blanks, they must be enclosed in double quotation marks.
+The user may specify any combination of options in any order.  Option values
+are consistently displayed in the order given in the syntax diagram above.
+
+&SET SCRATCH
+The SET SCRATCH command allows the user to set the number of buffers to be
+used by the scratch file that 1022 automatically creates for the session for
+use in building selection sets.  The syntax is:
+
+   SET SCRATCH n
+
+where n is the number of buffers to be allocated to the file.
+
+&SET TAPE
+The SET TAPE command controls formfeed of output from a report or a print 
+format statement to a printer.  The syntax is:
+
+		  {  FF  }
+  SET TAPE [ON n] {      }
+		  { NONE }
+
+where n is the number of the output channel.  The FF option allows automatic
+page ejection and the NONE option causes all paper motion to be done with <CR>
+and <LF>.  The defaults of the command are NONE if output is directed to the
+user's terminal, FF if output is directed to a disk file.  
+
+&TMPFILE
+The TMPFILE command provides a link for TOPS-10 users with TMPCORE
+for interprogram communication. The syntax is:
+
+	TMPFILE name d string d
+
+where name is a 3-character TMPCORE name, d is any character except space,
+<CR>, <LF> or <TAB> to be used as a delimiter, and string is any ASCII string
+to be placed into TMPCORE.  If the string does not fit into TMPCORE, the file
+###name.TMP is created on disk.  ### is the user's job number.
+
+&UPTO
+The UPTO command reformats the current data set built under an earlier version
+of System 1022 to make it compatible with a specified later version of the
+system.  The syntax is:
+
+	UPTO n
+
+where n is the integer version number.
+
+For example:
+
+OPEN FILMS - opens the data set FILMS (built under a pre-116 version of 1022).
+UPTO 116   - converts FILMS into a version-116 data set.
+
+See also BACKTO
+
+&USERCALL
+USERCALL is an interactive 1022 command that passes values to a
+user-written MACRO program on TOPS-20 systems. USERCALL does not
+return values from the MACRO program to interactive 1022.
+
+The MACRO routine called by USERCALL must be merged with the proper
+1022 segments so that it may be accessed. The address of the MACRO
+routine must be placed in the system variable SYSUSERADR or SYSUSRADRP
+prior to any calls. The syntax is:
+
+	USERCALL [ expression  [ , ] ... ]
+
+where each expression evaluates to a value to be passed to the MACRO
+routine.
+
+&FORMAT
+The FORMAT (or FMT) keyword of a PRINT or TYPE command introduces a set of 
+specifications for the way in which data is to be printed or displayed.  Such
+a set of specifications is terminated by the keyword END.  The syntax is:
+
+  ...FORMAT specifications END
+
+For example:
+
+FIND DIRECTOR GOULDING                   - forms the selection set 
+PRINT TITLE GROSS 
+ FORMAT A X "grossed" X P$ZZZZZZZ.ZZ END - produces the output: 
+                                           GRAND HOTEL grossed $4000000.00
+
+&SYNTAX
+The description of each System 1022 command documented in the on-line HELP 
+and in the User's Reference Manual includes a diagram of the command's syntax.
+The following notational conventions are used:
+   
+  1.  Keywords that the user must type when issuing the command appear in 
+      capital letters: FIND ALL, INFORM STRUCTURE LENGTH
+  2.  Command arguments for which the user must substitute specific values
+      appear in lower case: ADMIT user-id, TYPE output-list
+  3.  Keywords or arguments that are optional appear in square brackets [ ]:
+      EDIT [ [FILE] file-descriptor ]
+  4.  Items of which the user must choose one in issuing the command appear in
+      braces { }:
+                   { data-set-descriptor }
+             DBSET { alias               }
+                   { number              }
+                                                         { [NAME] }  
+  5.  Defaults appear in square brackets: INFORM COLLECT {        }  
+                                                         { NUMBER }
+  6.  Ellipses (...) appear after an item to show that item may be repeated:
+      DISABLE JOIN [ join-name-1 ]...[ [,]join-name-n ]
+
+&TRANSACT SORTED
+The SORTED clause of the TRANSACT command allows transaction records that have
+been sorted by locator field to be applied in a group against matching master
+data set records that have also been sorted by the same locator field for
+greater efficiency in large transaction runs.  The syntax is:
+
+  SORTED [SYNC [MESSAGE] [TTYMSG] ]
+
+where SYNC causes duplicates in the transaction and master files to be
+matched one to one in parallel, the first duplicate transaction being applied
+to the first duplicate master, the second to the second, and so on.  The SYNC
+option overrides DUPLICATES TRANSACT and DUPLICATES MASTER clauses.  MESSAGE
+writes an error message on an error log file, and the TTYMSG option displays
+the error message at the user's terminal.
+
+&1022
+The HELP command provides on-line information about 1022 features and commands.
+To read the information for a given feature or command, type HELP, then a 
+space, then the topic keyword followed by a <RETURN>.  For example, to read
+about the INFORM command, type:
+
+  HELP INFORM<RET>
+
+Additional information may be found under the subtopics listed at the end of
+individual HELP messages.  To read this information, type HELP, a space, the
+topic keyword, a space, and then the subtopic keyword followed by a <RETURN>.
+For example, to learn about the BASE subtopic listed at the end of the INFORM
+message, type:
+
+  HELP INFORM BASE<RET>
+
+For a list of the 1022 features and commands for which there are HELP messages,
+type:
+
+  HELP<RET>
+
+&COMPILE
+The COMPILE command allows the user to compile and save PL1022 and report
+programs in disk files for future execution with the PERFORM command.  The
+syntax is:
+
+  COMPILE [FROM] source-file [ [TO] compiled-file ]
+
+where source-file is a program in which the first command is PL1022 START,
+REPORT START, IF, WHILE, or REPEAT and the last command is a corresponding
+terminator (PL1022 END, REPORT END, ENDIF, ENDWHILE, UNTIL).  A source-file
+may contain any legal PL1022 or report program command except OPEN and PERMIT.
+
+A compiled-file is the output file containing the compiled program.  The
+default structure for this file is DSK:, its default extension is DMX, and
+its default name is that of the source-file.
+
+For example:
+
+COMPILE A.DMC - compiles the command file A.DMC, producing the compiled file
+                A.DMX for future execution with the PERFORM command.
+
+See also PERFORM
+
+&PERFORM
+The PERFORM command executes a command file that has been compiled with the
+COMPILE command.  The syntax is:
+
+  PERFORM compiled-file
+
+where compiled-file is a file containing a PL1022 or report program that has
+been compiled with the COMPILE command.  The file's default extension is DMX.
+
+When a PERFORM command is given, 1022 checks to make sure that the environment
+in which the file is to be executed matches the one in which the file was
+compiled in the following ways and blocks execution if matching errors are 
+found.  The errors are recorded in an error file, <filename.DMF>:
+
+1. The major version of 1022 is the same, and the minor versions are compatible.
+2. All data sets and collections referenced in the program are open and are
+   compatible with those referenced at COMPILE time, and access to protected
+   attributes is at least as free as it was at COMPILE time.
+3. Any variables referenced in the program and not defined within the program
+   itself exist and are defined exactly as they were at COMPILE time.
+
+See also COMPILE
+
+&-ERROR
+System 1022 error messages are coded by type and, within each type, by
+message number.  Error types are returned as numbers by a host language
+program on an error trap, while interactive 1022 represents each type by
+a two letter code.  These are: type (1) command scanner errors (CS), type
+(2) FIND and SAVE errors (FI), type (3) file damaged errors (FD), type 
+(4) OPEN errors (OP), type (5) miscellaneous errors (MI), type (6) format
+or print output errors (FO), type (7) update errors (UP), type (8) SORT
+errors (SO), type (9) I/O errors (IO), type (10) fatal System errors (SY),
+type (11) out of core errors (CO), type (12) PL1022 errors (PL), type (14)
+host language errors (HL), type (15) LOAD and APPEND errors (LD), type 
+(16) TRANSACT errors (TR), type (18) AUDIT errors (AU), type (19) 
+debugging errors, type (20) SPSS interface errors, and type (21) COMPILE
+and PERFORM errors (CP).
+
+To find out about a particular error message, type:
+
+  HELP ERROR <letter code><message number>
+
+For example: HELP ERROR CS205 - returns information about CS205.
+
+
+&ERROR CS1
+CS1  RELATIONAL FOLLOWS ARITHMETICAL OR LOGICAL
+In FIND commands, one relational follows another in an illegal pattern. 
+Note: "OR GT 30" is legal, but "EQ OR", "XOR GT", are illegal.
+
+&ERROR CS2
+CS2  LOGICAL FOLLOWS LOGICAL
+The presence of a logical (e.g. AND) requires that a new value or
+attribute begin.  Here, another logical follows, which is meaningless. 
+Note "OR EQ 30" is legal, "OR AND" is not.
+
+&ERROR CS3
+CS3  VALUE WAS REQUIRED
+Syntax required that a value follow (like after GT), but something else
+was found.
+
+&ERROR CS4
+CS4  ILLEGAL AUDIT COMMAND KEYWORD
+The word following AUDIT is not a valid audit subcommand. The legal
+audit subcommands are: START, LIST, BACKUP, CHECKPOINT, CHECK, COMMENT,
+MERGE, CLEAR, RECOVERY, and FIX.
+
+&ERROR CS5
+CS5  DATE-TIME SPECIFICATION REQUIRED HERE
+The word following SINCE in an audit command is not a legal date-time
+specification. (See Appendix C).
+
+&ERROR CS6
+CS6  CHECKPOINT, CHECK, OR AN INTEGER REQUIRED HERE
+In the AUDIT BACKUP and LIST commands FROM LAST must be followed by
+either the keyword CHECKPOINT (abbreviated CHECK) or an integer
+specifying the number of checkpoints to go back.
+
+&ERROR CS7
+CS7  OVER PUSHED AN @FILE LEVEL (10 IS MAX)
+An @file-descriptor reference calls in the 21th nested file in command
+reading, probably due to a "loop" in the references.
+
+&ERROR CS8
+CS8  CHECKPOINT NAME REQUIRED HERE
+Either no checkpoint name has been specified or the  name is not
+acceptable.
+
+&ERROR CS9
+CS9  AUDIT MERGE ILLEGAL IN PL1022 SEGMENT
+The audit merge command is restricted from use within a PL1022 segment,
+between PL START and PL END.
+
+&ERROR CS10
+CS10  ILLEGAL WITHOUT AUDIT FILE OPEN
+The given audit command cannot be executed without an accessible audit
+file to operate on.
+
+&ERROR CS12
+CS12  ARITHMETIC OVERFLOW IN NUMBER, OR NON NUMERIC CHAR
+A numeric input is illegal, either because it contains a non-digit
+character, or because it is too large to be stored.
+
+&ERROR CS13
+CS13  OUT OF ROOM IN INSIDE COMMAND BUFFER
+1022 has a very large capacity to hold commands, but an extremely long
+one might not  fit.
+
+&ERROR CS14
+CS14  KEYWORD NOTHING, QUERIES, OR UPDATES REQUIRED HERE
+One of these three keywords must follow the word ALLOW in the AUDIT
+RECOVERY command.
+
+&ERROR CS15
+CS15  UNEXPECTED LEFT OR RIGHT PAREN
+A parenthesis has cut off the ending of a descriptive group.
+
+&ERROR CS16
+CS16  MORE RIGHT THAN LEFT PARENS
+The parentheses are unbalanced. We know immediately, since there can
+never legally be more closing parentheses than opening ones.
+
+&ERROR CS17
+CS17  MORE RIGHT THAN LEFT PARENS IN A BASIC SELECTOR GROUP
+The parentheses may not be totally out of balance, but they are
+unbalanced since the last attribute group started.
+
+&ERROR CS18
+CS18  NEEDED AN ATTRIBUTE NAME
+The user has omitted the name of an attribute where the command syntax
+requires one.  Check to make sure that all attribute values are preceded
+by the appropriate attribute names.
+
+&ERROR CS19
+CS19  UNBALANCED PARENS IN AN ATTRIBUTE GROUPING
+The parentheses don't match in describing the last attribute group.
+
+&ERROR CS20
+CS20  UNBALANCED PARENS IN A COMMAND
+The parentheses don't match taken as a whole in the command.
+
+&ERROR CS21
+CS21  HIT A NULL PAREN GROUP   IE  (  )
+1022 doesn't allow meaningless null groups in FIND commands.
+
+&ERROR CS22
+CS22  A NOT FOLLOWS AN ARITHMETIC RELATIONAL
+In a command like 'FIND AGE EQ NOT 30', the 'NOT' follows the relator
+'EQ'. This is a confusing use of a logical at a point where 1022 expects
+only an arithmetic expression. 'FIND AGE NOT 30', or 'FIND AGE NOT EQ
+30' are legal.
+
+&ERROR CS23
+CS23  EXPRESSIONS NESTED TOO DEEPLY
+More than 10 intermediate values have to be saved at the same time to
+decode the FIND command.  This is highly unlikely, like having a true 10
+level parenthetical expression which cannot be expressed in fewer
+parenthetical groups.
+
+&ERROR CS24
+CS24  INVALID COMMAND
+The command word typed does not match or is not a long enough
+abbreviation for a System command.
+
+&ERROR CS25
+CS25  INVALID ATTRIBUTE FOR SPECIFIED DATA SET
+In a MAP command, the attribute named in the TO data set or the one to
+be matched in the TO data set is not an attribute in that data set or it
+is not KEYED and therefore cannot be used in the MAP.
+
+&ERROR CS26
+CS26  BAD # COMMAND
+The item #<word> does not match any immediate command.
+
+&ERROR CS27
+CS27  ILLEGAL FILE COMMAND KEYWORD
+A file subcommand must immediately follow the FILE command: TYPE
+(abbreviated TYP), RENAME (REN), COPY (COP), or DELETE (DEL).
+
+&ERROR CS28
+CS28  PERIOD EXPECTED HERE
+There are no more parts to the command, but another word is encountered.
+The usual cause of this problem is that the optional keywords are out of
+sequence.
+
+&ERROR CS29
+CS29  VALUE BUFFER OVERFLOW
+A single word is more than 250 characters long, and is too big for the
+word buffer.  Text between double-quotes counts as a single word to
+1022.
+
+&ERROR CS30
+CS30  KEYWORD DAMAGE EXPECTED HERE
+The IGNORE command must be followed by the keyword DAMAGE. This is the
+only option.
+
+&ERROR CS31
+CS31  DATA SET NOT OPEN
+This command requires that a data set be open for it to operate. Usually
+this means it is meaningless without a data set open.
+
+&ERROR CS32
+CS32  SAVE FILE NOT ALLOWED IN SEARCH
+The "FILE file-descriptor" option is only allowed in a FIND command,
+not in SEARCH.
+
+&ERROR CS33
+CS33  BAD FILE OR DEVICE SPECIFICATION
+A file-descriptor has illegal form, or contains illegal characters.
+
+&ERROR CS34
+CS34  ON CLAUSE HIT TWICE IN PRINT COMMAND
+There are two attempts to specify an output device in one PRINT command.
+
+&ERROR CS35
+CS35  TOO MANY ATTRIBUTES IN A SORT DESCRIPTION
+The SORT command has a limit of 20 sort expressions at the same time.
+
+&ERROR CS36
+CS36  OUT OF ROOM IN A BUFFER
+One of the internal data areas has expanded, and there is no more room. 
+This happens when too little core is available.
+
+&ERROR CS37
+CS37  TEXT ATTRIBUTE REQUIRED FOR CONTAINS OR BEGINS OR MATCHES
+In a relational expression, the relational operator CONTAINS, NCONTAINS,
+BEGINS, NBEGINS, MATCHES, or NMATCHES must be followed by an attribute of the 
+data type TEXT.
+
+&ERROR CS38
+CS38  ILLEGAL OR REPEATED PARAMETER
+A parameter (usually a reserved word) is specified incorrectly, out of
+range, or is repeated twice.
+
+&ERROR CS39
+CS39  TOTALS LIST NOT AT END
+In a PRINT command, a print list containing totals functions or
+identified as the totals list is followed by another print list, or what
+looks like one in some way.
+
+&ERROR CS40
+CS40  ON CLAUSE IN ILLEGAL POSITION
+The ON clause must be the first thing encountered in a PRINT command.
+
+&ERROR CS41
+CS41  UNEXPECTED RESERVED WORD
+1022 has encountered a reserved word too soon.  Usually,  a required
+value has been left out.
+
+&ERROR CS42
+CS42  FILENAME TOO LONG (3 CHARACTERS MAXIMUM)
+A tempcore filename may not contain more than three characters.
+
+&ERROR CS43
+CS43  FUNCTION HAS NO EXPRESSION
+In a PRINT command, a totals list function has no following expression
+to evaluate.
+
+&ERROR CS44
+CS44  USER ID OR KEYWORD CLASS REQUIRED HERE
+ADMIT must be followed by the keyword CLASS, a project-programmer
+number, or a user directory name.
+
+&ERROR CS45
+CS45  TEXT IN ARITHMETIC EXPRESSION
+An arithmetic expression can contain  arithmetic attributes, values, and
+variables, but no text or text valued items.
+
+&ERROR CS46
+CS46  INCOMPLETE COMMAND
+A command has terminated too soon; the termination leaves the command
+incomplete.
+
+&ERROR CS47
+CS47  UNEXPECTED OPERATOR OR RIGHT PAREN
+In evaluating an expression, 1022 has seen either an illegal character,
+or an arithmetic operator or parenthesis in the wrong place.
+
+&ERROR CS49
+CS49  UNBALANCED PARENTHESES
+Unbalanced parentheses have been found in an arithmetic expression.
+Usually this is noticed on the next word following the expression.
+
+&ERROR CS50
+CS50  UNRECOGNIZED WORD
+The last word read can't be decoded to mean anything.
+
+&ERROR CS51
+CS51  DATA NOT OF EXPECTED TYPE
+The user has typed an expression or data to compare with an attribute or
+variable which is not of the same type (numeric, text) as that
+attribute. For example, 1022 expected a number, and the user typed text.
+
+&ERROR CS52
+CS52  UNEXPECTED LEFT PAREN
+A left parenthesis cuts off part of the current command clause.
+
+&ERROR CS53
+CS53  UNIMPLEMENTED DATA TYPE
+Report this to Software House.
+
+&ERROR CS54
+CS54  NULL TOTALS CLAUSE
+The user has started a totals list in a PRINT command, and then just
+ended it with nothing inside.
+
+&ERROR CS55
+CS55  NOT AN INTEGER
+1022 expected an integer parameter, and didn't get one.
+
+&ERROR CS56
+CS56  OUT OF LEGAL RANGE
+A number supplied by the user is not in the right value range for the
+particular purpose of the command.
+
+&ERROR CS57
+CS57  COMMAND OUT OF CONTEXT (EG. REPORTS)
+Certain commands can only be used in some contexts, in a report section,
+or PL1022 program section.  Others are only legal in the interactive
+mode, outside these sections.  The user has supplied a command which is
+legal, but not in the current section.  It is difficult to decide what
+the user intended, and since the command might be legal in many other
+sections, no attempt is made to decide what section the command should
+appear in.
+
+&ERROR CS58
+CS58  NO PRINT IN REPORT
+A simple REPORT program is required to have a PRINT command for purposes
+of syntax.  It can be a null PRINT command, but it has to be included. 
+See REPORTS.
+
+&ERROR CS59
+CS59  CHARACTER NOT ALLOWED HERE
+A general message when a confusing special character appears at the
+wrong place.
+
+&ERROR CS60
+CS60  ATTRIBUTE AS VALUE NOT ALLOWED IN FIND
+Value expressions in a SEARCH command are unrestricted and may contain
+attributes, (SEARCH SALARY EQ BONUS+30). But in FIND commands, the value
+expressions cannot contain attribute names; all values must be
+independent of a particular record of the data base.
+
+&ERROR CS61
+CS61  ATTRIBUTE REFERENCED TWICE
+The same attribute is named twice in a command list.
+
+&ERROR CS62
+CS62  UNKEYED ATTRIBUTE
+An unkeyed attribute has been specified, usually in a FIND command where
+all attributes for selection must be keyed.
+
+&ERROR CS63
+CS63  VALUE TOO LARGE
+Either the numeric value of a user entry is larger than is allowed for a
+particular attribute, or a text string is too long.  This usually
+happens with  integer attributes that have limited ranges.
+
+&ERROR CS65
+CS65  NEEDED LOGICAL OR ATTRIBUTE
+The syntax of the command led 1022 to expect a new attribute group,
+either started by a logical or an attribute name.
+
+&ERROR CS66
+CS66  FILE NOT FOUND
+The user specified a file-descriptor for a file that can not be found.
+
+&ERROR CS67
+CS67  TEXT LENGTH (AN INTEGER) REQUIRED HERE
+The user has not given a text length in a DEFINE command.
+
+&ERROR CS68
+CS68  NOT IN REPORT
+The user tried to execute a command, like REPORT END, which is legal
+only if 1022 is in a REPORT program.
+
+&ERROR CS69
+CS69  EXTRA WORD IN COMMAND
+The requirements of the command have been met, but there is still
+something left over.  For safety, this is flagged as an error.
+
+&ERROR CS70
+CS70  ATTRIBUTE PROTECTED FROM ADD OR CHANGE
+An attempt has been made to change an attribute which can't be changed
+by the user.  These are Date of Change, Date of Entry, Integer of
+Identification, and possibly others.
+
+&ERROR CS71
+CS71  ILLEGAL OCTAL PPN
+The user has supplied a number which is to be interpreted as a user's
+project-programmer number, or a generic PPN containing *. Either the
+format is illegal, or the numbers are not  octal.
+
+&ERROR CS72
+CS72  EXPECTED A RESERVED WORD
+Syntax required a choice be indicated by a reserved word, but it doesn't
+match any ones legal at this point.
+
+&ERROR CS73
+CS73  TECO EXPECTS TEXT ATTRIBUTE
+The TECO ATT command can only be used on text  attributes.
+
+&ERROR CS74
+CS74  NOT IN PL1022 SEGMENT
+The user has tried to do something which requires being in a PL1022
+segment. In particular, trying PL END without being in PL1022 will give
+this message.
+
+&ERROR CS76
+CS76  ERRORS SEEN, PL1022 OR REPORT EXECUTION STOPPED
+The scan of a PL1022 or REPORT segment is continued past any errors in
+the segments so that more than one syntax error can be detected on each
+scan.  At the end, this informational error message  indicates that the
+segment is not runnable because of errors found.
+
+&ERROR CS77
+CS77  BAD RELATIONAL  EG. EQ GT
+The command format required the specification of a relational, but the
+word did not match one.
+
+&ERROR CS78
+CS78  CANNOT KEY TEXT GT 80 CHARS
+The user has requested key tables to be generated for a text attribute
+with a length greater than 80 characters.
+
+&ERROR CS79
+CS79  NOT A DATA SYMBOL
+The last word encountered may already be defined as a label, but it is
+not a data symbol, i.e. not a user variable.  The symbol must be defined
+as a variable before being used.  The same name can be used for a
+variable and a label without confusion.
+
+&ERROR CS80
+CS80  VARIABLE MUST START WITH LETTER
+The user has attempted to define a variable that doesn't start with a
+letter (i.e. A to Z).
+
+&ERROR CS81
+CS81  INVALID DATA SET SPECIFIED
+The data set specified for a DBSET command is not open; or a numeric
+data set identifier is out of range.
+
+&ERROR CS82
+CS82  MULTIPLE MATCH TO DATA SET NAME
+The data set name specified in a DBSET command matches more than one 
+open data set.
+
+&ERROR CS83
+CS83  ALREADY DEFINED - CAN'T REDEFINE
+The user is trying to define the same label again. This is illegal,
+since 1022 can't change the assignments in midstream.
+
+&ERROR CS84
+CS84  COMMAND NOT ALLOWED IN GROUP2 REPORT SECTION
+A REPORT has an internal syntax which must be respected. Report
+statements which belong in the Main Print group cannot be used once the
+Totals On Change group has begun.  This error happens when the user is
+not clear about what can go where, or has mis-inserted a new statement.
+
+&ERROR CS86
+CS86  HEADING OR FOOTING INSIDE MAIN REPORT SECTION
+Heading and Footing must appear before the first On Change control group
+starts.  Here the group has started when the Heading or Footing is
+encountered.
+
+&ERROR CS87
+CS87  UNAUTHORIZED COMMAND -- ADMIT PROTECTED 
+Due to the ADMIT protection on the data base, this command is not
+allowed.  This error message appears, for example, if an ADD command is
+tried on a data base with global READONLY protection or if an INFORM
+ADMIT command is issued by someone other than the data base owner.
+
+&ERROR CS88
+CS88  UNAUTHORIZED ATTRIBUTE -- ADMIT PROTECTED
+The ADMIT protection on this attribute prevents using it in this
+command.  There is no password to give, so the restriction cannot be
+removed in this user area.
+
+&ERROR CS89
+CS89  UNAUTHORIZED ATTRIBUTE, NEED PASSWORD
+Due to the ADMIT protection of the data base, the attribute requires a
+password before the user can access it.
+
+&ERROR CS90
+CS90  ALREADY AN ATTRIBUTE IDENTIFIER
+The new name or abbreviation given in a MODIFY command attempts to
+duplicate an already existing attribute identifier.
+
+&ERROR CS91
+CS91  TOTALS FUNCTION NOT ALLOWED HERE
+Incorrect use of a totals function (TOT MIN MAX MEAN) such as in a
+subscript.
+
+&ERROR CS92
+CS92  FUNCTION REQUIRES LEADING PARENTHESIS
+Functions that have more than one argument require parentheses around
+their argument lists.
+
+&ERROR CS93
+CS93  CAN'T NEST TOTALS FUNCTIONS
+The user has written a total of  a total.  
+
+&ERROR CS94
+CS94  INVALID PRINT ASSIGNMENT CONSTRUCTION
+This is incorrect use of the EQ operator in a PRINT statement.
+
+&ERROR CS95
+CS95  INITIAL SECTION MUST START REPORT WHEN USED
+In a general report, where SECTION commands are used,  SECTION INITIAL 
+must immediately follow the REPORT START command.
+
+&ERROR CS96
+CS96  SECTION INITIAL MUST BE THE FIRST STATEMENT IN A COMPLEX REPORT
+In a report that uses SECTION commands, SECTION INITIAL
+must be the first section.
+
+&ERROR CS97
+CS97  VALUE CANNOT BE USER ASSIGNED
+The user cannot assign a value to a reserved system variable, or to an
+attribute, using a LET  or EVALUATE command. Attributes may be assigned
+values using the CHANGE command.
+
+&ERROR CS98
+CS98  REPORT SECTION OUT OF SEQUENCE
+A SECTION command is missing, or out of order, in a report program.
+
+&ERROR CS99
+CS99  NOT ALLOWED IN NEW REPORTS
+The USING command is an obsolete feature in sectioned reports.
+
+&ERROR CS100
+CS100  GENERAL INTERNAL ERROR -- PLEASE REPORT
+This is printed for many "impossible" internal conditions. The situation
+which causes the error should be noted and  reported as a System bug.
+
+&ERROR CS101
+CS101  I/O ERROR IN READING
+A data error occurred in reading or writing a file.
+
+&ERROR CS102
+CS102  NOT CALLED FROM HOST LANGUAGE
+A HOST command  returns control to a host language program, but no host
+language program is in use.
+
+&ERROR CS103
+CS103  CONTINUATION LABEL NOT PROVIDED
+The DBEXEC subroutine was called with a command that required line
+continuation, but the optional line continuation argument was not
+provided.
+
+&ERROR CS104
+CS104  NO ATTRIBUTES QUALIFY FOR COMMAND
+A command is meaningless because there are no keyed attributes in the
+data base to act on.
+
+&ERROR CS105
+CS105  SOS CANNOT BE USED TO CHANGE ATTRIBUTES
+Unlike TECO, the SOS editor is not interfaced into the 1022 logic for
+changing the value of an attribute. SOS can only be used for editing
+files on the disk.
+
+&ERROR CS106
+CS106  INDIRECT FILE COULD NOT BE PROCESSED
+The requested indirect file, one referenced by an @ construction or in a
+USE command, can not be located.
+
+&ERROR CS107
+CS107  ONLY DOUBLE INTEGER SUPPORTED
+The only double precision data type supported by 1022 is double
+precision integer.
+
+ERROR CS108
+CS108  VARIABLE NAME REQUIRED HERE
+A variable name must be specified here. Usually, the user is trying to
+define a reserved word as a variable.
+
+&ERROR CS109
+CS109  REPEATED, UNKNOWN, OR ILLEGAL CLAUSE
+A general error message which may be given when (1) a valid clause word
+is mistakenly used twice, (2) the clause word is unknown to the command
+where it is used, or (3) this clause word does not combine with the
+other options already specified for this command.
+
+&ERROR CS110
+CS110  NO INPUT DATA SPECIFIED
+A LOAD, TRANSACT, APPEND, or similar command does not name the input
+data file.
+
+&ERROR CS111
+CS111  APPEND-TRANSACT FROM SET EXCLUDES DESC CLAUSE
+When an APPEND or TRANSACT is done from another data set, the structure
+is contained in the data set, and the user cannot supply a different
+one.
+
+&ERROR CS112
+CS112  NO OUTPUT CLAUSE SPECIFIED
+A general message given when the user does not specify an output file or
+data set in a command that requires one.
+
+&ERROR CS113
+CS113  BUNDLED DATA SETS CANNOT HAVE A DATA FILE
+When DUMPing to a standard, bundled data set, the data is contained in
+that data set. A separate data file cannot be associated with this form
+of data set, but the data clause appeared in the command.
+
+&ERROR CS114
+CS114  NO LOCATOR LIST SPECIFIED
+A TRANSACT command  uses  locators to compare transaction records with
+master records. This command did not give any locator list.
+
+&ERROR CS116
+CS116  SYNC OPTION REQUIRES SORTED TRANSACTIONS
+The SYNC option in the TRANSACT command requires  the SORTED option at
+the same time.
+
+&ERROR CS117
+CS117  DATA CLAUSE REQUIRES DESC CLAUSE
+When doing transactions from a data file, the DESC clause must be given
+so that 1022 may properly read the data.
+
+&ERROR CS118
+CS118  DESC CLAUSE IS REQUIRED
+The CREATE command requires that a DESC clause be included.
+
+&ERROR CS119
+CS119  TYPES INCOMPATIBLE
+An arithmetic operation or assignment requires a conversion which is not
+ permitted. This  only occurs if there is no reasonable interpretation
+for the operation or assignment, for example DATE * DATE or assigning a
+text string to an integer.
+
+&ERROR CS120
+CS120  '(' REQUIRED HERE
+A subscript or parameter list was expected here.
+
+&ERROR CS121
+CS121  ')' REQUIRED HERE
+After recognizing all required subscripts to an array, or parameters to
+a function, a terminating right parenthesis is required. Usually this
+error is caused by omitting the right parenthesis or specifying too many
+subscripts or parameters.
+
+&ERROR CS122
+CS122  ARGUMENT OF ILLEGAL TYPE
+The argument to a system function is not of an acceptable type. For
+example, MIN (text-attribute).
+
+&ERROR CS123
+CS123  UNRECOGNIZED SYMBOL OR RESERVED WORD
+The symbol appearing here is not acceptable as either an attribute,
+variable, or operator. The most common cause of this error is a mistyped
+variable name or operator.
+
+&ERROR CS124
+CS124  INTERNAL INCONSISTENCY IN GVLD - PLEASE REPORT
+An internal 1022 error has been detected. While this error should never
+occur it is provided for added user security. If encountered, exit 1022
+and start over. In addition, report the problem to the 1022 system
+maintainer. No damage to your data base is implied by this error.
+
+&ERROR CS125
+CS125  SYSTEM FUNCTION NOT PERMITTED HERE
+A value may not be assigned to a system function.
+
+&ERROR CS126
+CS126  TOTALS FUNCTION NOT PERMITTED HERE
+A  Totals function may not be used in a LET statement. Use the EVALUATE
+statement  for this purpose.
+
+&ERROR CS127
+CS127  ',' REQUIRED HERE
+A subscript or parameter is not delimited properly.
+
+&ERROR CS128
+CS128  ILLEGAL VARIABLE NAME
+An attempt has been made to define a variable name starting with SYS, or
+identical to a system function name. These names are reserved for use by
+1022.
+
+ERROR CS130
+CS130  TOO MANY DIMENSIONS (MAXIMUM 7)
+Too many dimensions have been specified. 1022 supports a maximum of
+seven dimensions.
+
+&ERROR CS131
+CS131  ARRAY BOUNDS MUST BE INTEGERS
+The bounds specified for an array must be integer constants.
+
+&ERROR CS132
+CS132  ARRAY BOUND OUT OF LEGAL RANGE
+The integer  array bound is too large or  small.
+
+&ERROR CS133
+CS133  LOWER BOUND GREATER THAN UPPER BOUND
+The lower bound must be less than or equal to the upper bound in an
+array definition.
+
+&ERROR CS134
+CS134  VARIABLE PREVIOUSLY DEFINED DIFFERENTLY
+A variable name may only be redefined if its new definition is identical
+to the previous definition.
+
+&ERROR CS135
+CS135  CHECKPOINT DESIGNATOR REQUIRED HERE
+Either a checkpoint name or number is required.
+
+&ERROR CS136
+CS136  KEYWORD INTEGER REQUIRED HERE
+The keyword INTEGER is required following the keyword DOUBLE. This 
+permits other double data types in the future.
+
+&ERROR CS137
+CS137  INVALID USER NAME
+The user name  does not exist.
+
+&ERROR CS138
+CS138  DBSET - DATA SET NOT OPEN IN PL1022 SEGMENT
+A DBSET command does not name an open data set.
+
+&ERROR CS139
+CS139  STRING TOO LONG
+The string given as an argument was too long. Refer to the explanation
+of the command in the manual for the maximum permitted length.
+
+&ERROR CS140
+CS140  QUOTED STRING EXPECTED HERE
+A string enclosed by quotation marks is the required item.
+
+&ERROR CS141
+CS141  ILLEGAL CONVERSION OF CONSTANT REQUIRED
+The type of the variable given as an argument to CONST was not
+compatible with the type of value required. Most frequently, this  is
+caused by  CONST ( <text variable> ) where an integer was required. In
+such a case, use the @= construction.
+
+&ERROR CS142
+CS142  IMPROPER CONSTANT SUBSCRIPT SPECIFICATION
+The subscripts (indices) to an array  argument to the CONST function are
+not correctly specified. This error may indicate too many subscripts,
+too few subscripts, an illegally typed subscript, or an illegal
+character in the subscript specification.
+
+&ERROR CS143
+CS143  CONSTANT SUBSCRIPT OUT OF BOUNDS
+The subscript (index) of an array used as an argument to the CONST
+function is not within the bounds specified for that array.
+
+&ERROR CS144
+CS144  ILLEGAL REFERENCE WITHOUT DATA SET OPEN
+A reference to SYSID is made without a data set OPEN. This is
+meaningless.
+
+&ERROR CS145
+CS145  UNTERMINATED LITERAL ENDS COMMAND FILE
+A quoted string continues across a command file level.  Usually, this
+error is a missing quote in the command file.
+
+&ERROR CS146
+CS146  UNTERMINATED REPORT OR PL1022 SEGMENT ENDS COMMAND FILE
+A PL1022 or REPORT program is started but not terminated within a
+command file.
+
+&ERROR CS147
+CS147  BOTH FROM AND SINCE CLAUSES MAY NOT BE SPECIFIED
+The FROM and SINCE clauses in an AUDIT command are mutually exclusive
+since they are alternate methods of specifying a point in the audit
+trail.
+
+&ERROR CS148
+CS148  KEYWORD DATA REQUIRED HERE
+The RELOCATE command requires the keyword DATA to follow the command
+word. This permits future expansion of the command.
+
+&ERROR CS149
+CS149  NOT AN UNBUNDLED DATA SET
+The RELOCATE DATA command only has meaning for an unbundled data set.
+
+&ERROR CS151
+CS151  BACK SELECTION FAILURE IN PTPBLK - PLEASE REPORT
+This is an internal error message which is only issued when an
+inconsistency is detected. No damage to the data set is implied by this
+message. However, QUIT 1022  and restart. Please report this message to
+your 1022 maintainer.
+
+&ERROR CS152
+CS152  UNTERMINATED PL1022 SEGMENT IN A REPORT
+A PL START within a REPORT does not have a matching PL END.
+
+&ERROR CS153
+CS153  FILENAME EXPECTED HERE
+A filename is required here and the supplied word is not a  filename.
+
+&ERROR CS154
+CS154  OUTSIDE PL1022 SEGMENT TERMINATES IN A REPORT
+A PL END  without a matching PL START is seen within the REPORT.
+
+&ERROR CS155
+CS155  REQUIRED CLAUSE OMITTED
+A required clause or keyword is omitted. Consult the manual for a full
+description of the syntax of the command.
+
+&ERROR CS156
+CS156  PASSWORD REQUIRED AFTER ADMIT CLASS
+An admit command that sets up a user class must include a password for
+that class.
+
+&ERROR CS157
+CS157  TRANSACT OR APPEND TO SAME DATA SET NOT ALLOWED
+In order to transact or append from a data set to itself, open the data
+set twice and transact or append one data set to the other.
+
+&ERROR CS158
+CS158  BOOLEAN VALUE NOT PERMITTED HERE
+The user has inserted a logical expression (such as AGE LT 65) where one
+is not allowed (such as immediately after ELSE).
+
+&ERROR CS159
+CS159  BOOLEAN VALUE REQUIRED HERE
+The user has neglected to include a complete logical expression (such as
+AGE LT 65) as required in an IF, WHILE, or REPEAT...UNTIL statement.
+
+&ERROR CS160
+CS160  ILLEGAL CONTROL STRUCTURE (MISSING END OR UNTIL)
+The user has neglected to close an IF--THEN(--ELSE) or WHILE statement
+with END or a REPEAT statement with UNTIL.
+
+&ERROR CS161
+CS161  ELSEIF OR ELSE NOT ALLOWED HERE
+ELSEIF and ELSE may only occur as parts of an IF statement.  The syntax
+is:
+IF <Boolean expression> THEN <commands> 
+[ELSEIF <Boolean expression> THEN <commands>] 
+[ELSE <commands>] 
+END[IF]
+
+&ERROR CS162
+CS162  END NOT ALLOWED HERE
+The user has attempted to employ the terminator END other than to close
+an IF--THEN(--ELSE) or WHILE statement.
+
+&ERROR CS163
+CS163  PL1022 BACK SELECTION FAILURE - PLEASE REPORT
+The user has been unable to return to an original open data set after
+cycling through all open data sets.  This should be reported to Software
+House.
+
+&ERROR CS164
+CS164  END OR UNTIL ILLEGAL OUTSIDE OF STRUCTURED COMMANDS
+The user has employed the terminator END or UNTIL without a preceding
+initiator (IF, WHILE, or REPEAT).
+
+&ERROR CS165
+CS165  THEN REQUIRED HERE
+THEN has been omitted from an IF or ELSEIF statement containing a
+command block.  The syntax is: 
+IF <Boolean expression> THEN <commands>
+[ELSEIF <Boolean expression> THEN <commands>]...
+END[IF].
+
+&ERROR CS166
+CS166  DO REQUIRED HERE
+DO has been omitted from a WHILE statement.  The syntax is:
+WHILE <Boolean expression> DO <commands>
+END[WHILE].
+
+&ERROR CS167
+CS167  COMMAND NOT ALLOWED IN PL1022 OR REPORT
+The user has attempted to issue a command (such as COLLECT) that is
+allowed in interactive 1022 but not in a PL1022 or report program.
+
+&ERROR CS168
+CS168  INCORRECT BLOCK TERMINATOR
+The user has either attempted to close an IF, WHILE, or REPEAT statement
+with the wrong terminator or else has failed to include a terminator
+where one is required by the syntax.
+
+&ERROR CS169
+CS169  COMMAND ONLY ALLOWED IN PL1022 OR REPORT
+The user has attempted to issue a command (such as LEAVE) that is only
+allowed in a PL1022 or report program and not in interactive 1022.
+
+&ERROR CS170
+CS170  FEATURE HAS NOT BEEN PURCHASED BY YOUR SITE
+The user has attempted to issue a command (such as ADMIT or AUDIT START)
+that is part of an optional feature (such as ADMIT/PERMIT security or
+AUDIT trails) which the user's site has not purchased.  Your site
+administrator should contact Software House to obtain the feature.
+
+&ERROR CS171
+CS171  ILLEGAL JOIN NAME
+A join name must begin with a letter and may not be a 1022 reserved
+word.
+
+&ERROR CS172
+CS172  CONFLICTS WITH EXISTING JOIN DEFINITION
+The user has either attempted to assign a non-unique name to a join
+relation or else has tried to join two data sets that are already
+joined.  Issue the INFORM JOIN command to see which is the case.
+
+&ERROR CS173
+CS173  MAP TO SAME DATA SET NOT ALLOWED
+A MAP may only occur between two open data sets with different names,
+namely, the current (source) data set and the target data set.  To MAP
+to the same data set, open that set twice, each time giving it a
+different alias.  If you do not wish to MAP to the same data set, use
+the DBSET command to establish the desired source set and then MAP to
+the desired target set.
+
+&ERROR CS174
+CS174  MAP OR JOIN BY SYSID IS ILLEGAL FOR COLLECTIONS
+The user has attempted to join or map between two or more collections
+via SYSID.  This is not allowed in System 1022.
+
+&ERROR CS175
+CS175  AMBIGUOUS ATTRIBUTE NAME
+The user has attempted to reference an attribute common to two or more
+open data sets, neither of which is the current one.  To allow such
+referencing, SYSAMBATTR must be set to 1.
+
+&ERROR CS176
+CS176  NO JOINS EXIST
+The user has issued an ENABLE JOIN or DISABLE JOIN command when no joins
+have been previously defined.
+
+&ERROR CS177
+CS177  DOUBLE PRECISION ATTRIBUTES MAY NOT BE KEYED
+The user has attempted to key an attribute whose data type is DOUBLE
+INTEGER.  This is not allowed in System 1022.
+
+&ERROR CS178
+CS178  REFERENCE TO AN ELEMENT OF A COLLECTION ILLEGAL
+Data sets serving as constituents of a collection can only be referenced
+or accessed as part of that collection.
+
+&ERROR CS179
+CS179  ATTEMPT TO COLLECT A JOINED DATASET 
+Joined data sets may not form part of a collection.  To collect the
+desired data sets, issue a CLEAR JOIN command and then a COLLECT
+command.
+
+&ERROR CS180
+CS180  ATTEMPT TO COLLECT INCOMPATIBLE DATASETS
+All data sets in a collection must be identical in structure.
+
+&ERROR CS181
+CS181  ATTEMPT TO COLLECT A DATASET ALREADY IN COLLECTION
+A collection or a data set already in a collection may not serve as a
+constituent of another collection.  To form a collection of the desired
+data sets, use the CLEAR COLLECT command and issue a new COLLECT
+command.
+
+&ERROR CS182
+CS182  COLLECTION NAME ALREADY IN USE
+The user has attempted to name a collection by using the internal name,
+file name, or alias of some open data set or collection.  Collection
+names must be unique.
+
+&ERROR CS183
+CS183  COLLECTION NAME TOO LONG
+Collection names may not be more than 25 characters long.
+
+&ERROR CS184
+CS184  COMMAND NOT ALLOWED WHEN DBSET TO A COLLECTION
+Certain commands (such as KEY and VALUES) may not be applied to
+collections.  To use these commands, you must issue the CLEAR COLLECT
+command and then access each data set separately.
+
+&ERROR CS185
+CS185  COLLECTION NAME SYNTAX ERROR
+The user has attempted to name a collection using one or more disallowed
+characters.  Collection names must contain only letters, numerals, or
+underscores.
+
+&ERROR CS186
+CS186  COLLECTION NAME DOES NOT EXIST
+The user has attempted to reference a nonexistent collection or has used
+the wrong name in attempting to reference an existing collection.  An
+INFORM COLLECT command will yield the names of existing collections.
+
+&ERROR CS187
+CS187  NO HELP AVAILABLE FOR THIS TOPIC
+The user has either typed the incorrect keyword or keywords for a HELP
+topic or has requested HELP on a topic for which there is no message on
+line.
+
+&ERROR CS188
+CS188  HELP FILE--1022.DMH--UNAVAILABLE
+The System Administrator has failed to put 1022.DMH in the same area as
+1022.  Please report this message to your System Administrator.
+
+&ERROR CS189
+CS189  HELP FILE--1022.DMH--NOT IN PROPER FORMAT
+A validation check has shown that the file named 1022.DMH has not been
+properly installed.  Please report this message to your System
+Administrator.
+
+&ERROR CS190
+CS190  INVALID 1022.DMH FILE VERSION NUMBER
+The 1022.DMH version number is not the same as the current 1022 version
+number.  Please report this message to your System Administrator.
+
+&ERROR CS191
+CS191  1022.DMH HELP FILE IS DAMAGED
+The 1022.DMH file is damaged.  The System Administrator should reprocess
+HELP22.TXT.
+
+&ERROR CS192
+CS192  EXPECTED A RESERVED WORD OR ATTRIBUTE
+In issuing the TRANSACT command, the user has omitted, misspelled, or
+otherwise misspecified an attribute name following the LOCATOR keyword.
+
+&ERROR CS193
+CS193  COULD NOT OPEN PERFORM FILE
+System 1022 was unable to open the file specified in a PERFORM command,
+usually because the file does not exist.
+
+&ERROR CS194
+CS194  COMMAND NOT ALLOWED IN COMPILED 1022
+An illegal command has been included in the source file specified in a
+COMPILE command.  See the "COMPILE and PERFORM" section of Chapter 8.
+
+&ERROR CS195
+CS195  FIRST COMPILED COMMAND DID NOT INITIATE PL1022
+The opening command in the source file specified in a COMPILE command is
+other than one of the required ones (PL1022 START, REPORT START, WHILE,
+REPEAT, or IF).
+
+&ERROR CS196
+CS196  1022 VERSION SKEW IN PERFORM--PLEASE RECOMPILE
+Either the major version of System 1022 has changed between COMPILE time
+and PERFORM time, or a change between minor versions of the system has
+introduced incompatibilities that make it impossible to PERFORM the file
+in its present compiled form.  The user should recompile the source
+file.
+
+&ERROR CS197
+CS197  PREMATURE EOF IN PERFORM FILE
+PERFORM has encountered an EOF in the input file before reading in all
+the necessary information for execution.  This indicates that the file
+has been truncated or otherwise damaged since it was compiled.  The user
+should COMPILE the source file.
+
+&ERROR CS198
+CS198  OUT OF CORE--PERFORM COMMAND
+More memory is needed to execute the PERFORM command.
+
+&ERROR CS199
+CS199  FORMAT ERROR IN PERFORM FILE--PLEASE RECOMPILE
+The user has attempted to PERFORM a file that has either been damaged
+since it was compiled or is not an output of the COMPILE command.  The
+user should COMPILE the source file.
+
+&ERROR CS200
+CS200  NO DATA SETS FOUND OPEN DURING PERFORM
+The user has attempted to PERFORM a file containing a compiled program
+that references one or more data sets but no data sets are presently
+open.  A diagnostic message in the corresponding DMF error file lists
+the data set(s) that need to be opened before PERFORM can execute the
+program.
+
+&ERROR CS201
+CS201  NON-RECOVERABLE PERFORM ERROR (DATA SET MATCHING)--PLEASE REPORT
+The user should not encounter this message, as it indicates a System
+1022 bug.  If this message appears, please report it to Software House.
+
+&ERROR CS202
+CS202  NON-RECOVERABLE PERFORM ERROR (REF. TBL.)--PLEASE REPORT
+The user should not encounter this message, as it indicates a System
+1022 bug.  If this message appears, please report it to Software House.
+
+&ERROR CS203
+CS203  ERRORS SEEN IN PERFORM ENVIRONMENT CHECK
+PERFORM has encountered an error in either the variable environment or
+the data set environment, or both.  A diagnostic message in the
+corresponding DMF error file indicates the specific nature of the
+problem.
+
+&ERROR CS204
+CS204  AMBIGUOUS HELP KEYWORD
+The user has abbreviated a keyword by typing a character string with
+which more than one keyword begins.
+
+&ERROR CS205
+CS205  ERROR CREATING COMPILE OUTPUT FILE
+System 1022 was unable to open the specified output file of a COMPILE
+command. The diagnostic I/O system message preceding this message
+indicates the nature of the problem.
+
+&ERROR CS206
+CS206  ZERO-LENGTH COMPILE SOURCE FILE
+The source file specified in a COMPILE command is a null file and so
+cannot be compiled.
+
+&ERROR CS207
+CS207  SPECIFIED ATTRIBUTE CAN NOT BE ADDITIVE
+The user has attempted to change the nonadditive status of a date, text,
+or integer of identification attribute to additive with the MODIFY
+$ATTRIBUTE command.  This is not allowed.
+
+&ERROR CS208
+CS208  ILLEGAL REFERENCE TO CURRENT DATA SET ATTRIBUTE
+The user has tried to use an attribute name in the current data set
+as an argument in an ADD command.  This is not allowed.
+
+&ERROR CS209
+CS209  ILLEGAL REFERENCE TO A JOINED ATTRIBUTE
+The user has tried to use an attribute name in a data set joined to
+the current one as an argument in an ADD command.  This is not allowed.
+
+&ERROR FI1
+FI1  ATTRIBUTE NOT KEYED
+An attribute  in a FIND command is not a keyed attribute.  All
+attributes used in a FIND command must be keyed.
+
+&ERROR FI2
+FI2  SAVE CMD OR FILECLAUSE OPEN OR ENTER ERROR
+System 1022 received a monitor error attempting to do the open or enter
+for a SAVE command, or the FILE part of a FIND command.
+
+&ERROR FI3
+FI3  FILECLAUSE FILE NOT FOUND
+The file specified in the FILE part of a  FIND command was not found.
+
+&ERROR FI4
+FI4  ATTRIBUTE TOO LONG FOR MAPPING
+The attribute in the source data set must not be greater than 80
+characters in length.
+
+&ERROR FI5
+FI5  MAP TO SAME DATA SET NOT ALLOWED
+A MAP must be between two open data sets. In order to MAP to the same
+data set, OPEN the data set twice.
+
+&ERROR FI6
+FI6  NOT A DMV FILE FOR CURRENT DATA SET
+The DMV file specified by a FIND FILE command was not for the current
+data set.
+
+&ERROR FI7
+FI7  ERROR IN FIND COMMAND
+A FIND command has failed to execute because of data set or disk damage.
+
+&ERROR FI8
+FI8  UNIMPLEMENTED ATTRIBUTE CONVERSION FOR MAP COMMAND
+The user has specified attributes of incompatible data types in the VIA
+clause of a MAP command.  The attributes in a VIA clause should be of
+compatible data types.
+
+&ERROR FI9
+FI9  ERROR IN MAP COMMAND
+A MAP command has failed to execute because of data set or disk damage.
+
+&ERROR FD1
+FD1  FILE DAMAGED -- KEY TABLE
+The keyed attribute tables of the data set file have become damaged as
+determined by a FIND, ADD, or CHANGE command.
+
+&ERROR FD2
+FD2  FILE DAMAGED -- KEY TABLE
+Same explanation as FD1.
+
+&ERROR FD3
+FD3  FILE DAMAGED -- END OF FILE REACHED
+The data set file is damaged. An internal pointer directed a read past
+the end of the file.
+
+&ERROR FD4
+FD4  FILE DAMAGED--INDEX CHECK
+The data in the keyed attribute tables does not correspond to the data
+in the  records of the file.
+
+&ERROR FD5
+FD5  FILE DAMAGED -- RECORD RETRIEVAL ERROR
+The data file or data portion of the data set has been truncated or
+damaged in some way.
+
+&ERROR FD6
+FD6  FILE DAMAGED -- KEY TABLE
+The data set is damaged as determined by the LOAD, APPEND or TRANSACT
+command.
+
+&ERROR FD7
+FD7  FILE DAMAGED - INDEX OUT OF ORDER OR DUPLICATES EXIST
+System 1022 detected a difference between the keys and the record value
+for a particular record.  This error comes from an ADD, or CHANGE
+command, and indicates file damage.  You can usually recover from this
+error by rekeying the damaged attribute.
+
+&ERROR FD8
+FD8  FILE DAMAGED - INDEX CHECK ON VALUE DELETION
+System 1022 detected a difference between the keys and the record value
+of an attribute for a particular record.  This error comes from the
+CHANGE command and indicates file damage.  You can usually correct this
+error by rekeying the damaged attribute.
+
+&ERROR OP1
+OP1  DEVICE NOT AVAILABLE OR NOT DISK
+The device specified in an OPEN command does not exist, or is not a disk
+device.  All data base files must reside on disk.
+
+&ERROR OP2
+OP2  DATA SET NOT FOUND
+The data set file requested in the OPEN command is not found on disk.
+
+&ERROR OP3
+OP3  WRONG PASSWORD
+The user has given the wrong 1022 password necessary to open the data
+set file.
+
+&ERROR OP4
+OP4  NOT A 1022 DATA BASE FILE
+The file requested in an OPEN command was not generated by System 1022
+to be a data set file.
+
+&ERROR OP5
+OP5  UNAUTHORIZED ACCESS
+The user is not on the 1022 ADMIT list for the specified data set file.
+
+&ERROR OP6
+OP6  PASSWORD NEEDED
+A password must be given to open the data set file.  No password is
+provided in the OPEN command.
+
+&ERROR OP7
+OP7  DATA BASE FILE PROTECTED
+The operating system file protection on the data set file does not allow
+the user to open it for reading.
+
+&ERROR OP8
+OP8  OUT OF IO CHANNELS
+There are not enough software IO channels available to open the
+specified data sets.  The user must either close some data sets, or, if
+in a host language program, close some files.  There are a maximum of 15
+channels available to the user.  Each open data set file requires one
+channel. Each sorted data set requires another channel.
+
+&ERROR OP9
+OP9  DATA SET INCOMPATIBLE
+The data set that the user is attempting to open was created with a
+version of 1022 which is incompatible with the version being run. Please
+refer to the BACKTO command which may remove this incompatibility.
+
+&ERROR OP10
+OP10  INTERNAL DATA SET NOT FOUND
+An  OPEN command has been specified for <data set-name> An OPEN
+command has been specified for <data set-name> IN <file>, and <file>
+contains no data set by that name.
+
+&ERROR OP11
+OP11  PROTECTION FAILURE IN OPEN FROM PL1022 SEGMENT
+An attempt was made to open a data set at runtime which was more highly
+protected than the data set used at scan time. Such an open is
+prohibited since it would permit security violations.
+
+&ERROR OP13
+OP13  INCONSISTENT ENQ/NOENQ FILE STATUS DURING OPEN
+One user has attempted to open a file as ENQ while another user has
+attempted to open the same file as NOENQ.
+
+&ERROR OP14
+OP14  DATASET ALIAS ALREADY IN USE
+An alias may not be identical to the internal name or alias of any other
+open data set, including the one to which it refers.  An INFORM BASE
+command will show the internal names and aliases of all open data sets.
+
+&ERROR OP15
+OP15  AUXILIARY FILE NOT FOUND OR HAS INVALID DATASET ID
+In attempting to reference or access an auxiliary file, the user has not
+correctly specified the name of the data set containing that file; or else 
+the user has tried to open a multi-file data set of which one of the
+constituent auxiliary files is missing.
+
+&ERROR OP16
+OP16  ALIAS NOT ALLOWED FOR MULTI-DATA SET OPEN
+In issuing the OPEN command, the user has attempted to assign an alias
+to a DMS file containing multiple data sets.  This is not allowed
+because the same alias would be assigned to more than one open data set,
+which is illegal in 1022.  Open each data set in the DMS file
+individually and assign each its own alias.
+
+&ERROR OP17
+OP17  DATASET INCOMPATIBILITY EXISTS IN THE ADMIT ENTRIES
+The user running version 116A of System 1022 has attempted to open a
+data set created under version 16B or later in which there are ADMIT
+provisions that specify directory strings.  Consult your System Administrator.
+
+&ERROR MI1
+MI1  OPEN ERROR
+The device specified in the ONTO part of the INFO command can not be
+opened.  It is not available or does not exist.
+
+&ERROR MI2
+MI2  ENTER ERROR
+The file specified in the ONTO part of the INFO command can not be
+written. The monitor prevents it.
+
+&ERROR MI3
+MI3  TECO EXPECTS 1 RECORD
+The number of records currently selected (from the last FIND or SEARCH
+command) is not one.  TECO can only be used on a text attribute from one
+record currently selected alone,  or with GETREC.
+
+&ERROR MI4
+MI4  NOT ENOUGH IO CHANNELS FOR TECO OR SOS
+There are no I/O channels left for use by TECO or SOS.
+
+&ERROR MI5
+MI5  NOT ENOUGH CHANNELS FOR KEY PROGRAM
+More I/O channels are needed for a KEY command.
+
+&ERROR MI6
+MI6  KEY SCRATCH DEVICE NOT AVAILABLE
+The scratch disk structure specified in a KEY, LOAD, or APPEND command
+cannot be opened for writing.
+
+&ERROR MI7
+MI7  KEY TMP FILE ENTER ERROR
+A KEY, LOAD, or APPEND command can not write a temporary file to disk.
+
+&ERROR MI8
+MI8  NO RECORDS SELECTED
+The user must first select one or more records from the data set using
+FIND and/or SEARCH commands.
+
+&ERROR MI9
+MI9  DMS DEVICE NOT AVAILABLE
+The output device  in a DUMP command is not available to this job.
+
+&ERROR MI10
+MI10  CANNOT ENTER DMS FILE
+The monitor will not write the output file for a DUMP command.
+
+&ERROR MI11
+MI11  UNAUTHORIZED CMD -- ONE OR MORE ATTRIBUTE IS ADMIT PROTECTED
+The user does not have read privileges to the whole data set, and may
+not DUMP the data set.
+
+&ERROR MI12
+MI12  CONVERSION NOT IMPLEMENTED
+Report this to Software House.
+
+&ERROR MI13
+MI13  CAN'T WRITE TMPFILE
+The TMPFILE command could not write to TMPCORE or to disk.
+
+&ERROR MI14
+MI14  FILE COMMAND ABORTED DUE TO ERRORS
+An I/O, enter, lookup, or rename error occurred during a FILE TYPE,
+COPY, RENAME, or DELETE command. A detailed error message has already
+printed;  this error is provided for error trapping and batch use.
+
+&ERROR MI15
+MI15  SYSID ILLEGAL HERE
+The user may not add or change a SYSID.
+
+&ERROR MI16
+MI16  DBSET - DATA SET NOT OPEN IN PL1022 SEGMENT
+Data sets must be opened at compile time rather than at runtime.
+
+&ERROR MI17
+MI17  CANNOT RESTORE 113 COMPATIBILITY FOR THIS DATA SET
+The data set contains incompatible features; it has an audit trail, is
+part of a multi-data set file, or is an unbundled data set, which are
+not in V113, and prevent compatibility.
+
+&ERROR MI18
+MI18  REFERENCE TO NON-EXISTENT DATA SET IN REPORT -- FILE CLOSED
+A REPORT references a data set which has been closed in the report,
+making the report impossible to complete.
+
+&ERROR MI19
+MI19  CAN'T FIND SYS:EDIT.EXE
+The user has issued the command, EDIT, on TOPS-20.  System 1022 could
+not find either EDITOR: or EDIT.EXE. You may have redefined SYS to
+something other than the area containing EDIT.EXE.  If not, check with
+your system administrator to find out the location of EDIT.
+
+&ERROR MI20
+MI20  ERROR SETTING UP FORK FOR EDITOR
+The user has issued the command, EDIT, on TOPS-20.  System 1022 could
+not obtain the process to run SYS:EDIT.EXE.  Contact your system
+administrator.  This is probably caused by insufficient monitor
+resources.
+
+&ERROR MI21
+MI21  PUSH COMMAND MUST BE ISSUED UNDER TOPS-20 OPERATING SYSTEM
+The PUSH command is illegal for TOPS-10.
+
+&ERROR MI22
+MI22  CANNOT FIND <SYSTEM>EXEC.EXE
+The file EXEC.EXE is not found in response to the PUSH command.   This
+error is unlikely to occur since EXEC.EXE should always be in the system
+area.
+
+&ERROR MI23
+MI23  PUSH COMMAND ILLEGAL WITH A DATA SET IN UPDATE MODE
+The PUSH command is illegal when any data set is in update mode.
+
+&ERROR MI24
+MI24  VERSION SKEW BETWEEN 1022 AND TE1400
+The user has attempted to edit an attribute in a current version of 1022
+using a non-current version of TECO.
+
+&ERROR MI25
+MI25  BAD FORMAT IN FILESPEC FOR RELOCATE DATA COMMAND
+The user has made a syntax error in specifying the new name of a data
+file while issuing the RELOCATE DATA command.
+
+&ERROR MI26
+MI26  BAD FORMAT FOR LINE-NUMBERED FILE
+The user has referenced a line-numbered input file whose format does not
+conform to the requirements of System 1022.  See "Input File Formats" in
+Chapter 2.
+
+&ERROR MI27
+MI27  NO SUCH AUXFILE
+The source auxfile specified in a RELOCATE AUXFILE command is not one
+that belongs to the current data set.
+
+&ERROR MI28
+MI28  NEW FILESPEC FOR RELOCATE AUXFILE ALREADY IN USE
+The name of the target auxiliary file specified in a RELOCATE AUXFILE 
+command is already in use as the name of some other file.
+
+&ERROR FO1
+FO1  CAN'T OPEN OUTPUT DEVICE
+The formatter cannot open the output device specified by the user.
+
+&ERROR FO2
+FO2  CAN'T ENTER OUTPUT FILE
+1022 cannot write the output file, usually because that file is
+protected, is in a protected area, or the user is over quota.
+
+&ERROR FO3
+FO3  OUTPUT TO UNASSIGNED DEVICE
+The user specified a System device number in an ON clause, which has not
+been assigned to a device.  See INIT.
+
+&ERROR FO4
+FO4  NOT ENOUGH DIGITS IN PICTURE SPECIFICATION
+The PICTURE specification supplied by the user doesn't have enough
+positions  to handle the  data supplied to it.  This usually happens
+with text sent to a picture.
+
+&ERROR FO5
+FO5  PICTURE TOO LONG
+The picture  is more than 50 internal characters long.
+
+&ERROR FO6
+FO6  ZERO REPEAT COUNT
+The multiplier in front of a parenthetical group is 0.  The multiplier
+should either be omitted, or be a positive number.
+
+&ERROR FO7
+FO7  MISSING ) IN REPEAT
+The format scanner has run off the end of the format statement trying to
+match a left parenthesis with its corresponding right parenthesis.
+
+&ERROR FO8
+FO8  ILLEGAL CHARACTER IN NUMERIC SPECIFICATION
+A special or meaningless character appears in a numeric specification.
+
+&ERROR FO9
+FO9  INVALID USE OF PERIODS IN SPEC
+The scan found two unrelated periods in a  numeric specification.
+
+&ERROR FO10
+FO10  INVALID FORMAT SPECIFICATION
+This is the general error message for strange input.  The System doesn't
+know what is happening.
+
+&ERROR FO11
+FO11  INVALID NUMBER
+Either a number is out of range, or unexpected in this position.  The
+number itself may be a valid integer.
+
+&ERROR FO12
+FO12  MISSING OR BAD FORMAT SPECIFICATION
+1022 either saw something like M-3... with no following specification
+(missing), or hit a right parenthesis in the middle of decoding a
+specification.
+
+&ERROR FO13
+FO13  NUMERIC SPECIFICATION AND PICTURE COMBINED
+Both a numeric specification and a Picture specification are seen in the
+same formatting instruction.  IP999 is legal, but I5P999 is not.
+
+&ERROR FO14
+FO14  TOO MANY PAREN LEVELS
+The Formatter has a limit of 10 nested repeating groups.  The user has
+just used 11.
+
+&ERROR FO15
+FO15  INVALID C SPECIFICATION
+The Cn specification seen is an illegal one.  N is not a valid
+specifier.
+
+&ERROR FO16
+FO16  UNENDED ASCII LITERAL
+A literal of the form "-----" is started, but the scanner ran off the
+end of the format.  Another " is needed.
+
+&ERROR FO17
+FO17  BAD SCROLLING SPECIFICATION
+A number supplied in a scrolling specification is 0 or out of range, or
+something else strange.
+
+&ERROR FO18
+FO18  SA DOES NOT FOLLOW S SPEC
+An SA specification must follow an S spec, to which it must apply.
+
+&ERROR FO19
+FO19  SCROLLING NOT ASSEMBLED
+This message indicates that the user's version of System 1022 does not
+have the Scrolling option.
+
+&ERROR FO20
+FO20  TOO MANY SCROLLS
+There is a limit of 20 S specs to any one output line.
+
+&ERROR FO21
+FO21  SCROLLING PAST COL 400
+It is illegal to scroll information past column 400, although it is 
+legal to write lines of any length.
+
+&ERROR FO22
+FO22  OUTPUT DEVICE ALREADY IN USE BY USER
+The user has  assigned the same device to two different System device
+numbers.  This usually happens with  TTY and LPT.  It doesn't happen to
+device DSK or other file structures.
+
+&ERROR FO23
+FO23  ILLEGAL PICTURE SWITCH
+The user  supplied an illegal switch to a Picture specification using
+the Wx option.
+
+&ERROR FO24
+FO24  * OR $ AFTER NUMERIC SPECIFICATION
+The * or $ characters can only be floated in front of a number in the
+simple specification.
+
+&ERROR FO25
+FO25  ILLEGAL VALUE IN DISPLAY NUMERIC OR DISPLAY DATE FIELD
+A display date or display number could not be converted to its
+underlying form on output. For example, the display data in an unbundled
+data set attribute is illegal.
+
+&ERROR FO26
+FO26  TAB (nT) COLUMN IS TOO LARGE OR ILLEGAL
+The user is either trying to tab past the 400th column, or using an
+illegal value for the numeric argument.
+
+&ERROR UP1
+UP1  CAN'T OPEN DATA SET FOR WRITING
+The DECsystem-10 file protection does not allow this user to open the
+file for writing.  System 1022 received the error return when attempting
+to  update the data set. If the user has rights to write the  file, 
+check to see that the disk quota is not  exceeded.
+
+&ERROR UP2
+UP2  DATA SET STRUCTURE CHANGED BY ANOTHER USER; FILE MUST BE REOPENED
+The data set is superseded by a LOAD or DUMP command.  If the data set
+is not in a multiple data set file, the file itself is superseded.  If
+the data set is in a multiple data set file, it is overwritten within
+that file. This message does not print if another user keys or optimizes
+an attribute.
+
+&ERROR UP3
+UP3  THE CURRENTLY SELECTED RECORD HAS BEEN CHANGED BY ANOTHER UPDATER
+The record has been changed between the time it was selected and the
+time a CHANGE command was issued.
+
+&ERROR UP4
+UP4  DATASET NOT HANDLED WITH ENQ/DEQ
+The user has attempted to apply an UPDATE PREVENT command to a data set
+that is not ENQ.  UPDATE PREVENT works only for ENQ sets.
+
+&ERROR UP5
+UP5  OPERATION IS ILLEGAL WITH UPDATE ON
+The user has attempted to issue an UPDATE PREVENT or UPDATE ALLOW
+command while a previously issued UPDATE ON command is still in effect. 
+This is not allowed.
+
+&ERROR UP6
+UP6  UNABLE TO PREVENT UPDATES
+The user has issued an UPDATE PREVENT command but the update restriction
+cannot be applied (presumably because another user has the set open for
+update already).
+
+&ERROR SO1
+SO1  NOT ENOUGH IO CHANNELS FOR SORT
+There are not 4 free I/O channels available to execute the SORT command.
+
+&ERROR SO2
+SO2  ILLEGAL SCRATCH DEVICE
+The USING clause in the SORT command specifies a device which does not
+exist, is not available, or is not a disk.
+
+&ERROR SO3
+SO3  CAN'T OPEN SORT OUTPUT FILE
+A SORT temporary file cannot be written.
+
+&ERROR SO4
+SO4  TOO MANY SORT FIELDS
+More than 20 fields are specified as keys to a sort.
+
+&ERROR SO5
+SO5  SORT IO ERROR
+System 1022 cannot write a disk block for a sort temporary file.  Check
+for disk quote exceeded or hardware disk errors.
+
+&ERROR SO6
+SO6  IO ERROR SORT FILE
+System 1022 cannot read a sort temporary file.  Check for hardware disk
+errors.
+
+&ERROR SO7
+SO7  STRING FUNCTION RESULT MUST HAVE SAME LENGTH FOR EACH RECORD
+The SORT command only operates on values of uniform length.  String
+functions that return values of variable length must be combined with
+other functions that trim or pad to produce results of uniform length
+for sorting.
+
+&ERROR IO1
+IO1  ERROR READING DISK
+System 1022 cannot  read a disk block of the data set file,  probably
+due to hardware disk errors.
+
+&ERROR IO2
+IO2  ERROR WRITING DISK
+System 1022 cannot write a disk block of the data file,  probably due to
+hardware disk errors.
+
+&ERROR IO3
+IO3  INFO IO ERROR
+System 1022 cannot write a disk block on the INFORM output file. Check
+for disk quota exceeded or hardware disk errors.
+
+&ERROR IO4
+IO4  SAVE CMD OR FILECLAUSE IO ERROR
+System 1022 cannot  write a disk block for a SAVE file, or read a disk
+block during the FILE part of a FIND command.  Check for disk quota
+exceeded or hardware disk errors.
+
+&ERROR IO5
+IO5  SORT IO ERROR
+System 1022 cannot  write a disk block for a sort temporary file.  Check
+for disk quota exceeded or hardware disk errors.
+
+&ERROR IO6
+IO6  IO ERROR SORT FILE
+System 1022 cannot read a sort temporary file.  Check for hardware disk
+errors.
+
+&ERROR IO7
+IO7  KEY TMP FILE READ ERROR
+A disk read error occurred while keying attributes.
+
+&ERROR IO8
+IO8  KEY TMP FILE WRITE ERROR
+A disk write error is encountered while executing a KEY, LOAD, or APPEND
+command; check for over quota.
+
+&ERROR IO9
+IO9  IO OUTPUT ERROR
+An error occurred in an attempt to output ASCII data in a PRINT command.
+
+&ERROR IO10
+IO10  IO ERROR WRITING DMS FILE
+An output error occurred while System 1022 wrote a new data set file in
+a DUMP command.
+
+&ERROR IO11
+IO11  NON-RECOVERABLE OUTPUT ERROR
+There is an error writing an external file.
+
+&ERROR IO12
+IO12  NON-RECOVERABLE INPUT ERROR
+There is an error reading an external file.
+
+&ERROR IO13
+IO13  INPUT FILE READ ERROR
+System 1022 detected a hardware error while reading input on a FILE TYPE
+or FILE COPY.  Try again.  If the error persists, contact your system
+administrator or computer operations staff.
+
+&ERROR IO14
+IO14  OUTPUT FILE WRITE ERROR
+System 1022 detected a hardware writing error while doing a FILE COPY.
+Try again.  If the error persists, contact your system administrator or
+computer operations staff.
+
+&ERROR IO15
+IO15  FILE RENAME OR DELETE ERROR
+System 1022 could not perform the specified RENAME or DELETE operation
+and issued a warning message.  This is probably due to a protection
+error. Read the warning message for further information.
+
+&ERROR CO1
+CO1  OUT OF CORE -- COMPLEX FIND COMMAND
+A complex FIND command needed more core.
+
+&ERROR CO2
+CO2  OUT OF CORE -- ADD COMMAND
+An ADD command needed more core.
+
+&ERROR CO3
+CO3  OUT OF CORE -- SET BUFFER COMMAND
+A SET BUFFER command needed more core.
+
+&ERROR CO4
+CO4  OUT OF CORE -- SORT COMMAND
+More core was needed to process sorted records.
+
+&ERROR CO5
+CO5  OUT OF CORE -- SORT COMMAND
+Not enough core is available to perform the SORT.  If the user has
+specified a  core size,  try reissuing the command with less core
+specified.
+
+&ERROR CO6
+CO6  OUT OF CORE -- TECO TEXT EDITOR
+More core is needed to run the TECO text editor.
+
+&ERROR CO7
+CO7  OUT OF CORE --OPEN COMMAND
+More core is needed to hold  the tables necessary to OPEN the data set
+file.
+
+&ERROR CO8
+CO8  OUT OF CORE -- KEY COMMAND
+More core is needed to perform a KEY command.
+
+&ERROR CO9
+CO9  OUT OF CORE -- KEY REFORMATTER
+More core is needed for the key reformatter.
+
+&ERROR CO10
+CO10  OUT OF CORE -- LOAD COMMAND
+More core is needed for the loading program.
+
+&ERROR CO11
+CO11  OUT OF CORE -- APPEND COMMAND
+More core is needed for an APPEND command.
+
+&ERROR CO12
+CO12  OUT OF CORE WHILE PROCESSING KEYS
+More core is needed to process the keys.
+
+&ERROR CO13
+CO13  OUT OF CORE -- I/O BUFFERS
+More core is needed for  I/O buffers.
+
+&ERROR CO14
+CO14  NOT ENOUGH CORE TO SORT KEYS
+More core is needed to sort the keys.
+
+&ERROR CO15
+CO15  OUT OF CORE -- COLLECT COMMAND
+More core is needed to execute a COLLECT command.
+
+&ERROR CO16
+CO16  OUT OF CORE
+More core is needed.  Core usage can be reduced by closing unneeded data
+sets and by issuing the SET BUFFERS command.
+
+&ERROR PL5
+PL5  GETREC, NO RECORD
+Either there are no records selected for a GETREC command; or previous
+GETREC commands have looped through all  selected records.
+
+&ERROR PL6
+PL6  CALL LEVEL EXCEEDED
+Subroutine calls are nested too deeply in a PL1022 program.
+
+&ERROR HL1
+HL1  NUMERIC DATA REQUESTED IN TEXT ARGUMENT
+In 113, a call to the DBVAL or DBGET subroutine from a COBOL program is
+requesting that numeric data  be placed in a COBOL DISPLAY variable.
+
+&ERROR HL2
+HL2  INVALID ATTRIBUTE NAME
+An attribute name is needed, but does not exactly match any  name or
+synonym.
+
+&ERROR HL3
+HL3  INVALID RELATIONAL
+1022 does not recognize the relational name or number, or the relational
+is illegal in this command.
+
+&ERROR HL4
+HL4  ATTRIBUTE NOT KEYED
+The user has  used an unkeyed attribute in a FIND command.
+
+&ERROR HL5
+HL5  INVALID OR NO VALUE
+A value was expected, but none was given, or the value was out of  legal
+range.
+
+&ERROR HL6
+HL6  INVALID LOGICAL
+The logical in a DBFIND or DBSRCH command is not recognized.
+
+&ERROR HL7
+HL7  DBVAL CALLED BEFORE DBGREC
+The user must be in local mode, by a call to DBGREC, before calling
+DBVAL.
+
+&ERROR HL8
+HL8  DOUBLE ATTRIBUTE IN ADD OR CHANGE
+The same attribute can not be specified twice in DBADD or DBCHNG.
+
+&ERROR HL9
+HL9  TOO FEW ARGS
+Another argument was required, but the list ended.
+
+&ERROR HL10
+HL10  OUT OF CORE
+1022 needs more than available core for internal table space.
+
+&ERROR HL11
+HL11  DATA SET NOT OPEN
+The command  requires that a data set be open for operations.
+
+&ERROR HL12
+HL12  INVALID COBOL DISPLAY TYPE
+The user declared a variable as DISPLAY-9, which the COBOL Host Language
+interface does not recognize.
+
+&ERROR HL13
+HL13  SAV. ARGUMENT NOT SEQUENTIAL OR NOT IN RANGE
+For efficiency, the user is required to use the lowest SAV. number that
+he can at any time.  Here he used one that is greater than 10, or
+skipped a number in sequence.
+
+&ERROR HL14
+HL14  ADD OR CHANGE ON PROTECTED ATTRIBUTE
+The user may not specify an attribute that is protected from change,
+being Integer Of Identification, Date Of Change, and Date Of Entry.
+
+&ERROR HL15
+HL15  ILLEGAL TYPE CONVERSION
+The host language interface cannot convert text to numeric, or the
+reverse.
+
+&ERROR HL16
+HL16  TOO MANY SORT FIELDS
+The user has given more than 20 attributes to sort on.
+
+&ERROR HL17
+HL17  ILLEGAL OR REPEATED SORT SPECIFICATION
+The scan hit an unknown word, or duplicate keywords, processing  a sort
+description.
+
+&ERROR HL18
+HL18  UNAUTHORIZED COMMAND
+Either the ADMIT protection on the data set does not allow the last
+command to be executed, or DBRETN was called from a FORTRAN or MACRO
+program.
+
+&ERROR HL19
+HL19  UNAUTHORIZED ATTRIBUTE REQUEST
+The ADMIT protection on the data set prohibits the attribute specified
+in this operation, usually in DBCHNG.
+
+&ERROR HL20
+HL20  "FILE" INVALID IN SEARCH
+The user can not use the FILE <file-descriptor> option in DBSRCH.
+
+&ERROR HL21
+HL21  INVALID FILE DESCRIPTOR
+A file descriptor in DBOPEN or DBAUD has illegal form.
+
+&ERROR HL22
+HL22  INVALID PASSWORD
+A password supplied in a DBPSWD command is not correct.
+
+&ERROR HL23
+HL23  INVALID KEYWORD
+The DBAUD command saw an invalid keyword.
+
+&ERROR HL24
+HL24  ALREADY AN ATTRIBUTE IDENTIFIER
+The new attribute name or abbreviation specified in a call to the DBMOD
+routine duplicates an  existing attribute identifier.
+
+&ERROR HL26
+HL26  INVALID DATA SET SPECIFIED
+DBSET specified a data set number that is not currently assigned to a
+data set.
+
+&ERROR HL27
+HL27  INVALID DBAUD SUB-COMMAND
+The first argument to DBAUD is not a valid subcommand. The legal DBAUD
+subcommands are: START, CHECK, and PLACE.
+
+&ERROR HL28
+HL28  AUDIT FILE NOT OPEN
+An attempt is made to write data into an audit file before the file is
+initialized.
+
+&ERROR HL29
+HL29  ILLEGAL AUDIT FILE BLOCK TYPE
+User defined audit file entries may only have entry codes in the range
+700-777 octal.
+
+&ERROR HL30
+HL30  INVALID DBAUD 'START' KEYWORD
+One or more of the keywords  in a 'START' call to DBAUD is not
+recognized. The possible keywords are: FILE, LOCK, and JOB.
+
+&ERROR HL31
+HL31  SYSID ILLEGAL HERE
+The user has specified  SYSID in a call to DBPSWD. SYSID cannot be
+protected.
+
+&ERROR HL32
+HL32  DBEND NOT ALLOWED HERE
+DBEND may not be called during an error trapping subroutine or
+procedure.
+
+&ERROR HL33
+HL33  NO RETURN ADDRESS FOR DBRETN
+DBRETN was entered outside of an error-trapping procedure and 1022 has
+no return address set up.
+
+&ERROR HL34
+HL34  INVALID DATA SET SPECIFIED -- DATA SET NAME AMBIGUOUS
+A call to DBSET specified a data set name that matches more than one
+open data set.  Close the unwanted data set(s) or reference the desired
+one by data set number or alias.
+
+&ERROR HL35
+HL35  INVALID SYSTEM VARIABLE NAME OR NUMBER 
+The system variable name in a call to DBSYSV was not recognized or the
+number in that call was out of range.
+
+&ERROR HL36
+HL36  SYSTEM VARIABLE NOT USER ASSIGNABLE
+The user has attempted to change the value of a system variable that may
+only be read.
+
+&ERROR HL37
+HL37  SCALING NOT SUPPORTED FOR COBOL ARGUMENTS
+COBOL picture editing and picture scaling, including implied decimal,
+are not supported by System 1022.  Do editing in COBOL by moving a
+returned item to a COBOL edited field.
+
+&ERROR HL38
+HL38  INVALID ARGUMENT, LITERALS CANNOT BE CHANGED
+The user has specified a constant where an indication of change is
+expected.
+
+&ERROR HL39
+HL39  SIZE OF VALUE/COUNT PAIR EXCEEDS USER ARRAY BOUNDS
+In issuing a DBVALU command, the user has made the ARRAY-START and
+ARRAY-END specifications too narrow to allow room in the array for a
+single value/occurrence pair.
+
+&ERROR HL40
+HL40  REQUESTED NUMBER OF VALUES EXCEEDS ALLOWABLE MAXIMUM
+In issuing a DBVALU command, the user has set NV to a value greater than
+the maximum number of value/occurrence pairs that can be contained
+within the bounds defined by ARRAY-START and ARRAY-END.
+
+&ERROR HL41
+HL41  UNEXPECTED EOF DURING KEY SEARCH
+The data file has been damaged.  An internal pointer has directed a read
+past the end of the file during a key search.
+
+&ERROR HL42
+HL42  UNEXPECTED EOF WHILE COUNTING KEY VALUES
+The data file has been damaged.  An internal pointer has directed a read
+past the end of the file during a key value count.
+
+&ERROR HL43
+HL43  REFERENCE TO AN ELEMENT OF A COLLECTION IS ILLEGAL
+Data sets serving as constituents of a collection can only be referenced
+or accessed as part of that collection.
+
+&ERROR HL44
+HL44  COMMAND NOT ALLOWED WHEN SET TO A COLLECTION
+The user has attempted to apply a disallowed command to a current
+collection.
+
+&ERROR HL45
+HL45  INVALID ARGUMENT DESCRIPTION RETURNED FROM XGARG.
+The XGARG. routine that identifies the argument type was unable to do so
+either because a particular argument contains an invalid argument
+description or else because there is an error in the XGARG. routine
+itself.  Consult your system manager.
+
+&ERROR LD1
+LD1  NOT ENOUGH CHANNELS AVAILABLE
+There are fewer than four free channels, not enough to perform a LOAD or
+APPEND command.
+
+&ERROR LD2
+LD2  CANNOT OPEN DESCRIPTION FILE DEVICE
+The device given for the DMD file is unavailable to this job.
+
+&ERROR LD3
+LD3  CANNOT FIND DESCRIPTION FILE
+The description (DMD) file specified in a LOAD command cannot be read.
+
+&ERROR LD4
+LD4  ERROR READING DESCRIPTION FILE
+An I/O error occurred while reading the description file for a LOAD
+command.
+
+&ERROR LD5
+LD5  DDL ERRORS ENCOUNTERED
+A LOAD command is terminated by syntax or other errors in the data set
+description.
+
+&ERROR LD6
+LD6  CANNOT OPEN INPUT DATA FILE DEVICE
+The device for the input data file, in a LOAD or APPEND command, cannot
+be accessed by this job.
+
+&ERROR LD7
+LD7  CANNOT FIND INPUT DATA FILE
+1022 cannot locate  the input data file for a LOAD or APPEND command.
+
+&ERROR LD8
+LD8  ERROR READING INPUT DATA FILE
+A LOAD or APPEND command encountered I/O errors reading the input data
+file.
+
+&ERROR LD10
+LD10  DATA SET ALLOCATION UNSUCCESSFUL
+The output allocation of the data set file in a LOAD command failed due
+to either an enter or open failure, or because the total allocation
+couLDnot be performed in the number of attempts specified.
+
+&ERROR LD11
+LD11  ERROR OPENING CHANNEL
+The input file device can not be opened.
+
+&ERROR LD12
+LD12  ERROR WRITING DATA BASE FILE
+System 1022 encountered errors writing a disk block to the data set
+file, probably due to hardware disk errors.
+
+&ERROR LD13
+LD13  CAN'T ENTER DMS FILE
+System 1022 is unable to enter the DMS file.
+
+&ERROR LD14
+LD14  OPEN ERROR ON SCRATCH CHANNEL
+System 1022 can not open the output device.
+
+&ERROR LD15
+LD15  UNABLE TO OPEN CHANNEL FOR KEY TMP FILE
+The device for a KEY TMP file can not be opened.
+
+&ERROR LD16
+LD16  CAN'T ENTER KEY TMP FILE
+The KEY TMP file can not be entered.
+
+&ERROR LD17
+LD17  CAN'T FIND SPOOLER FILE
+A spooler System file can not be found.
+
+&ERROR LD18
+LD18  CAN'T OPEN SPOOLER CHANNEL
+The device for a spooler file can not be opened.
+
+&ERROR LD19
+LD19  LRECL SPECIFIED IS INCOMPATIBLE WITH LRECL IN DMD
+The LRECL specified on the command line is smaller than the  record size
+determined from the fieLDspecifications of the Data Description file.
+The LRECL must be as great as the highest column number used in the
+description file.
+
+&ERROR LD21
+LD21  OUT OF CORE
+Too little core is available to process the LOAD, APPEND or TRANSACT.
+
+&ERROR LD22
+LD22  KEY CONVERSION NOT IMPLEMENTED
+This error should not occur. Please report it to Software House.
+
+&ERROR LD23
+LD23  CAN'T ENTER DATA FILE
+A data file in the DUMP command cannot be entered.
+
+&ERROR LD24
+LD24  ISAM DATA FILE ILLEGAL HERE
+ISAM data files may be used only with the CREATE command. The TRANSACT
+and APPEND commands  only accept ISAM data files that are part of a 1022
+data set. ISAM data files may not be written with the DUMP command.
+
+&ERROR LD25
+LD25  ISAM DATA FILE OF INFINITE LENGTH FOUND - RUN SETEOF FIRST
+An attempt is made to use CREATE on an ISAM file before setting an
+end-of-file flag on the file. The ISAM file  was infinite in length. Use
+the DEC-supplied SETEOF program to set the EOF flag, then reissue the
+CREATE command.
+
+&ERROR LD26
+LD26  COULD NOT ENTER DMS FILE
+The LOAD or CREATE command could not create the DMS file.  This is
+probably due to limited disk space, or to another user updating the file
+when the  LOAD or CREATE command was given.
+
+&ERROR LD27
+LD27  ATTEMPT TO CREATE A DATA SET CONTAINING MORE THAN 262143 RECORDS
+The DMI file given in a CREATE contains more than the maximum number of
+records currently allowed by 1022.
+
+&ERROR LD28
+LD28  CANNOT DUMP TO MULTI-FILE DATA SET
+It is not possible to dump records to a data set that consists of more
+than one file.
+
+&ERROR LD29
+LD29  ILLEGAL SCRATCH DEVICE SPECIFIED FOR LOAD
+The user has specified a nonexistent device in the SCRATCH clause of
+the loading section of a data description file.
+
+&ERROR LD30
+LD30  SYSCUSTDMI MUST BE DEFINED BEFORE USING CUSTDMI KEYWORD
+The CUSTDMI keyword signals 1022 to use a user-written DMI reader rather
+than the standard one when doing a load, append, or transact. The address
+of this user-written DMI reader must be stored in the system variable
+SYSCUSTDMI before it can be accessed for a load, append, or transact.
+
+&ERROR TR1
+TR1  LOCATOR NOT KEYED
+An unkeyed attribute is a locator in an unsorted transaction. The
+locators must be  keyed attributes.
+
+&ERROR TR2
+TR2  LOCATOR CONVERSION NOT IMPLEMENTED
+Report this error to Software House.
+
+&ERROR TR3
+TR3  NO RECORDS SELECTED FOR SORTED TRANSACTION
+No records are selected for this transaction.
+
+&ERROR TR4
+TR4  LOCATOR PROTECTED OR NAME DOES NOT MAP TO MASTER
+The name of a locator attribute does not match any of the  master file
+attributes.
+
+&ERROR TR5
+TR5  ADDITIVE CONVERSION NOT IMPLEMENTED
+Please report this error to Software House.
+
+&ERROR TR6
+TR6  NO INPUT FILE FOUND
+No transaction file was found.  Transaction processing is terminated.
+
+&ERROR TR7
+TR7  DUMP ILLEGAL IN GETREC MODE
+You must be in global mode to issue a DUMP command.
+
+&ERROR TR8
+TR8  UNAUTHORIZED ATTEMPT TO READ DATA SET
+User did not satisfy ADMIT command requirements for READ access. Ask
+your data base administrator for access to the data set.
+
+&ERROR TR9
+TR9  UNAUTHORIZED ATTEMPT TO WRITE DATA SET
+User did not satisfy ADMIT command requirements for WRITE access. Ask
+your data base administrator for access to the data set.
+
+&ERROR AU1
+AU1  NO FREE CHANNELS FOR AUDIT FILE
+There are no  channels available for writing the audit file.
+
+&ERROR AU2
+AU2  CAN'T OPEN AUDIT FILE DEVICE
+1022 cannot access the device for the audit file.
+
+&ERROR AU3
+AU3  COULD NOT ENTER AUDIT FILE
+1022 cannot gain write access to the Audit file.
+
+&ERROR AU4
+AU4  CAN'T GET AT AUDIT FILE
+1022 cannot write the audit file.
+
+&ERROR AU5
+AU5  NO FREE CHANNELS FOR AUDIT FILE
+A call to DBAINI has failed for lack of a free channel  to read the 
+audit file.
+
+&ERROR AU6
+AU6  AUDIT FILE NOT OPENED FOR DBAGET
+DBAGET is called before a call to DBAINI.
+
+&ERROR AU7
+AU7  ILLEGAL AUDIT FILE LOCATOR CODE
+A call to DBALOC gives an incorrect locator code value.
+
+&ERROR AU8
+AU8  INVALID KEYWORD
+DBAINI is called with an unrecognized keyword.
+
+&ERROR AU9
+AU9  CAN'T FIND AUDIT FILE
+1022 is unable to access the audit file for a LIST, BACKUP, FIX, or
+DBAINI operation.
+
+&ERROR AU10
+AU10  AUDIT FILE DAMAGED
+The audit file contains bad data.
+
+&ERROR AU11
+AU11  CAN'T FIND CHECKPOINT
+The required  checkpoint is not in the audit file.
+
+&ERROR AU12
+AU12  WRONG AUDIT FILE VERSION
+The audit file is incompatible with this version of System 1022.
+
+&ERROR AU13
+AU13  NOT ENOUGH CORE
+A BACKUP operation requires more than the  available amount of core.
+
+&ERROR AU14
+AU14  AUDIT BACKUP ABORTED
+An unrecoverable error has occurred during a BACKUP.
+
+&ERROR AU15
+AU15  AUDIT VERIFICATION FAILURE
+The audit trail specified for a BACKUP  contains omissions that prevent
+the BACKUP from proceeding properly. The BACKUP is not attempted.
+
+&ERROR AU16
+AU16  NOT ENOUGH IO CHANNELS FOR AUDIT LIST
+An AUDIT LIST requires 1 free channel, 2 if an output file is  written.
+
+&ERROR AU17
+AU17  CAN'T ENTER OUTPUT FILE
+The output file for an AUDIT LIST or AUDIT MERGE cannot be started.
+
+&ERROR AU18
+AU18  CAN'T FIND INPUT FILE
+One of the input files to AUDIT MERGE is not there.
+
+&ERROR AU19
+AU19  NOT ENOUGH CHANNELS FOR MERGE
+AUDIT MERGE requires 3 free channels.
+
+&ERROR AU20
+AU20  COULDN'T START AUDIT FILE
+An AUDIT START command is not completed due to errors.
+
+&ERROR AU21
+AU21  COMMENT NOT WRITTEN
+The AUDIT COMMENT is not written due to errors.
+
+&ERROR AU22
+AU22  CHECKPOINT NOT WRITTEN
+An AUDIT CHECKPOINT did not complete, due to errors.
+
+&ERROR AU23
+AU23  AUTO AUDIT FAILURE
+A data set has an automatic audit trail (specified by an earlier AUDIT
+START AUTO command) which 1022 is unable to read.
+
+&ERROR AU24
+AU24  ACCESS NOT ALLOWED UNTIL DAMAGE FIXED
+The audit trail recovery mode is ALLOW NOTHING. The data set is damaged
+and must be fixed before  audit  allows normal access again.
+
+&ERROR AU25
+AU25  RETRY NOT SUPPORTED
+The RETRY option of the AUDIT RECOVERY and AUDIT FIX commands is no
+longer supported in System 1022.
+
+&ERROR AU26
+AU26  SCRATCH FILE ERROR DURING AUDIT BACKUP
+System 1022 has encountered a disk error while using a scratch file
+to back up a large data set.
+
+&ERROR SP1
+SP1  NO FREE CHANNEL FOR SPSS COMMAND
+The SPSS command needs one free channel to operate.
+
+&ERROR SP2
+SP2  SPSS COMMAND ILLEGAL IN GETREC MODE
+Statistics are  meaningless for one record. The user should set up his
+selection group again and reissue the SPSS command.
+
+&ERROR SP3
+SP3  INTERNAL ERROR IN SPSS COMMAND - CONVERSION
+This error should never occur. It is included only for security. QUIT
+from System 1022 and try again. Also notify your System 1022 maintainer.
+
+&ERROR SP4
+SP4  SPSS COMMAND ABORTED DUE TO ERRORS
+An error in file LOOKUP or ENTER occurred. A detailed error message has
+already printed.
+
+&ERROR SP5
+SP5  SPSS SYSTEM FILE NOT CREATED BY 1022
+System 1022 can only add subfiles to an SPSS system file which was 
+created by 1022.
+
+&ERROR SP6
+SP6  ATTEMPT TO ADD A SUBFILE FROM A DIFFERENT DATA SET
+Adding subfiles from different data sets to an SPSS system file  is a
+meaningless operation which SPSS cannot handle.
+
+&ERROR SP7
+SP7  SPSS FILE DAMAGE - EOF
+The SPSS system file  has an inconsistent internal format, and subfiles
+cannot be added to it. The user must create it again.
+
+&ERROR SP8
+SP8  TOO MANY SUBFILES
+A maximum of 10 subfiles are permitted by the SPSS Interface. The user
+has attempted to exceed this limit. This limit may be exceeded by use of
+the ADD SUBFILES procedure in SPSS.  (See the SPSS manual.)
+
+&ERROR SP9
+SP9  NO RECORDS SELECTED
+No selection group is set up, and no file is created.
+
+&ERROR CP1
+CP1  COMPILED PL1022 INTERNAL INCONSISTENCY--PLEASE REPORT!
+The user should not encounter this message, as it indicates a System
+1022 bug.  If this message appears, please report it to Software House.
+
+&DOCUMENTS
+The System 1022 distribution tape includes a set of documentation files that
+your site may keep on line. These files include the following:
+
+1022.BWR    Explains version incompatibilities, outstanding bugs, and other
+            news of special interest to 1022 users and the site administrator
+117B.MEM    Describes new features added to version 117B
+BEWARE.DMC  Report program that operates on BEWARE.DMS to produce BEWARE.RPT
+BEWARE.DMS  Data set of version incompatibilities, solved and outstanding bugs
+BEWARE.RPT  Report generated by BEWARE.DMC using BEWARE.DMS
+DBA.MEM     Installation manual for the site administrator
+FORMS.MEM   A form to report software problems to Software House
+HOST.MEM    The System 1022 Host Language Interface Manual (revision 5,
+            March, 1986)
+HCHNG.MEM   Change pages for revision 4 (October, 1984) of the System 1022
+            Host Language Interface Manual
+MANUAL.MEM  The System 1022 User's Reference Manual (Revision 4, March, 1986)
+MCHNG.MEM   Change pages for revision 3 (October, 1984) of the System 1022
+            User's Reference Manual
+REPMAN.MEM  The System 1022 Report Generator Manual
+
+To order printed copies of the manuals and change pages, contact the Software
+House Documentation Department.
+
+&NEWS1
+Version 117B of System 1022 contains the following major new features:
+  1. The capability of supporting the Large Data Sets Module, which
+     extends the allowable number of 1022 data set records to 
+     134,000,000 and allows data sets to be split over multiple devices.
+  2. The PC Extract feature, which allows you to create DIF and WKS files
+     that can be down-loaded from 1022 to a personal computer.
+  3. Debugging tools for PL1022 and report programs.
+  4. Wildcard matching for FIND, DFIND, SEARCH, SELECT, DBFIND, and DBSRCH.
+  5. Support for record-level locking.
+  6. Support for FORTRAN-10's use of extended sections (TOPS-20).
+  7. Tools to diagnose and pinpoint key table inconsistencies.
+  8. Support for bilingual error message capability. 
+  9. An expanded INFORM command that includes a new DMX option as well as
+     additions to the ATTRIBUTE, STATUS, and STRUCTURE options.
+ 10. A NODME option that allows you to suppress the creation of an error
+     file when the LOAD, APPEND, or TRANSACT command is given.
+ 11. A SORT22 option that allows you to distribute temporary files used by
+     the sorter over multiple structures.
+ 12. System variables that return the highest integer of identification
+     and the highest SYSID in a data set and that control whether selection
+     sets are formed in scratch files or entirely in core. 
+
+For additional 117B features, type HELP NEWS2.
+
+&NEWS2
+In addition to the new features listed in NEWS1, version 117B also 
+introduces the following:
+ 1.  Support for DEFAULT_EXEC on a PUSH from 1022 on TOPS-20.
+ 2.  Support for user-written host language routines to pass data in nonstandard
+     formats to 1022 for processing with LOAD, APPEND, and TRANSACT.
+ 3.  The BY SORT option of the MAP command, which sorts the locator 
+     values in the source data set before mapping, saving run time.
+ 4.  The INFORM DBA command in 1022SA.
+ 5.  Support for DBA as directory string on TOPS-20.
+ 6.  The BANNER command in 1022SA, which allows sites to display their own
+     banner.
+ 7.  The $MOD system function, which returns the integer remainder that 
+     results from the division of one integer expression by another.
+ 8.  Support for wildcarded devices in ADMIT commands on TOPS-20.
+ 9.  The system variable SYSNOYMD, which allows all-numeric dates to be
+     read as MMDDYY(YY) or DDMMYY(YY) rather than (YY)YYMMDD.
+ 10. The system variable SYSFMSG, which can be used to save and restore 
+     the current settings of the bit flags that are manipulated by the 
+     SET FMSG and SET FERR commands.
+ 11. The system variable SYSEXECKP, which allows you to return to your
+     former EXEC rather than to a new EXEC after a PUSH from 1022.
+ 12. Support for the DBRETN call in FORTRAN host language programs. 
+
+&LOCK
+The LOCK ON RECORD command allows the user to request exclusive access to
+an individual record in a RECLOCK data set. The LOCK OFF RECORD removes that
+restriction for that record. The LOCK ON USERLOCK command requests exclusive
+access to perform some agreed-upon operation on the data covered by the
+userlock string. The LOCK OFF USERLOCK command withdraws that request. The
+syntax is:
+
+             { RECORD              }
+       { ON  { USERLOCK string     } }
+  LOCK {                             }
+       { OFF { RECORD              } }
+             { USERLOCK { string } }
+                        {  ALL   }
+
+The LOCK OFF USERLOCK string command removes the request for exclusive access
+to perform the operation covered by that string. The LOCK OFF USERLOCK ALL
+command removes all such requests made by the user. The LOCK ON USERLOCK and
+LOCK OFF USERLOCK commands can only apply to ENQ data sets, though those
+data sets need not be RECLOCK.
+
+&SH
+In 1971, Andrew Garland and Charles Houseman began work on a
+data base management system that avoided the complex rules
+that characterized the DBMSes of the time.  Without
+sacrificing fast retrieval and easy reporting, the
+interaction of user and system was to be as natural and
+convenient as possible. 
+
+The first sale of System 1022 was made in 1974, and
+licensing began on a timesharing network.  Today it is the
+most widely used DBMS on DECsystem-10s and -20s. 
+
+System 1032 for VAX went to market in 1983, stressing ease
+of use, tutorial help keys, and a fourth-generation language
+-- on top of fast direct retrieval among millions of records.
+
+Software House is headquartered at 1105 Massachusetts
+Avenue, Cambridge, MA 02138; Tel (617) 661-9440; TWX
+710-320-1075.  Additional offices are in Fullerton,
+California and Toronto, Ontario, Canada. 
+
+&1032
+System 1032 is a relational, fully integrated DBMS and
+fourth-generation programming language that runs on the entire
+family of VAX computers and in VAXclusters.  The same
+conversational language is utilized for interactive use, stored
+compiled procedures, and application and host language
+programming.  Features include non-procedural queries, wild-card
+queries, record- and field-level security, journaling/ recovery,
+multiple data set report writing, and CHOICE, HELP, and RECOGNIZE
+keys which present on-line documentation.  The system prompts
+for more information when a command is incomplete and presents
+feedback at each step. System 1032 Forms includes an automatic
+layout feature, and supports multiple record and multiple data
+set forms, scrolled arrays, and wrapped text fields.  Provides
+an inverted file structure and asynchronous I/O.  System 1032
+TOOLS includes an automatic Forms-based application generator,
+graphics, and interfaces to packages such as SPSS and DECgraph.
+Conversion documentation, consultants, and a data set conversion
+program are available for sites converting from 1022 to 1032. 
+
+&INIT DIF
+The DIF option of the INIT command allows you to create an 8-bit ASCII file
+in Data Interchange Format (DIF) from within 1022. This file can then be
+down-loaded to a PC with any standard communications protocol for use in
+spreadsheeting or other PC applications. The syntax of the INIT DIF command is:
+
+  INIT DIF [ COL <c> ] [ ROW <r> ] [ NCOLS <n> ] <channel number> <file name>
+
+where <c> is a letter or letters identifying the initial column (vector) to
+which 1022 will print data. The default is A. 1022 will write blanks to the
+columns between A and <c> when <c> is greater than A. <r> is an integer 
+identifying the initial row (tuple) to which 1022 will print data. The default
+is 1. 1022 will fill the rows between 1 and <n> when <n> is greater than 1. The
+NCOLS option allows you to specify the number of vectors (columns) that the DIF
+file will have in addition to any specified in the COL clause. <n> is an 
+integer  that determines this number. The default is 100. It is strongly 
+recommended that you use the NCOLS option to limit the size of your DIF file 
+for greatest  efficiency. The default extension of the file name is DIF.
+
+&INIT 123
+The 123 option of the INIT command allows you to create a binary file
+in Lotus 123 WKS format from within 1022. This file can then be down-loaded
+to a PC with any standard communications protocol. The syntax of the INIT 123
+command is:
+
+                                 { [RWISE] }
+  INIT 123 [COL <c1>] [ROW <r1>] {         } 
+                                 { [CWISE] }
+
+      [ [NRANGE name <c2> <r2> <c3> <r3> ]...]  <channel number> <file name>
+
+where <c1> is a letter or letters identifying the initial spreadsheet column to
+which 1022 will print. The default is A. <r1> is an integer identifying the
+initial spreadsheet row to which 1022 will print. The default is 1. The RWISE
+option lets you print data to the spreadsheet in row-wise (top-to-bottom)
+format. The default is CWISE,which prints the data in column-wise (left-to-
+right) format. The NRANGE option lets you specify a named range. <c2> is a
+letter or letters identifying the initial column of the named range, <r2> is an
+integer identifying the initial row of the named range, <c3> is the final 
+column of the named range, and <r3> is the final row. The default extension
+of the file name is WKS.
+
+&ERROR CS210
+CS210  ILLEGAL DEVICE IN PC INIT
+INIT 123 and INIT DIF require output to a file. Output to the terminal is
+not allowed.
+
+&ERROR CS211
+CS211  ILLEGAL COL DESCRIPTOR
+The COL option of the INIT 123 and INIT DIF command requires an alphabetic
+argument. For 123 files, this argument must be within the range of A to 2^16-1.
+For DIF files, this argument must be within the range of A to 2^18-1.
+
+&ERROR CS212
+CS212  ILLEGAL ROW DESCRIPTOR
+The ROW option of the INIT 123 and INIT DIF command requires a positive integer
+argument. For 123 files, this integer must be between 1 and 2^16-1. For DIF 
+files, this integer must be between 1 and 2^18-1..
+
+&ERROR CS214
+CS214  ILLEGAL NCOLS ARGUMENT
+The NCOLS keyword in an INIT DIF command requires a positive integer
+argument. This integer must be between 1 and 2^18-1.
+
+&ERROR CS215
+CS215  KEYWORD ALL NOT ALLOWED WITH LOCK ON USERLOCK
+The LOCK ON USERLOCK command requires a string of up to 25 characters
+as its argument. ALL is not allowed as an argument for the LOCK ON USERLOCK
+command.
+
+&ERROR OP18
+OP18  OPEN NOENQ NOT ALLOWED FOR RECLOCK DATASET
+A RECLOCK dataset cannot be opened NOENQ unless you first open the data set
+and issue the MODIFY $ACCESS NORECLOCK command to disable record-level locking
+for the dataset.
+
+&ERROR OP19
+OP19  UNABLE TO OPEN A SCRATCH FILE
+System 1022 cannot open a scratch file for selection set formation
+because you are presently connected to a directory in which you cannot
+create files, or you are over disk quota, or the like.
+
+&ERROR MI29
+MI29  ILLEGAL PRINT CHANNEL NUMBER
+The subscript for SYSPCCOL, SYSPCROW, SYSPCRESET, and SYSPAGE must be
+an integer between 1 and 8. All other subscripts are out of range.
+
+&ERROR MI30
+MI30  ATTEMPT TO WRITE ILLEGAL VALUE TO SYSPC FUNCTION
+SYSPCCOL, SYSPCROW, and SYSPCRESET require a positive integer as their
+argument. This integer must be between 0 and 2^16-1. 
+
+&ERROR MI31
+MI31  ILLEGAL ATTEMPT TO READ SYSPC FUNCTION
+The subscript for SYSPCCOL, SYSPCROW, SYSPCRESET, and $SYSPCPOS must be
+the same as the channel number specified in the preceding INIT 123 or INIT DIF
+command. You can print the value of SYSPCCOL, SYSPCROW, SYSPCRESET, or
+$SYSPCPOS only if the keyword 123 or DIF has been given in the preceding
+INIT command and the subscript matches the channel number specified in
+that INIT command.
+
+&ERROR MI32
+MI32  ILLEGAL ATTEMPT TO WRITE SYSPC FUNCTION
+The subscript for SYSPCCOL, SYSPCROW, and SYSPCRESET must be the same as
+the channel number specified in the preceding INIT 123 command. You can assign
+a value to SYSPCCOL, SYSPCROW, or SYSPCRESET only if the keyword 123 has been
+given in the preceding INIT command and the subscript matches the channel
+number specified in that INIT command.
+
+&ERROR FO27
+FO27  ILLEGAL PAGE-ORIENTED COMMAND ON PC PRINT CHANNEL
+The HEADING, FOOTING, BODY, PAGE, and TYPAGE page-formatting commands are
+not allowed in PRINT commands that direct output to a channel specified in a
+preceding INIT 123 or INIT DIF command.
+
+&ERROR FO28
+FO28  ILLEGAL DIF FILE FORMAT
+System 1022 does not support L, $, $3, $4, S, T, or C formats in PRINT
+commands that direct output to a channel specified in a preceding INIT DIF
+command.
+
+&ERROR FO29
+FO29  ILLEGAL PC FILE FORMAT
+System 1022 does not support $3, $4, S, T, or C formats in PRINT
+commands that direct output to a channel specified in a preceding INIT 123
+command.
+
+&ERROR FO30
+FO30  "L" FORMAT ILLEGAL ON NON-123 PRINT CHANNEL
+System 1022 supports "L" format only in PRINT commands that direct
+output to a channel specified in a preceding INIT 123 command.
+
+&ERROR FO31
+FO31  SYSPC COUNTER OVERFLOW ON EOL
+In printing to a 123 columnwise file, the value of SYSPCROW has 
+exceeded the allowed limit of 2^16-1 or, in printing to a 123 rowwise file,
+the value of SYSPCCOL has exceeded that value.
+
+&ERROR FO32
+FO32  SYSPC COUNTER OVERFLOW ON EOI
+In printing to a 123 columnwise file, the value of SYSPCCOL has exceeded
+the allowed limit of 2^16-1 or, in printing to a 123 rowwise file, the value
+of SYSPCROW has exceeded that value.
+
+&ERROR FO33
+FO33  SYSPCROW COUNTER OVERFLOW IN DIF FILE
+In printing to a DIF file, the value of SYSPCROW has exceeded the allowed
+limit of 2^18-1.
+
+&ERROR FO34
+FO34  SYSPCCOL COUNTER OVERFLOW IN DIF FILE
+In printing to a DIF file, the value of SYSPCCOL has exceeded the allowed
+limit of 2^18-1.
+
+&ERROR UP7
+UP7  DATASET MUST BE ENQ TO DO LOCK
+To put a userlock on a string with the LOCK ON USERLOCK
+command, the data set containing that record must be opened ENQ. In order to
+lock an individual record with the GETREC $LOCK or LOCK ON RECORD command,
+the data set must be both ENQ and RECLOCK. 
+
+&ERROR UP8
+UP8  RECORD WAS NOT PREVIOUSLY LOCKED
+The user either tried to change, delete, or undelete a RECLOCK dataset
+record without first locking the record with the GETREC $LOCK or LOCK ON
+RECORD command or else issued a LOCK OFF RECORD command on a record that was
+not currently locked.
+
+&ERROR UP9
+UP9  USERLOCK STRING WAS NOT PREVIOUSLY LOCKED
+The user issued a LOCK OFF USERLOCK command on a string that was not
+currently locked.
+
+&ERROR UP10
+UP10  CANNOT LOCK RECORD
+You have tried to lock a record is currently locked by another user.
+
+&ERROR UP11
+UP11  CANNOT LOCK USERLOCK STRING
+You have tried to lock a string on which some other user currently has
+a lock.
+
+&ERROR UP12
+UP12  USERLOCK STRING ALREADY LOCKED
+You have issued a LOCK ON USERLOCK command on a string on which you
+already have a lock.
+
+&ERROR UP13
+UP13  CANNOT LOCK ON/OFF RECORD WHILE IN GLOBAL MODE
+You must be in local (GETREC) mode to execute a LOCK ON RECORD or
+LOCK OFF RECORD command.
+
+&ERROR UP14
+UP14  DATASET MUST BE NORECLOCK TO MODIFY ACCESS TO NOENQ
+If a data set is RECLOCK, it is also by definition ENQ. To make a data
+set NOENQ, you must first make certain that it is NORECLOCK.
+
+&ERROR UP15
+UP15  DATASET MUST BE ENQ TO MODIFY ACCESS TO RECLOCK
+Only ENQ data sets can be RECLOCK.
+
+&ERROR UP16
+UP16  MODIFY FAILED BECAUSE OTHER USERS ARE ACCESSING THE FILE
+You need exclusive (UPDATE) access to the data set to execute a
+MODIFY $ACCESS RECLOCK or MODIFY $ACCESS NORECLOCK command.
+
+&ERROR UP17
+UP17  ILLEGAL WHEN DATASET IS NORECLOCK
+The data set must be RECLOCK before you can lock a record with
+the GETREC $LOCK or LOCK ON RECORD command.
+
+&ERROR UP18
+UP18  ILLEGAL WHEN DATASET IS RECLOCK
+Users cannot execute CHANGE, DELETE, UNDELETE, or TRANSACT commands
+in global mode when the data set is RECLOCK.
+
+&ERROR UP19
+UP19  ILLEGAL WITH RECORD OR USERLOCK STRING LOCKED
+You cannot execute a MODIFY $ACCESS RECLOCK/NORECLOCK commands if you currently
+have a lock on a record or userlock string. You should issue the appropriate
+LOCK OFF command before giving the MODIFY $ACCESS RECLOCK/NORECLOCK command.
+
+&INFORM STRUCTURE DATA
+The INFORM STRUCTURE DATA command returns the same information in tabular
+form about the attributes of a data set as INFORM STRUCTURE TABLE except that 
+the labels and legend are omitted. You can use the ON <file-descriptor> 
+clause of the command to create a data file, which can then be loaded into
+a data dictionary with the appropriate description file.
+
+The syntax is:
+
+INFORM [ ON <file descriptor> ] STRUCTURE DATA
+
+
+See also INFORM STRUCTURE TABLE
+
+&INFORM STRUCTURE TABLE
+The INFORM STRUCTURE TABLE command returns a variety of information
+in tabular form about the attributes in the data set. This information
+includes: the name and abbreviation of each attribute, its keyed status,
+its data type, the data mode in which its values are represented, its length
+and column fields, and its ERROR specification (if any). In addition, if an
+attribute is one of the special types (Date of Entry, Date of Change, or
+Integer of Identification), this fact is displayed. If such an attribute has
+been specified as RESET, this information is also given. If a computational
+attribute has been specified as ADDITIVE, this information appears as well.
+
+The syntax is:
+
+   INFORM [ ON <file descriptor> ] STRUCTURE TABLE
+
+&INFORM STRUCTURE TABLE KEY
+K  Refers to key status: * shows that the attribute is keyed in version 117 
+    format; = shows that the attribute is keyed in 117 format and is keyed 
+    inactive; + shows that the attribute is keyed in pre-117 format;
+    - shows that the attribute is keyed in pre-117 format and is keyed inactive.
+T  Refers to the data type. Type T is Text, I is integer, R is Real, D is
+    Date, and I2 is Double Integer.
+S  Refers to attributes that are treated specially. E is Date of Entry, C is 
+    Date of Change, and I is Integer of Identification.
+R  Refers to the RESET specification used in LOAD  for Date of Entry, Date of 
+    Change, and Integer of Identification. R shows that RESET is specified.
+M  Refers to the mode in which the attribute's values are represented. B
+    shows that the representation is Binary, 7 that it is 7-bit ASCII,
+    and 6 that it is SIXBIT.
+A  Refers to the ADDITIVE specification used in TRANSACT for computational
+    attributes. A shows that the attribute is ADDITIVE.
+E  Refers to the ERROR specification for an attribute. T shows that ERROR TYPE
+    has been specified for the attribute, R shows that ERROR RECOVER has
+    been specified, and TR shows that ERROR TYPE and ERROR RECOVER have
+    both been specified.
+
+&WILDCARDS
+You can specify any of six wildcard characters in a selection expression
+in a FIND, DFIND, SEARCH, SELECT, DBFIND, DBSRCH, or DBSEL command with 
+either of the relational operators MATCHES and NMATCHES.
+
+  *      Matches any number of characters or spaces, including
+         no characters or spaces.
+
+  @     Matches any number of spaces or tab characters, including
+        no space or tab characters.
+
+  %     Matches any single character or space.
+
+  &     Matches any single alphanumeric character.
+
+  $     Matches any single alphabetic character.
+
+  #     Matches any single numeric character.
+
+
+&OPTIONS
+Sites may elect to license any or all of the following additional System
+1022 modules:
+ 
+  * Audit Trail Journaling, which provides complete backup and recovery
+    procedures to assure the safety of the data.
+
+  * Data Base Access Accounting, which offers built-in accounting and
+    reports features for billing and planning purposes.
+
+  * Data Base Security, which allows the data set owner precise control
+    over access to the data.
+
+  * Host Language Interface, which offers direct access to both
+    the stand-alone system and to the host language (FORTRAN, COBOL, and the
+    like).
+
+  * The Large Data Sets Module, which allows storage of more than
+    134,000,000 records in a single data set and the distribution of the
+    data set over multiple files.
+
+The INFORM VERSION command returns a list of the modules at your site.
+    "@4

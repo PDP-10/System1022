@@ -1,0 +1,15 @@
+"/KEYNDV/
+"/PHJ 1-MAY-86/
+"/Make KEY command store correct # of different values of attr/
+"/***NS1022,1022??,??1700/
+
+"/!PATN/&&1W
+./ &"/KEYNDV/
+.-1/ "/!PATN/
+
+2000,,616250&&1W
+.-24/ 0,,&Q<TEMP:
+.-4/ JFCL
+
+232601&1V
+&0V

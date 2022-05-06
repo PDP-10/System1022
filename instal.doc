@@ -1,0 +1,1259 @@
+
+.LM 5;.RM 70
+.C 1;COM   ON V115
+.C 1;COM
+.C 1;Q: For which language do you want installation instructions?
+.C 1;A: FORTRAN |FORTRAN |
+.C 1;A: COBOL   |COBOL   |
+.C 1;A: MACRO   |MACRO   |
+.C 1;T:
+.C 1;Q: Does your site use TOPS-10 or TOPS-20?
+.C 1;A: TOPS-10 |TOPS-10 |
+.C 1;A: TOPS-20 |TOPS-20 |
+.C 1;IF FORTRAN 
+.C 1;Q: Which version of FORTRAN are you installing?
+.C 1;A: FTN-5   |V5      |(Fortran version 5 or earlier)
+.C 1;A: FTN-6   |V6      |(Fortran version 6)
+.C 1;A: FTN-7   |V7      |(Fortran version 7)
+.C 1;A: FTN10   |V10     |(Fortran version 10)
+.C 1;COM
+.C 1;IF FTN-5
+.C 1;Q: Do you already have a version of FOROTS with Software House's patches?
+.C 1;A: GOT-FRS |YES     |(A modified FOROTS for that version already exists)
+.C 1;A: NEED-FRS|NO      |(I need to set up a modified version of that FOROTS)
+.C 1;ENDIF FTN-5
+.C 1;COM
+.C 1;IF FTN-6
+.C 1;ON F6+F7
+.C 1;ENDIF FTN-6
+.C 1;IF FTN-7
+.C 1;ON F6+F7
+.C 1;ENDIF FTN-7
+.C 1;IF TOPS-10
+.C 1;IF FTN-6
+.C 1;Q: Do you already have a version of FOROT6 reloaded for 1022?
+.C 1;A: GOT-FRS |YES     |(There is a FOROT6 reloaded at page 400)
+.C 1;A: NEED-FRS|NO      |(This FOROT6 needs to be loaded)
+.C 1;ENDIF FTN-6
+.C 1;IF FTN-7
+.C 1;Q: Do you already have a version of FOROT7 reloaded for 1022?
+.C 1;A: GOT-FRS |YES     |(There is a FOROT7 reloaded at page 400)
+.C 1;A: NEED-FRS|NO      |(This FOROT7 needs to be loaded)
+.C 1;ENDIF FTN-7
+.C 1;IF FTN10
+.C 1;Q: Do you already have a version of FOROT7 reloaded for 1022?
+.C 1;A: GOT-FRS |YES     |(There is a FOROT0 reloaded at page 400)
+.C 1;A: NEED-FRS|NO      |(This FOROT0 needs to be loaded)
+.C 1;ENDIF FTN10
+.C 1;ENDIF TOPS-10
+.C 1;COM
+.C 1;COM SEPARATE VERSIONS FOR FORTRAN-5?
+.C 1;COM
+.C 1;IF FTN-5   
+.C 1;T: Some sites run the FOROTS with Software House's patches as the standard
+.C 1;T: FOROTS, and this usually causes no problems. Other sites run with both the
+.C 1;T: Software House FOROTS, for programs that use 1022, and the unmodified DEC
+.C 1;T: FOROTS, for all other programs.
+.C 1;Q: Do you want to keep two version of FOROTS (modified and unmodified)?
+.C 1;A: DEC+SH  |YES     |(I want to have both FOROTS and FOR22 around)
+.C 1;A: ONE-FRS |NO      |(I will use the modified FOROTS as the system default)
+.C 1;ENDIF F-V5
+.C 1;COM
+.C 1;COM SEPARATE VERSIONS FOR FORTRAN-6 OR 7?
+.C 1;COM
+.C 1;IF F6+F7
+.C 1;IF TOPS-10 
+.C 1;IF NEED-FRS
+.C 1;IF FTN-6
+.C 1;T: Under TOPS-10, DEC's FOROT6 must be reloaded in order to be compatible
+.C 1;T: with 1022, which requires that the run-time system start at page 400.
+.C 1;T: This loses the extra space that DEC made available in FORTRAN-6. It is
+.C 1;T: possible to keep both the modified FOROT6, for 1022 programs, and the
+.C 1;T: unmodified one, for all other FORTRAN programs, if this extra space is
+.C 1;T: important at your site.
+.C 1;ENDIF FTN-6
+.C 1;IF FTN-7
+.C 1;T: Under TOPS-10, DEC's FOROT7 must be reloaded in order to be compatible
+.C 1;T: with 1022, which requires that the run-time system start at page 400.
+.C 1;T: This loses the extra space that DEC made available in FORTRAN-7. It is
+.C 1;T: possible to keep both the modified FOROT7, for 1022 programs, and the
+.C 1;T: unmodified one, for all other FORTRAN programs, if this extra space is
+.C 1;T: important at your site.
+.C 1;ENDIF FTN-7
+.C 1;IF FTN10
+.C 1;T: Under TOPS-10, DEC's FOROT0 must be reloaded in order to be compatible
+.C 1;T: with 1022, which requires that the run-time system start at page 400.
+.C 1;T: This loses the extra space that DEC made available in FORTRAN-10. It is
+.C 1;T: possible to keep both the modified FOROT0, for 1022 programs, and the
+.C 1;T: unmodified one, for all other FORTRAN programs, if this extra space is
+.C 1;T: important at your site.
+.C 1;ENDIF FTN10
+.C 1;ENDIF NEED-FRS
+.C 1;IF FTN-6
+.C 1;Q: Do you want to keep two version of FOROTS (modified and unmodified)?
+.C 1;A: DEC+SH  |YES     |(I want to have both FOROT6 and FOR226 around)
+.C 1;A: ONE-FRS |NO      |(I will use the modified FOROT6 as the system default)
+.C 1;ENDIF FTN-6
+.C 1;IF FTN-7
+.C 1;Q: Do you want to keep two version of FOROTS (modified and unmodified)?
+.C 1;A: DEC+SH  |YES     |(I want to have both FOROT7 and FOR227 around)
+.C 1;A: ONE-FRS |NO      |(I will use the modified FOROT7 as the system default)
+.C 1;ENDIF FTN-7
+.C 1;IF FTN10
+.C 1;Q: Do you want to keep two version of FOROTS (modified and unmodified)?
+.C 1;A: DEC+SH  |YES     |(I want to have both FOROT0 and FOR220 around)
+.C 1;A: ONE-FRS |NO      |(I will use the modified FOROT0 as the system default)
+.C 1;ENDIF FTN10
+.C 1;ENDIF T10
+.C 1;IF TOPS-20 
+.C 1;ON ONE-FRS
+.C 1;ENDIF T20
+.C 1;ENDIF F6+F7
+.C 1;COM
+.C 1;COM
+.C 1;COM
+.C;F  O  R  T  R  A  N
+.B1
+This section describes the installation of 1022 and FORTRAN.
+.B
+.C 1;COM
+.C 1;IF FTN-5   
+.C 1;T: Software House distributes a FOROTS version 5A(721) with our patches.
+.C 1;T: This version of FOROTS doesn't include DEC's SORT option.
+.C 1;Q: Do you want to use this FOROTS?
+.C 1;A: SH-FRS  |YES     |(I want to use the Software-House supplied FOROTS)
+.C 1;A: LCL-FRS |NO      |(I want to use a patched version of the local FOROTS)
+.C 1;COM
+.C 1;COM
+.C 1;IF SH-FRS  
+.C 1;IF NEED-FRS
+.C 1;COM DETERMINE IF THE USER IS ON A KA OR NOT
+.C 1;IF TOPS-10 
+.C 1;Q: Is your machine a KA?
+.C 1;A: KA-CPU  |YES     |
+.C 1;A: NOT-A-KA|NO      |(KI, KL, KS, or other type cpu)
+.C 1;ENDIF T10
+.C 1;COM
+.C 1;COM (INSIDE SH-FRS, NEED-FRS, AND FTN-5 CONDITIONALS)
+.C 1;COM
+If you want to use only Software House FORTRAN, the appropriate FOROTS is
+on the 1022 distribution tape.
+Software House FORTRAN does not include FORTRAN SORT. If your programs
+require this command, you should use your own FORTRAN.
+Software House FOROTS
+is called FOR22.EXE and the 1022/FORTRAN object time system
+is called 1022T.EXE.  FOR22.EXE is DEC FOROTS version 5A(721),
+patched for 1022 memory management as described in Chapter 4.
+.b
+If you want your 1022/FORTRAN programs to use only Software House FOROTS,
+the system comes properly set up for your site.
+.C 1;IF KA-CPU  
+.b
+FOR22.EXE is not KA-10 compatible.
+Sites with KA-10 CPU's should delete FOR22.EXE and
+rename the file FOR22A.EXE to be FOR22.EXE and rebuild 1022T:
+.b;.LM 10;.NF
+_.DELETE FOR22.EXE
+_.RENAME FOR22.EXE=FOR22A.EXE
+.B;.LM 5;.f
+.C 1;ON BILD-OTS
+.C 1;ENDIF KA
+.C 1;ENDIF NEED-FRS
+.C 1;IF GOT-FRS
+.C 1;ON BILD-OTS
+.C 1;ENDIF
+.C 1;ENDIF SH-FRS
+.C 1;COM
+.C 1;COM (STILL INSIDE FTN-5 CONDITIONAL)
+.C 1;COM
+.C 1;IF LCL-FRS
+.C 1;IF NEED-FRS
+If you want to use a  version of FORTRAN other than
+Software House FORTRAN or FORTRAN-6, you must
+modify your FOROTS
+to use 1022 memory management. The following procedure 
+will rebuild your FOROTS for use with 1022:
+.C 1;ENDIF NEED-FRS
+.C 1;ENDIF LCL-FRS
+.LS
+.C 1;IF LCL-FRS
+.C 1;IF NEED-FRS
+.C 1;IF TOPS-10
+.LE;Restore the files F10OTS.REL and FORFUN.MAC from the FORTRAN distribution
+.C 1;ENDIF
+.C 1;IF TOPS-20
+.LE;Restore the files F20OTS.REL and FORFUN.MAC from the FORTRAN distribution
+.C 1;ENDIF
+tape to your work area.
+.LE;Use the FILCOM program to compare and list the differences
+between your FORFUN.MAC and the 1022 FORFUN.MAC. A systems programmer can
+modify your FORFUN.MAC to reflect the changes required for 1022 use.
+.LE;Compile the files to produce FORFUN.REL:
+.SK 1
+
+.C 1;IF TOPS-10
+_.COMPILE/COMP FT22.MAC + FORFUN.MAC
+.C 1;ENDIF
+.C 1;IF TOPS-20
+_@COMPILE/COMP FT22.MAC + FORFUN.MAC
+.C 1;ENDIF
+
+.TP 10
+.LE;Use the MAKLIB program to modify your FORLIB.REL. It will 
+replace the old FORFUN file with the new,
+install the FOROTS patch, and re-index FORLIB:
+.SK 1
+
+.C 1;IF TOPS-10
+_.R MAKLIB
+.C 1;ENDIF
+.C 1;IF TOPS-20
+_@MAKLIB
+.C 1;ENDIF
+.BR
+_*FORLIB=SYS:FORLIB/MASTER:FORFUN,FORFUN/REPLACE:FORFUN
+.BR
+_*FORLIB=FORLIB,FORLIB.MAK/FIX
+.BR
+.C 1;IF TOPS-10
+_*F10OTS=F10OTS,FORLIB.MAK/FIX
+.C 1;ENDIF
+.C 1;IF TOPS-20
+_*F20OTS=F20OTS,FORLIB.MAK/FIX
+.C 1;ENDIF
+.BR
+_*FORLIB=FORLIB/INDEX
+.TP 14
+.LE;Now combine these REL files to produce the high segment 1022 FOROTS,
+named FOR22:
+.SK 1
+.C 1;IF TOPS-10
+_.R LINK
+.BR
+_*/NOSYM F10OTS,FORLIB/SEA/GO
+.BR
+_.SSAVE FOR22
+.C 1;ENDIF TOPS-10
+.C 1;IF TOPS-20
+_@LINK
+.BR
+_*/NOSYM F20OTS,FORLIB/SEA/GO
+.BR
+_@SAVE FOR22
+.C 1;ENDIF TOPS-20
+.C 1;ENDIF NEED-FRS
+.C 1;ON BILD-OTS
+.C 1;ENDIF LCL-FRS
+.C 1;COM
+.C 1;COM (STILL INSIDE FTN-5 CONDITIONAL)
+.C 1;COM
+.C 1;IF BILD-OTS
+.LE;Build a 1022/FORTRAN object time system that incorporates
+your FOROTS.
+.SK 1
+.C 1;IF TOPS-10
+_.RUN 1022SA
+.C 1;ENDIF
+.C 1;IF TOPS-20
+_@RUN 1022SA
+.C 1;ENDIF
+.BR
+.C 1;IF NEED-FRS
+_*OTS 1022T.EXE=FOR22.EXE/FOR
+.BR
+.C 1;ENDIF
+.C 1;IF GOT-FRS
+.C 1;IF DEC+SH
+_*OTS 1022T.EXE=SYS:FOR22.EXE/FOR
+.BR
+.C 1;ENDIF
+.C 1;IF ONE-FRS
+_*OTS 1022T.EXE=SYS:FOROTS.EXE/FOR
+.BR
+.C 1;ENDIF
+.C 1;ENDIF GOT-FRS
+.SK 1
+The OTS command requires approximately 60K of user core for its
+execution.  TOPS-10 sites must arrange a sufficient physical core limit
+for the job.
+.C 1;ENDIF BILD-OTS
+.C 1;COM
+.C 1;COM (STILL UNDER FTN-5 CONDITIONAL)
+.C 1;COM
+.C 1;IF ONE-FRS
+.LE;Since you are running only this FORTRAN on your system,
+you must delete FORINI.REL from the two 1022 library files:
+.SK 1
+.C 1;IF TOPS-10
+_.R MAKLIB
+.C 1;ENDIF
+.C 1;IF TOPS-20
+_@MAKLIB
+.C 1;ENDIF
+.BR
+_*HL1022.REL=HL1022.REL/DELETE:FORINI
+.BR
+_*HR1022.REL=HR1022.REL/DELETE:FORINI
+.BR
+.C 1;ENDIF ONE-FRS
+.C 1;COM
+.C 1;COM (STILL UNDER FTN-5 CONDITIONAL)
+.C 1;COM
+.C 1;IF NEED-FRS
+.LE;Place your FOROTS into the system area:
+.SK 1
+.C 1;IF TOPS-10
+.C 1;IF DEC+SH
+_.COPY SYS:FOR22.EXE<155>=FOR22.EXE
+.BR
+.C 1;ENDIF DEC+SH
+.C 1;IF ONE-FRS
+_.COPY SYS:FOROTS.EXE<155>=FOR22.EXE
+.BR
+.C 1;ENDIF ONE-FRS
+.C 1;ENDIF TOPS-10
+.C 1;IF TOPS-20
+.C 1;IF DEC+SH
+_@COPY (FROM) FOR22.EXE (TO) SYS:FOR22.EXE;P775252
+.BR
+.C 1;ENDIF DEC+SH
+.C 1;IF ONE-FRS
+_@COPY (FROM) FOR22.EXE (TO) SYS:FOROTS.EXE;P775252
+.BR
+.C 1;ENDIF ONE-FRS
+.C 1;ENDIF TOPS-20
+.C 1;ENDIF NEED-FRS
+.C 1;COM
+.C 1;IF BILD-OTS
+.LE;Place your 1022T into the system area:
+.SK 1
+.C 1;IF TOPS-10
+_.COPY SYS:1022T.EXE<155>=1022T.EXE
+.C 1;ENDIF
+.C 1;IF TOPS-20
+_@COPY (FROM) 1022T.EXE (TO) SYS:1022T.EXE;P775252
+.C 1;ENDIF
+.C 1;ENDIF BILD-OTS
+.BR
+.LE;You may now want to copy the modified version of FORLIB back to the
+system area. This step is necessary if any of the FORTRAN program which call
+1022 have low segments larger than 128K.
+.C 1;IF DEC+SH
+Unfortunately, it is not possible to keep this modified FORLIB separate from
+the DEC standard FORLIB; thus, all FORTRAN programs with low segments larger
+than 128K will be affected.
+.C 1;ENDIF
+.SK 1
+.C 1;IF TOPS-10
+_.COPY SYS:FORLIB.REL<155>=FORLIB.REL
+.C 1;ENDIF
+.C 1;IF TOPS-20
+_@COPY (FROM) FORLIB.REL (TO) SYS:FORLIB.REL;P775252
+.C 1;ENDIF
+.BR
+.ELS
+You have now installed Version 5 of FORTRAN.
+.C 1;ENDIF FTN-5
+.C 1;COM
+.C 1;COM (ONLY IN FORTRAN CONDITIONAL)
+.C 1;COM
+.C 1;IF F6+F7
+.C 1;IF TOPS-10
+.C 1;IF NEED-FRS
+.C 1;IF FTN-6
+Under TOPS-10, you must set up a FORTRAN-6 high segment
+by reloading FOROT6.EXE.
+.C 1;ENDIF FTN-6
+.C 1;IF FTN-7
+Under TOPS-10, you must set up a FORTRAN-7 high segment
+by reloading FOROT7.EXE.
+.C 1;ENDIF FTN-7
+.C 1;IF FTN10
+Under TOPS-10, you must set up a FORTRAN-10 high segment
+by reloading FOROT0.EXE.
+.C 1;ENDIF FTN10
+If someone at your site has modified FORTRAN, you
+should refer this procedure to him or her, along with the information from
+the file
+FORTR6.DOC.  Otherwise, the procedure to set up a new FOROTS for 1022 is:
+.C 1;ENDIF NEED-FRS
+.LS
+.C 1;IF NEED-FRS
+.LE;Restore *.RLS and FORHAK.REL from the
+.C 1;IF FTN-6
+FORTRAN-6 distribution tape, and F10OTS.CCL from the 1022 tape to a work area.
+.LE;Load the new FOROTS.
+.SK 1
+_.R LINK
+.BR
+_*@F10OTS
+.BR
+EXIT
+.BR
+_.RUN FOROT6
+.BR
+_.SSAVE FOROT6
+.BR
+_.GET FOROT6
+.BR
+_.SSAVE FOROT6
+.SK 1
+This FOROT6.EXE file replaces the one distributed by DEC.  The only
+difference is in the location of the impure storage in the high segment.
+.ELS
+.C 1;ENDIF FTN-6
+.C 1;IF FTN-7
+FORTRAN-7 distribution tape, and F10OT7.CCL from the 1022 tape to a
+work area.  If you autopatch with Autopatch tape _# 9, you must
+restore F10OT7.CC9 and use F10OT7.CC9 instead of F10OT7.CCL (in the
+LINK command below) to build your OTS.
+.LE;Load the new FOROTS.
+.SK 1
+_.R LINK
+.BR
+_*@F10OT7
+.BR
+EXIT
+.SK 1
+This FOROT7.EXE file replaces the one distributed by DEC.  The only
+difference is in the location of the impure storage in the high segment.
+.C 1;ENDIF FTN-7
+.C 1;IF FTN10
+FORTRAN-10 distribution tape, and F10OT0.CCL from the 1022 tape to a
+work area.
+.LE;Load the new FOROTS.
+.SK 1
+_.R LINK
+.BR
+_*@F10OT0
+.BR
+EXIT
+.SK 1
+This FOROT0.EXE file replaces the one distributed by DEC.  The only
+difference is in the location of the impure storage in the high segment.
+.C 1;ENDIF FTN10
+.C 1;ENDIF NEED-FRS
+.C 1;IF FTN-6
+.LE;To generate a 1022T6 to use with this, use the 1022SA program:
+.SK 1
+_.RUN 1022SA
+.BR
+_*OTS 1022T6.EXE=FOROT6.EXE/F6
+.C 1;ENDIF FTN-6
+.C 1;IF FTN-7
+.LE;To generate a 1022T7 to use with this, use the 1022SA program:
+.SK 1
+_.RUN 1022SA
+.BR
+_*OTS 1022T7.EXE=FOROT7.EXE/F6
+.C 1;ENDIF FTN-7
+.C 1;IF FTN10
+.LE;To generate a 1022T0 to use with this, use the 1022SA program:
+.SK 1
+_.RUN 1022SA
+.BR
+_*OTS 1022T0.EXE=FOROT0.EXE/F6
+.C 1;ENDIF FTN10
+.LE;Copy these files from your work area to the system:
+.C 1;IF FTN-6
+.SK 1
+.C 1;IF DEC+SH
+_.COPY SYS:FOR226.EXE<155>=FOROT6.EXE
+.BR
+.C 1;ENDIF
+.C 1;IF ONE-FRS
+_.COPY SYS:FOROT6.EXE<155>=FOROT6.EXE
+.BR
+.C 1;ENDIF
+_.COPY SYS:1022T6.EXE<155>=1022T6.EXE
+.BR
+.C 1;ENDIF FTN-6
+.C 1;IF FTN-7
+.SK 1
+.C 1;IF DEC+SH
+_.COPY SYS:FOR227.EXE<155>=FOROT7.EXE
+.BR
+.C 1;ENDIF
+.C 1;IF ONE-FRS
+_.COPY SYS:FOROT7.EXE<155>=FOROT7.EXE
+.BR
+.C 1;ENDIF
+_.COPY SYS:1022T7.EXE<155>=1022T7.EXE
+.BR
+.C 1;ENDIF FTN-7
+.C 1;IF FTN10
+.SK 1
+.C 1;IF DEC+SH
+_.COPY SYS:FOR220.EXE<155>=FOROT0.EXE
+.BR
+.C 1;ENDIF
+.C 1;IF ONE-FRS
+_.COPY SYS:FOROT0.EXE<155>=FOROT0.EXE
+.BR
+.C 1;ENDIF
+_.COPY SYS:1022T0.EXE<155>=1022T0.EXE
+.BR
+.C 1;ENDIF FTN10
+.C 1;ENDIF TOPS-10
+.C 1;COM
+.C 1;COM (STILL UNDER FORTRAN AND F6+F7 CONDITIONALS)
+.C 1;COM
+.C 1;IF TOPS-20
+.C 1;IF FTN-6
+Under TOPS-20, FOROT6 runs with a separate 1022 high segment.  The FOROT6
+distributed by DEC starts at page 527, so that a 1022 high segment starting
+at page 400 can fit underneath it.  If your site has relocated FOROT6,
+consult the technical people involved.  Otherwise, all you need do is set up
+1022T6 as follows:
+.LS
+.LE;Create the object time system:
+.SK 1
+_@RUN 1022SA
+.BR
+_*OTS 1022T6.EXE=/ORG:400/F6
+.LE;Copy the file from your work area to the system:
+.SK 1
+_@COPY (FROM) 1022T6.EXE (TO) SYS:1022T6.EXE;P775252
+.C 1;ENDIF FTN-6
+.C 1;IF FTN-7
+Under TOPS-20, FOROT7 runs with a separate 1022 high segment.  The FOROT7
+distributed by DEC starts at page 520, so that a 1022 high segment starting
+at page 400 can fit underneath it.  If your site has relocated FOROT7,
+consult the technical people involved.  Otherwise, all you need do is set up
+1022T7 as follows:
+.LS
+.LE;Create the object time system:
+.SK 1
+_@RUN 1022SA
+.BR
+_*OTS 1022T7.EXE=/ORG:400/F6
+.LE;Copy the file from your work area to the system:
+.SK 1
+_@COPY (FROM) 1022T7.EXE (TO) SYS:1022T7.EXE;P775252
+.C 1;ENDIF FTN-7
+.C 1;IF FTN10
+Under TOPS-20, FOROT0 runs with a separate 1022 high segment.  The FOROT0
+distributed by DEC starts at page 512, so that a 1022 high segment starting
+at page 400 can fit underneath it.  If your site has relocated FOROT0,
+consult the technical people involved.  Otherwise, all you need do is set up
+1022T0 as follows:
+.LS
+.LE;Create the object time system:
+.SK 1
+_@RUN 1022SA
+.BR
+_*OTS 1022T0.EXE=/ORG:400/F6
+.LE;Copy the file from your work area to the system:
+.SK 1
+_@COPY (FROM) 1022T0.EXE (TO) SYS:1022T0.EXE;P775252
+.C 1;ENDIF FTN10
+.C 1;ENDIF TOPS-20
+.C 1;COM
+.C 1;COM NOW, THE MONITOR-INDEPENDENT HACKS TO HL1022 AND HR1022
+.C 1;COM
+.LE;FORTRAN-6 and later require a new initialization routine to
+be called from the host-language programs (DBF6).
+To avoid this, you must modify the distributed
+HL1022.REL and HR1022.REL files, as follows:
+.SK 1
+.C 1;IF TOPS-10
+_.R MAKLIB
+.C 1;ENDIF TOPS-10
+.C 1;IF TOPS-20
+_@MAKLIB
+.C 1;ENDIF TOPS-20
+.BR
+*HL1022=HL1022/DELETE:QF10
+.BR
+*HR1022=HR1022/DELETE:QF10L
+.SK 1
+The change has
+the effect of making all calls to DBF10 get linked to DBF6, when programs
+are loaded with either of these REL files.
+.C 1;COM
+.C 1;COM
+.C 1;IF DEC+SH
+.C 1;IF FTN-6
+.LE;If you want to use the reloaded FOROT6 only for 1022 programs, and the
+DEC version for all others, you must include a fake version of FORINI
+in HL1022.REL and HR1022.REL. Retrieve the file FORINI.V6 from the
+distribution tape and perform the following steps:
+.SK 1
+.C 1;IF TOPS-10
+_.COMPILE/COMP FORINI.V6/MAC
+.C 1;ENDIF
+.C 1;IF TOPS-20
+_@COMPILE/COMP FORINI.V6/MAC
+.C 1;ENDIF
+.BR
+.C 1;ENDIF FTN-6
+.C 1;IF FTN-7
+.LE;If you want to use the reloaded FOROT7 only for 1022 programs, and the
+DEC version for all others, you must include a fake version of FORINI
+in HL1022.REL and HR1022.REL. Retrieve the file FORINI.V7 from the
+distribution tape and perform the following steps:
+.SK 1
+.C 1;IF TOPS-10
+_.COMPILE/COMP FORINI.V7/MAC
+.C 1;ENDIF
+.C 1;IF TOPS-20
+_@COMPILE/COMP FORINI.V7/MAC
+.C 1;ENDIF
+.BR
+.C 1;ENDIF FTN-7
+.C 1;IF FTN10
+.LE;If you want to use the reloaded FOROT0 only for 1022 programs, and the
+DEC version for all others, you must include a fake version of FORINI
+in HL1022.REL and HR1022.REL. Retrieve the file FORINI.V10 from the
+distribution tape and perform the following steps:
+.SK 1
+.C 1;IF TOPS-10
+_.COMPILE/COMP FORINI.V10/MAC
+.C 1;ENDIF
+.C 1;IF TOPS-20
+_@COMPILE/COMP FORINI.V10/MAC
+.C 1;ENDIF
+.BR
+.C 1;ENDIF FTN10
+.C 1;IF TOPS-10
+_.R MAKLIB
+.C 1;ENDIF
+.C 1;IF TOPS-20
+_@MAKLIB
+.C 1;ENDIF
+.BR
+_*HL1022=HL1022,FORINI/APPEND
+.BR
+_*HR1022=HR1022,FORINI/APPEND
+.C 1;ENDIF DEC+SH
+.LE;Copy these modified REL files to the system:
+.SK 1
+.C 1;IF TOPS-10
+_.COPY SYS:HL1022.REL<155>=HL1022.REL
+.BR
+_.COPY SYS:HR1022.REL<155>=HR1022.REL
+.C 1;ENDIF
+.C 1;IF TOPS-20
+_@COPY (FROM) HL1022.REL SYS:HL1022.REL;P775252
+.BR
+_@COPY (FROM) HR1022.REL (TO) SYS:HR1022.REL;P775252
+.C 1;ENDIF
+.BR
+.ELS
+
+The initialization routines in the modified HL1022 and HR1022 will
+not work with the older FORTRANs.
+Many sites may want to change
+to the new FORTRAN without forcing all FORTRAN programs that use 1022 to be
+modified.
+If you want to run both the new FORTRAN and an earlier version of FORTRAN with
+1022, you must keep alternative versions of HL1022 and HR1022.
+Earlier versions of FORTRAN require versions of HL1022 and HR1022 in which
+QF10 and QF10L have not been deleted. Keep the alternative HL1022, HR1022,
+and the earlier FORTRAN on another system area.
+For example, the earlier version can be kept on OLD:#and
+the new FORTRAN version can be kept on SYS:.
+The old REL files
+should be replaced on SYS:#if FORTRAN is moved back to the earlier version.
+.B;.LM 5;.f
+.C 1;IF FTN-6
+You have now installed FORTRAN-6.
+.C 1;ENDIF FTN-6
+.C 1;IF FTN-7
+You have now installed FORTRAN-7.
+.C 1;ENDIF FTN-7
+.C 1;IF FTN10
+You have now installed FORTRAN-10.
+.C 1;ENDIF FTN10
+.C 1;ENDIF F6+F7
+.C 1;ENDIF FORTRAN
+.C 1;COM
+.C 1;COM ON TO 					COBOL 
+.C 1;COM
+.C 1;IF COBOL
+.C 1;Q: Which COBOL are you installing?
+.C 1;A: CBL-68  !COBOL-68!
+.C 1;A: CBL-74  !COBOL-74!
+.C 1;IF CBL-68
+.C 1;Q: Which version of COBOL are you installing?
+.C 1;A: COBOL-11!COBOL-11!(COBOL version 11 or earlier)
+.C 1;A: COBOL-12!COBOL-12!(COBOL version 12A or 12B)
+.C 1;ENDIF CBL-68
+.C 1;COM
+.C 1;IF CBL-74 
+.C 1;AN TOPS-20
+.C 1;Q: Which version of COBOL are you installing?
+.C 1;A: COBOL-11!COBOL-11!(COBOL version 11 or earlier)
+.C 1;A: COBOL-12!COBOL-12!(COBOL version 12A or 12B)
+.C 1;A: COBOL-13!COBOL-13!(COBOL version 13)
+.C 1;ENDIF !CBL-74 AN TOPS-20!
+.C 1;COM
+.C 1;IF CBL-74
+.C 1;AN TOPS-10
+.C 1;Q: Which version of COBOL are you installing?
+.C 1;A: COBOL-11!COBOL-11!(COBOL version 11 or earlier)
+.C 1;A: COBOL-12!COBOL-12!(COBOL version 12A or 12B)
+.C 1;ENDIF !CBL-74 AN TOPS-10!
+
+.C 1;COM
+.C 1;T: Software House distributes modifications to the COBOL library that are
+.C 1;T: needed if any COBOL programs that use 1022 also use overlays, use the 
+.C 1;T: SORT verb in COBOL, or ever split the top level index of a COBOL ISAM 
+.C 1;T: file.  If you install these modifications, the new version of the COBOL
+.C 1;T: library will become the standard COBOL library, even for programs which
+.C 1;T: don't use 1022.
+.C 1;Q: Do you want to install these patches to COBOL library?
+.C 1;A: SH-LBL  !YES     !(We need these patches)
+.C 1;A: DEC-LBL !NO      !(We will avoid those COBOL features)
+.C 1;IF SH-LBL
+.C 1;AN COBOL-12
+.C 1;Q: Do you want to install these patches using DEC's Autopatch utilities?
+.C 1;A: APC12   !YES     !(This simplifies patching)
+.C 1;A: NOAPC12 !NO      !
+.C 1;ENDIF SH-LBL AN COBOL-12
+.C 1;COM
+.C 1;COM     OUTPUT COBOL INSTALLATION TYPE
+.C 1;COM
+.C;C  O  B  O  L
+.B3
+This section describes the installation of 1022 and  
+.C 1;IF CBL-68
+COBOL-68
+.C 1;ENDIF CBL-68
+.C 1;IF CBL-74
+COBOL-74
+.C 1;ENDIF CBL-74
+version
+.C 1;IF COBOL-11
+11 or earlier
+.C 1;ENDIF COBOL-11
+.C 1;IF COBOL-12
+12A or 12B
+.C 1;ENDIF COBOL-12
+.C 1;IF COBOL-13
+13
+.C 1;ENDIF COBOL-13
+on
+.C 1;IF TOPS-10
+TOPS-10.
+.C 1;ENDIF TOPS-10
+.C 1;IF TOPS-20
+TOPS-20.
+.C 1;ENDIF TOPS-20
+.C 1;IF SH-LBL
+First it gives the procedure for patching the COBOL library
+.C 1;IF COBOL-13
+, COBLIB.
+.C 1;ENDIF COBOL-13
+.C 1;IF COBOL-11
+, LIBOL.
+.C 1;ENDIF COBOL-11
+.C 1;IF COBOL-12
+, LIBOL.
+.C 1;ENDIF COBOL-12
+ Then it
+.C 1;ENDIF SH-LBL
+.C 1;IF DEC-LBL
+It
+.C 1;ENDIF DEC-LBL
+gives the 1022SA commands to associate this COBOL
+with its initialization call (DBCBL, DBC68, and DBC74).
+.b
+System 1022 allows multiple COBOL versions to be run.
+The COBOL object time system
+is read in on the initialization calls DBCBL, DBC68, DBC74.
+
+.C 1;IF SH-LBL
+.C 1;COM
+.C 1;COM INSTRUCTIONS FOR INSTALLING OUR MEMORY-MANAGEMENT PATCHES
+.C 1;COM
+.B
+No modified COBOL Library is distributed
+because special libraries such as SORT, MCS, and DBMS-10 are required by
+many sites but cannot be distributed by Software House.
+.b
+For each version of COBOL you run with 1022, you must patch the 
+COBOL library using the following procedure:
+.C 1;ENDIF SH-LBL
+.LS
+.C 1;IF SH-LBL
+.C 1;IF NOAPC12
+.LE;Restore the following files from the COBOL distribution tape 
+.C 1;IF CBL-68
+(COBOL-68 saveset):
+LIBOL.REL, LIBSHR.REL, 
+.C 1;ENDIF CBL-68
+.C 1;IF CBL-74+COBOL-11
+(COBOL-74 saveset):
+C74LIB.REL, C74SHR.REL,
+.C 1;ENDIF CBL-74+COBOL-11
+.C 1;IF CBL-74+COBOL-12
+(COBOL-74 saveset):
+C74LIB.REL, C74SHR.REL,
+.C 1;ENDIF CBL-74+COBOL-12
+.C 1;IF COBOL-13
+<SUBSYS>COBLIB.REL, <COBOL-BUILD>C8XSHR.REL, <COBOL-BUILD>
+.C 1;ENDIF COBOL-13
+.C 1;IF COBOL-11
+CBLIO.MAC, COBFUN.MAC,
+.C 1;ENDIF COBOL-11
+*.UNV to a work area.
+.C 1;IF COBOL-12
+.LE;For COBOL 12A or 12B copy the CBLIO.12x and COBFUN.12x (where x = A or B)
+from the 1022 distribution tape to the work area using '.MAC' file
+extensions for the work area files.
+.C 1;ENDIF COBOL-12
+.C 1;IF COBOL-13
+.LE;Copy the CBLIO.13, COBFUN.13, and FT22.MAC
+from the 1022 distribution tape to the work area using '.MAC' file
+extensions for the work area files.
+.C 1;ENDIF COBOL-12
+.C 1;IF COBOL-11
+.LE;If you have been
+applying DEC's patches to LIBOL, use the FILCOM program
+to compare and list the differences between your CBLIO.MAC and the
+1022 CBLIO.MAC, and between your COBFUN.MAC and the 1022 COBFUN.MAC.
+A systems programmer should modify your CBLIO and COBFUN to reflect the
+changes required for 1022 use.
+.C 1;ENDIF COBOL-11
+.LE;Compile the files to produce CBLIO.REL and COBFUN.REL:
+.SK 1
+.C 1;IF TOPS-10
+_.COMPILE FT22.MAC+CBLIO.MAC
+.BR
+_.COMPILE FT22.MAC+COBFUN.MAC
+.C 1;ENDIF TOPS-10
+.C 1;IF TOPS-20
+_@COMPILE FT22.MAC+CBLIO.MAC
+.BR
+_@COMPILE FT22.MAC+COBFUN.MAC
+.C 1;ENDIF TOPS-20
+.LE;Use the MAKLIB program to replace the old CBLIO and COBFUN files with
+the new and to re-index the COBOL library:
+.SK 1
+.C 1;IF TOPS-10
+_.R MAKLIB
+.C 1;ENDIF TOPS-10
+.C 1;IF TOPS-20
+_@MAKLIB
+.C 1;ENDIF TOPS-20
+.BR
+.C 1;IF CBL-68
+_*LIBOL=LIBOL/MASTER:COBFUN,COBFUN/REPLACE:COBFUN
+.BR
+_*LIBOL=LIBOL/MASTER:CBLIO,CBLIO/REPLACE:CBLIO
+.BR
+_*LIBOL=LIBOL/INDEX
+.BR
+.C 1;ENDIF CBL-68
+.C 1;IF CBL-74
+.C 1;IF COBOL-11
+_*C74LIB=C74LIB/MASTER:COBFUN,COBFUN/REPLACE:COBFUN
+.BR
+_*C74LIB=C74LIB/MASTER:CBLIO,CBLIO/REPLACE:CBLIO
+.BR
+_*C74LIB=C74LIB/INDEX
+.BR
+.C 1;ENDIF COBOL-11
+.C 1;IF COBOL-12
+_*C74LIB=C74LIB/MASTER:COBFUN,COBFUN/REPLACE:COBFUN
+.BR
+_*C74LIB=C74LIB/MASTER:CBLIO,CBLIO/REPLACE:CBLIO
+.BR
+_*C74LIB=C74LIB/INDEX
+.BR
+.C 1;ENDIF COBOL-12
+.C 1;IF COBOL-13
+_*COBLIB=COBLIB/MASTER:COBFUN,COBFUN/REPLACE:COBFUN
+.BR
+_*COBLIB=COBLIB/MASTER:CBLIO,CBLIO/REPLACE:CBLIO
+.BR
+_*COBLIB=COBLIB,OPENEX.MAK/FIX
+.BR
+_*COBLIB=COBLIB/INDEX
+.BR
+.C 1;ENDIF COBOL-13
+.C 1;ENDIF CBL-74
+_^C
+.LE;Load and save the COBOL library. This example uses the
+.C 1;IF COBOL-11
+COBOL-12 
+.C 1;ENDIF COBOL-11
+.C 1;IF COBOL-12
+COBOL-12
+.C 1;ENDIF COBOL-12
+.C 1;IF COBOL-13
+COBOL-13 
+.C 1;ENDIF COBOL-13
+name for the linked file. For other versions, check the version specific name.
+.SK 1
+.C 1;IF TOPS-10
+_.R LINK
+.C 1;ENDIF
+.C 1;IF TOPS-20
+_@LINK
+.C 1;ENDIF
+.BR
+.C 1;IF CBL-68
+_*/NOSYM LIBSHR,LIBOL/SEARCH/GO
+.C 1;ENDIF CBL-68
+.C 1;IF CBL-74
+.C 1;IF COBOL-11
+_*/NOSYM C74SHR,C74LIB/SEARCH/GO
+.C 1;ENDIF COBOL-11
+.C 1;IF COBOL-12
+_*/NOSYM C74SHR,C74LIB/SEARCH/GO
+.C 1;ENDIF COBOL-12
+.C 1;IF COBOL-13
+_*/NOSYM C8XSHR,COBLIB/SEARCH/GO
+.C 1;ENDIF COBOL-13
+.C 1;ENDIF CBL-74
+.BR
+.C 1;IF TOPS-10
+.C 1;IF CBL-68
+_.SSAVE LIBO12
+.C 1;ENDIF CBL-68
+.C 1;IF CBL-74
+_.SSAVE C74O12
+.C 1;ENDIF CBL-74
+.C 1;ENDIF TOPS-10
+.C 1;COMM
+.C 1;COMM
+.C 1;IF TOPS-20
+.C 1;IF CBL-68
+_@SAVE LIBO12
+.C 1;ENDIF CBL-68
+.C 1;IF CBL-74
+.C 1;IF COBOL-12
+_@SAVE C74O12
+.C 1;ENDIF COBOL-12
+.C 1;IF COBOL-13
+_@SAVE COBOTS-V13
+.C 1;ENDIF COBOL-13
+.C 1;ENDIF CBL-74
+.C 1;ENDIF TOPS-20
+.BR
+.C 1;ENDIF NOAPC12
+.C 1;IF APC12
+.LE;Use the DEC Autopatch utilities to patch your COBOL.
+.C 1;IF TOPS-10
+You should be logged into the main autopatching directory, PAT:
+(default DSKP:[7,6]).
+.C 1;ENDIF TOPS-10
+.C 1;IF TOPS-20
+.LE;If your main autopatching directory, PAT:, is not the default
+(AP20:<AUTOPATCH>), define PAT: as whatever your main patching
+directory is in your LOGIN.CMD and BATCH.CMD files before proceeding.
+.C 1;ENDIF TOPS-20
+.LE;Confirm that the following files are on disk:
+.SK 1
+DIS:CBLIO.MAC
+.BR
+DIS:COBFUN.MAC
+.BR
+.C 1;IF CBL-68
+PAT:LIBOL.REL
+.BR
+PAT:LIBSHR.REL
+.BR
+.C 1;ENDIF CBL-68
+.C 1;IF CBL-74
+PAT:C74LIB.REL
+.BR
+PAT:C74SHR.REL
+.BR
+.C 1;ENDIF CBL-74
+PAT:*.UNV
+.BR
+.LE;Restore the following files to PAT: from the 1022 distribution tape:
+.SK 1
+CBLIO.12B
+.BR
+CBLIO.C12
+.BR
+CBLIO.M12
+.BR
+COBFUN.12B
+.BR
+COBFUN.C12
+.BR
+COBFUN.M12
+.BR
+FT22.MAC
+.BR
+.LE;Issue the following command:
+.SK 1
+.C 1;IF TOPS-10
+.C 1;IF CBL-68
+_.SUBMIT LIBOL.CT1/TAG:C68/TIME:1:00:00
+.C 1;ENDIF CBL-68
+.C 1;IF CBL-74
+_.SUBMIT LIBOL.CT1/TAG:C74/TIME:1:00:00
+.C 1;ENDIF CBL-74
+.C 1;ENDIF TOPS-10
+.C 1;IF TOPS-20
+.C 1;IF CBL-68
+_@SUBMIT LIBOL.CT2/TAG:C68/TIME:1:00:00
+.C 1;ENDIF CBL-68
+.C 1;IF CBL-74
+_@SUBMIT LIBOL.CT2/TAG:C74/TIME:1:00:00
+.C 1;ENDIF CBL-74
+.C 1;ENDIF TOPS-20
+.LE;When the batch job has finished, type out the file LIBOL.LOG to
+confirm that the job completed successfully.
+.LE;Assuming that the job completed successfully, your new LIBOL is
+.C 1;IF CBL-68
+INS:LIBO12.EXE.  Copy this file to SYS:LIBO12.EXE.
+.C 1;ENDIF CBL-68
+.C 1;IF CBL-74
+INS:C74O12.EXE.  Copy this file to SYS:C74O12.EXE.
+.C 1;ENDIF CBL-74
+.C 1;IF TOPS-10
+.LE;Log out of the autopatch directory and log into your main
+directory.
+.C 1;ENDIF TOPS-10
+.C 1;ENDIF APC12
+.C 1;COMM
+.C 1;COMM
+.C 1;ENDIF SH-LBL
+.C 1;COM
+.C 1;COM Now, create a 1022 OTS
+.C 1;COM Under TOPS-20, the COBOL version makes a difference
+.C 1;COM
+.C 1;COM
+.C 1;COM GENERATE AN OTS COMBINING 1022 AND LIBOL
+.C 1;COM
+.C 1;IF TOPS-10
+.C 1;OR COBOL-11
+.LE;Create the object  time system and associate it with the appropriate
+host language call with the 1022SA OTS command.
+You must build a COBOL operation time system for each version of COBOL
+your site is running with the 1022SA program.
+The file named with "/CBL"
+is the default COBOL called by DBCBL.
+.C 1;IF COBOL-12
+ In the following example 1022C2 becomes the default.
+ It can be called with DBC68. DBC74 calls 1022C4. For example:
+.SK 1
+.C 1;IF TOPS-10
+_.RUN 1022SA
+.C 1;ENDIF
+.C 1;IF TOPS-20
+_@RUN 1022SA
+.C 1;ENDIF
+.BR
+*OTS 1022C2.EXE=LIBO12.EXE/CBL
+.BR
+*OTS 1022C4.EXE=C74O12.EXE/C74
+.BR
+*INFORM HR1022.REL
+.BR
+######^&.\&
+.BR
+######^&.\&
+.BR
+######^&.\&
+.BR
+######^&.\&
+.BR
+COBOL-68 RUNTIME SYSTEM IS SYS:1022D.EXE, CHANGE? Y
+.BR
+SYS:1022C2.EXE
+.BR
+######^&.\&
+.BR
+######^&.\&
+.SK 1
+The last step associates 1022C2 with DBC68 (request explicitly for
+COBOL-68).
+.C 1;ENDIF COBOL-12
+.C 1;IF COBOL-11
+In the following example 1022C1 becomes the default.
+It can be called with DBC68. DBC74 calls 1022C4. For example:
+.SK 1
+.C 1;IF TOPS-10
+_.RUN 1022SA
+.C 1;ENDIF
+.C 1;IF TOPS-20
+_@RUN 1022SA
+.C 1;ENDIF
+.BR
+*OTS 1022C1.EXE=LIBO11.EXE/CBL
+.BR
+*OTS 1022C4.EXE=C74O11.EXE/C74
+.BR
+*INFORM HR1022.REL
+.BR
+######^&.\&
+.BR
+######^&.\&
+.BR
+######^&.\&
+.BR
+######^&.\&
+.BR
+COBOL-68 RUNTIME SYSTEM IS SYS:1022D.EXE, CHANGE? Y
+.BR
+SYS:1022C1.EXE
+.BR
+######^&.\&
+.BR
+######^&.\&
+.SK 1
+The last step associates 1022C1 with DBC68 (request explicitly for
+COBOL-68).
+.C 1;ENDIF COBOL-11
+.LE;Finally, copy the version of COBOL from your work area to the system.
+Replace n with the number from the OTS file you have just created:
+.SK 1
+.C 1;IF TOPS-10
+_.COPY SYS:1022Cn.EXE<155>=1022Cn.EXE
+.C 1;ENDIF TOPS-10
+.C 1;IF TOPS-20
+_@COPY 1022Cn.EXE (TO) SYS:1022Cn.EXE;P775252
+.C 1;ENDIF TOPS-20
+.BR
+.C 1;ENDIF TOPS-10 OR COBOL-11
+.C 1;COM
+.C 1;COM (STILL UNDER COBOL CONDITIONAL)
+.C 1;COM
+.C 1;IF COBOL-12
+.C 1;OR COBOL-13
+.C 1;AN TOPS-20
+.LE;Create the object time system.
+.C 1;IF TOPS-20
+.SK 1
+Prior to version 115, the COBOL runtime system was called 1022R, and began
+at page 530. In version 115, the runtime system was moved down to page
+512, and renamed 1022C to avoid confusion with older programs.  In version
+116B, the runtime system has been renamed 1022D and has been moved to
+begin at page 500.  To change
+existing COBOL programs to use the new 1022D rather than 1022R or 1022C, 
+you may
+reload the programs with the new HR system, or you may use the program
+SETORG.EXE to patch them directly.  
+.SK 1
+COBOL programs loaded under pre-116B versions of System 1022 must either be
+reloaded with 116B or must be modified by the SETORG program if they are to
+run under version 116B without producing illegal memory references or error
+messages.
+.SK 1
+The SETORG program has two commands and two subcommands:
+.SK 1
+_@RUN SETORG
+.SK 1;.lm 42;.i -37;SETORG>PATCH filespec,_._._.,filespec,##where the filespec
+ names the files to be modified.  The default extension is EXE.
+.SK 1;.i -36;>>ORG origin#######################where the origin is the HR1022
+ origin.  The default is 512, but should be entered here as 500 to ensure
+ compatibility with version 116B.
+.SK 1;.i -36;>>NAME#filename#####################where the filename is the 1022
+ high segment.  The default is 1022C, but as of version 116B, the user should
+ explicitly give the filename as 1022D.
+.SK 1;.i -36;SETORG> QUIT########################where QUIT exits SETORG.
+.ELS
+.lm 0
+.BR
+.C 1;ENDIF TOPS-20
+
+A copy of 1022D is provided on the tape. If, for some reason, you
+need to set up another one, the procedure is:
+.SK 1
+.LS
+_@RUN 1022SA
+.BR
+_*OTS 1022D.EXE=/ORG:500/CBL
+.LE;Now, copy 1022D over to the system area:
+.SK 1
+_@COPY (FROM) 1022D.EXE (TO) SYS:1022D.EXE;P775252
+.BR
+.C 1;ENDIF (COBOL-12 OR COBOL-13) AND TOPS-20
+.C 1;COM
+.C 1;COM NOW, TELL SITES THAT AREN'T INSTALLING OUR PATCHES
+.C 1;COM HOW TO AVOID THE WARNING MESSAGE
+.C 1;COM
+.C 1;IF DEC-LBL
+.LE;Since you are not installing the Software House patches to LIBOL, you will
+probably want to turn off the error message from DBCBL complaining about the
+unmodified LIBOL. This is done as follows:
+.SK 1
+.C 1;IF TOPS-10
+_.RUN 1022SA
+.BR
+*FIX <ots name> USING NOMSG6
+.BR
+*QUIT
+.BR
+_.R MAKLIB
+.BR
+*HL1022.REL=HL1022.REL,NOMSG6.MAK/FIX
+.BR
+.C 1;ENDIF TOPS-10
+.C 1;IF TOPS-20
+@RUN 1022SA
+.BR
+*FIX <ots name> USING NOMSG6
+.BR
+*QUIT
+.BR
+@MAKLIB
+.BR
+*HL1022.REL=HL1022.REL,NOMSG6.MAK/FIX
+.BR
+.C 1;ENDIF TOPS-20
+.C 1;ENDIF DEC-LBL
+.ELS
+.LM 5
+You can repeat this process of COBOL installation
+for each version of COBOL you wish to
+run with 1022. And you can install different versions or make
+a different version the default on different devices (SYS:, NEW:, OLD:).
+.SK 1
+You can check that the versions of COBOL are properly installed with
+the 1022SA INFO command:
+.SK 1;.LM 10
+.C 1;IF TOPS-10
+_.RUN 1022SA
+.C 1;ENDIF TOPS-10
+.C 1;IF TOPS-20
+_@RUN 1022SA
+.C 1;ENDIF TOPS-20
+.BR
+_*INFO HR1022.REL
+.SK 1;.LM 5
+This will list the COBOL files installed with 1022.
+.SK 1
+You have now installed COBOL.
+.C 1;ENDIF COBOL
+.C 1;COM
+.C 1;COM NOW, ON TO MACRO
+.C 1;COM
+.C 1;IF MACRO
+.C;M  A  C  R  O
+.b
+Software House distributes a 1022/MACRO object time system called
+1022M.EXE. If 1022M.EXE is present, proceed immediately to the "Designate
+DBA" section of the DBA Manual.
+.b
+If 1022M.EXE is missing or if you choose to rebuild it, use
+the following procedure.
+.test page 5
+.LM 15;.b 1;.ts 10,30
+.C 1;IF TOPS-10
+_.RUN 1022SA
+.C 1;ENDIF
+.C 1;IF TOPS-20
+@RUN 1022SA
+.C 1;ENDIF
+.SK 1
+*OTS 1022M.EXE=/ORG:400/MAC
+.LM 5;.b 1;.ts
+.C 1;ENDIF MACRO
+.C 1;Q: Do you want to install any more languages?
+.C 1;A: MORE    |YES     |
+.C 1;A: NO-MORE |NO      |
+.C 1;IF MORE
+.PAGE
+.C 1;OF ALL
+.C 1;RD INSTAL.DOC
+.C 1;ENDIF MORE
+    WLs"®

@@ -1,0 +1,36 @@
+TOPS-10
+*******
+
+Generally, when building a 1022 high segment for the HR system, 1022SA
+adds routines from HL1022.REL onto the top of the existing high
+segment (e.g., FOROTS or LIBO12), producing the 1022 version of that
+high segment (1022T or 1022C2).  If this were done to FOROT6, as DEC
+distributes it, the 1022 routines would occupy the area that DEC has
+reserved for FOROT6's impure storage.  Since TOPS-10 high segments
+must be contiguous, it isn't possible to move 1022's routines beyond
+the FOROT6 impure area;  and putting 1022's routines into address
+space below FOROT6 confuses Fortran.  Instead, we move the FOROT6
+impure area, to make room for 1022's routines.  This is done
+by relinking the FOROT6 REL files with a gap between the top
+of the code (F.EES) and the start of the impure storage (F.DATA).
+For 1022 version 115A, this gap must be at least 48 pages.
+
+The loading procedure contains a sequence "GET FOROT6", "SAVE FOROT6".
+This is done to set the left half of word 400003 to the high segment
+length.  LINK apparently doesn't set this when loading into PSECT's.
+1022SA uses this word to determine where to start loading the code
+from HL1022.REL when it creates 1022T6.
+
+TOPS-20
+*******
+
+It is possible to load a 1022 high segment for TOPS-20 similar to the one
+used by TOPS-10;  however, since TOPS-20 high segments needn't be contiguous,
+it isn't necessary.  The 1022T6 high segment is loaded between page 400 and
+DEC's FOROT6.
+
+If your site loads FOROT6 at some other location, you may need to relocate
+1022T6 so that 1022 doesn't overlap FOROT6 or the impure area.  Also, the
+impure area must be above the top of the stand-alone system (QN1500.EXE),
+in order for DBEXEC to work properly.
+

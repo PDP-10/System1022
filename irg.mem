@@ -1,0 +1,2142 @@
+
+
+
+             THE SYSTEM 1022 INTERACTIVE REPORT GENERATOR
+
+
+
+The System 1022 Interactive Report Generator is a utility which allows
+the non-programmer to generate System 1022 reports.  The report can be
+as simple or as complicated as necessary for the user's needs, yet the
+user  does  not  have  to  contend  with  many of the minor details of
+standard report design;  the program does that for him.
+
+The format of the  program  is  interactive.   The  user  responds  to
+questions  asked  by  the  program.   Each question requires a simple,
+direct answer, and  questions  are  grouped  together  when  they  are
+related.   When  the user has finished the input for one line, he must
+type a carriage-return, <CR>.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+The Interactive Report  Generator  is  one  of  a  series  of  utility
+programs  designed  to  supplement the Software House System 1022 Data
+Base Management System.  It is provided free to System 1022  users  in
+source   language   form   for   purposes   of  user  maintenance  and
+modification.  
+                                                                Page 2
+
+
+The first question is
+
+
+             INPUT FROM A LOG FILE?  (Y/<CR>=N/FILENAME)
+
+
+This establishes the source of input for the  program.   If  the  user
+chooses  to  be  asked questions and respond to them via the teletype,
+i.e.  interactively, he answers 'N' or merely <CR> to  this  question.
+If, however, he wishes to run from an existing log file, he can either
+input the log file name here, or answer 'Y' and then the log file name
+in response to the next question.  
+
+A log file is a duplicate of the interaction that occurs  between  the
+program  and  the  user,  and  it  is  capable of being read in by the
+program as the source of input.  The user will never have to repeat an
+interaction  once  finished - he can tell the program to run from this
+log file.  Or, if minor changes must be made, they can be made to  the
+log  file  instead  of repeating the entire interactive sequence.  Log
+files  are  generated  automatically  while  the  program  is  running
+interactively.   They  are called "NAME.DMR", where "NAME" is the file
+name of the report control file being generated.  When running from  a
+log  file,  any  errors  are  fatal  and  halt execution.  The program
+announces this fact, plus the type and line number of the error in the
+log  file.   This error must be corrected before the log file will run
+completely and correctly through the program.
+
+
+
+EXAMPLE:_______
+
+
+INPUT FROM A LOG FILE?  (Y/<CR>=N/FILENAME) <CR>                                            ____
+
+
+notifies the program that it is to go to interactive mode.
+
+
+INPUT FROM A LOG FILE?  (Y/<CR>=N/FILENAME) CROSS.DMR <CR>                                            _________ ____
+
+
+notifies the  program  that  its  input  is  to  come  from  the  file
+"CROSS.DMR".   since  all  log  files generated automatically have the
+extension ".DMR", the user can omit this  with  no  loss  in  clarity.
+Extensions other than ".DMR" must be specified.
+                                                                Page 3
+
+
+                 SPECIFY NAME OF REPORT CONTROL FILE:
+
+
+The user types a file name, with a name not longer than  six  letters,
+and  optionally  a  period  and  an  extension  of not more than three
+letters.  The report control file created by the program will exist in
+this  file  name.  Since the program also creates a log file with this
+name, the user is not permitted to input an extension of ".DMR" here -
+this  would  result  in  the  program  attempting  to place the report
+control file and the log file into the same file.
+
+
+EXAMPLE:_______
+
+
+SPECIFY NAME OF REPORT CONTROL FILE:  REPORT.DMC <CR>                                      __________ ____
+
+
+will cause  the  report  control  file  to  be  created  in  the  file
+"REPORT.DMC",   and   a  corresponding  log  file  to  be  created  in
+"REPORT.DMR".  If the extension is left off, the default will be .DMC.
+                                                                Page 4
+
+
+                 --- OUTPUT MEDIUM SPECIFICATIONS ---
+
+
+The format of the output medium is determined at this  time.   Program
+asks 
+
+
+SPECIFY NAME OF REPORT OUTPUT FILE:
+
+
+POSSIBLE RESPONSES:   TTY:  or  FILENAME  or  <CR>                      ____      ________      ____
+
+
+     1) "TTY:"
+
+          A) 'INIT 1 TTY:.' command placed in report control file.
+          B) pagelength set to 60, linewidth to 72, automatically.
+          C) program asks if these are suitable dimensions with
+
+               STANDARD PAGE SIZE CONVENTIONS?  (<CR>=Y/N)
+
+               1) if user responds 'Y' or <CR>, go to 3.
+               2) if user responds 'N', program asks
+
+                    PAGE LENGTH?
+                    LINE WIDTH?
+
+               After inputting answers, go to 3.
+
+     2) <CR> or "FILENAME"
+
+          A) program asks
+
+               REPORT DESTINATION TTY, LPT, OR OTHER?  (T/L/O)
+
+                    1) 'T' - sets pagelength to 60, linewidth  to  72,
+                    and goes to 1.C above.
+                    2) 'L' - sets pagelength to 60, linewidth to  132,
+                    and goes to 1.C above.
+                    3) 'O' - goes to ask questions in 1.C.2 above.
+
+     3) Continue on to next question asked by program.
+
+
+
+EXAMPLE:________
+
+
+SPECIFY NAME OF REPORT OUTPUT FILE:  <CR>                                     ____
+
+REPORT DESTINATION TTY, LPT, OR OTHER?  (T/L/O) O <CR>                                                _ ____
+
+     PAGE LENGTH?  37 <CR>                   __ ____
+
+     LINE WIDTH?  66 <CR>                  __ ____
+                                                                Page 5
+
+
+This causes no 'INIT ...' command in the report control file, and sets
+the linewidth to 66 and the pagelength to 37.
+
+
+SPECIFY NAME OF REPORT OUTPUT FILE:  GET.OUT <CR>                                     _______ ____
+
+REPORT DESTINATION TTY, LPT, OR OTHER?  (T/L/O) L <CR>                                                _ ____
+
+STANDARD PAGE SIZE CONVENTIONS?  (<CR>=Y/N) <CR>                                            ____
+
+
+This would  cause  the  file  GET.OUT  to  receive  the  report,  with
+pagelength  60  and  linewidth  132,  because  it  will go to the line
+printer.
+
+
+SPECIFY NAME OF REPORT OUTPUT FILE:  TTY: <CR>                                     ____ ____
+
+STANDARD PAGE SIZE CONVENTIONS?  (<CR>=Y/N) N <CR>                                            _ ____
+
+     PAGE LENGTH?  75 <CR>                   __ ____
+
+     LINE WIDTH?  80 <CR>                  __ ____
+
+
+This would cause the command 'INIT 1  TTY:.'  in  the  report  control
+file, and the pagelength to be 75, the linewidth 80.
+                                                                Page 6
+
+
+                  WHAT IS THE NAME OF THE DATABASE?
+
+
+Here the user inputs the name of the data  base  that  he  wishes  the
+report  control file to open and operate on.  This file name is placed
+in the "OPEN ..." command in the report control file.  Answering  this
+question  with  a  <CR> will cause no 'OPEN ...' command in the report
+control file.
+
+
+EXAMPLE:_______
+
+
+WHAT IS THE NAME OF THE DATABASE?  SYS:DB1.DMS[101,23] <CR>                                   ___________________ ____
+
+
+will open the file "SYS:DB1.DMS[101,23]" for the report control file.
+
+
+WHAT IS THE NAME OF THE DATABASE?  <CR>                                   ____
+
+
+will cause no 'OPEN ...' command in the report control file.
+                                                                Page 7
+
+
+             WANT TO 'FIND' ANYTHING?  (Y/<CR>=N/STRING)
+
+
+If the user desires a "FIND ..." command in the report  control  file,
+he  should either input the find string now, or type 'Y' and input the
+string in response to the following question.  If he does not  want  a
+"FIND  ..." command in the report control file, he should respond with
+a 'N' or <CR>.  if no "FIND  ..."  command  is  included,  the  report
+control file will run on any group of records selected at that time.
+
+
+EXAMPLE:_______
+
+
+WANT TO 'FIND' ANYTHING?  (Y/<CR>=N/STRING) ALL <CR>                                            ___ ____
+
+
+will cause the command "FIND ALL." to appear  in  the  report  control
+file.
+
+
+WANT TO 'FIND' ANYTHING?  (Y/<CR>=N/STRING) <CR>                                            ____
+
+
+will cause no "FIND ..." command to be placed in  the  report  control
+file.
+                                                                Page 8
+
+
+             IS THE DATA BASE ALREADY SORTED?  (Y/<CR>=N)
+
+
+The user should respond with either <CR> or 'N' if the  data  base  is
+not,  or  'Y' if it is, sorted already.  If the user answers 'N' here,
+the report control file will contain a "SORT BY  ..."  command,  where
+...  will be the list of sort attributes he inputs next.
+
+Regardless of the answer to the above question, the  user  must  input
+his  list of sort attributes, because they will be needed later in the
+program, to drive loops in the TOTALS section of the program.
+
+To denote a DESCENDING attribute, type a  'D '  before  the  attribute
+name.
+
+
+EXAMPLE:_______
+
+
+IS THE DATA BASE ALREADY SORTED?  (Y/<CR>=N) Y <CR>                                             _ ____
+
+ENTER SORT ORDER USED IN THE DATA BASE:
+
+     (<CR> TO END)
+
+     * HOUSE <CR>       _____ ____
+
+     * D FLOOR <CR>       _ _____ ____
+
+     * ROOMNUM <CR>       _______ ____
+
+     * <CR>       ____
+
+
+will  name  "HOUSE",  "FLOOR",  and  "ROOMNUM"  as  the   three   sort
+attributes,  in  order  of  outermost  to  innermost.  "FLOOR" will be
+sorted in DESCENDING order.
+
+Had the user answered 'N'  to  the  "ALREADY  SORTED?"  question,  the
+program  would have placed the following command in the report control
+file:
+
+
+               SORT BY HOUSE FLOOR DESCENDING ROOMNUM.
+                                                                Page 9
+
+
+           ENTER TEXT FOR COVER PAGE, TERMINATE WITH "DONE"
+
+
+Any text that the user wishes to appear  on  the  front  page  of  the
+output  can be entered here, line by line, ended by typing a "DONE" on
+its own line.  The heading and footing  will  be  suppressed  on  this
+front  page.  Blank lines input here will appear as blank lines in the
+body of text.
+
+
+EXAMPLE:_______
+
+
+ENTER TEXT FOR COVER PAGE, TERMINATE WITH "DONE"
+
+     * <CR>       ____
+
+     * FIRST LINE OF THE TEXT TO APPEAR       _____ ____ __ ___ ____ __ ______
+
+     * <CR>       ____
+
+     * <CR>       ____
+
+     * ON THE FRONT PAGE.       __ ___ _____ _____
+
+     * <CR>       ____
+
+     * <CR>       ____
+
+     * DONE <CR>        ____ ____
+
+
+The following text lines
+
+                             [BLANK LINE]
+                  "FIRST LINE OF THE TEXT TO APPEAR"
+                             [BLANK LINE]
+                             [BLANK LINE]
+                         "ON THE FRONT PAGE"
+                             [BLANK LINE]
+                             [BLANK LINE]
+
+as a body, will appear centered vertically  and  horizontally  on  the
+front page.
+                                                               Page 10
+
+
+            ENTER TEXT FOR HEADING, TERMINATE WITH "DONE"
+
+
+This is identical to the previous  question  in  all  its  inputs  and
+outputs,  except  that the text the user types in here will be printed
+out on the top of every page, but not on the front page.
+                                                               Page 11
+
+
+                     WANT A FOOTING?  (Y/<CR>=N)
+
+
+Here the user can input any text he likes  for  the  page  footing  by
+answering this question with a 'Y'.  Answering 'N' or <CR> means there
+will be no "FOOTING ..." command in the report control file.
+
+
+EXAMPLE:_______
+
+
+WANT A FOOTING?  (Y/<CR>=N) Y <CR>                            _ ____
+
+     HOW MANY LINES IN IT?  4 <CR>                            _ ____
+
+     WANT TEXT?  (Y/<CR>=N/TEXT) FOOTING-TEXT <CR>                                 ____________ ____
+
+
+will cause the command FOOTING 4 PRINT FORMAT "FOOTING-TEXT" END.   to
+appear as a command in the report control file.
+                                                               Page 12
+
+
+                         -- PAGE HEADINGS --
+
+
+Four questions are now asked to determine  whether  or  not  the  user
+wants  the current page number, date, and time to appear at the top of
+every page, and how many blank lines he wants after the  field  titles
+in  the  heading  of  every  page.   If the user wants the date, it is
+printed at the left-hand corner;  if he  wants  the  page  number,  it
+appears  in the middle of the same line;  and if he wants the time, it
+appears on the right-hand side of the same line.  Specifying all three
+would result in the following line appearing at the top of every page:
+
+MARCH 14, 1975                  PAGE ...                11:45:13
+
+Answering the question STANDARD PAGE HEADINGS?  (<CR>=Y/N) with a  'N'
+will  cause  the  individual questions listed below to appear, whereas
+answering 'Y' or <CR> will set all the defaults to 'Y'.   The  default
+number of blank lines after the field titles is 2.
+
+
+
+EXAMPLE:_______
+
+
+STANDARD PAGE HEADINGS?  (<CR>=Y/N) N <CR>                                    _ ____
+
+     WANT PAGE NUMBERS?  (<CR>=Y/N) <CR>                                    ____
+
+     WANT DATE?  (<CR>=Y/N) N <CR>                            _ ____
+
+     WANT TIME?  (<CR>=Y/N) <CR>                            ____
+
+     NUMBER OF BLANK LINES AFTER TITLES?  3 <CR>                                          _ ____
+
+
+would produce the following at the top of every page:
+
+                                PAGE ...                13:05:46
+
+
+and three blank lines  would  follow  the  underlining  of  the  field
+titles, or the above line, should there be no field titles.
+                                                               Page 13
+
+
+                             -- FIELDS --
+
+
+The user must now input all the information the program will need  for
+the fields.  A field is a vertical band on the page.  It may be either
+a text field or an expression field.  Inside a band, the user may have
+a  title  at  the top of the page, any number of entry lines having an
+item in that band, and totals of the contents of  the  band,  at  some
+point,  if  he  wishes.  A field merely acts to keep the format of the
+report columnar.
+
+The user is first asked what type of field he wants with the question
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  
+
+
+POSSIBLE RESPONSES:________ __________
+
+
+     <CR> - ends the input of fields.
+
+
+     "TEXT" - must be in double-quotes.  This text string  is  printed
+     out  in  this  field  at  every  detail line.  Main use is to put
+     spaces between adjacent  fields.   Another  use  is  to  place  a
+     dollar-sign  against  the  left-hand  side  of  a  number  in the
+     following field.  The user must be careful  that  the  number  of
+     characters  is  less  than  or equal to the field width, which he
+     must input at the next question.
+
+
+     EXPRESSION - The value of this  expression  will  be  printed  at
+     every detail line.
+
+     Next, the user can input any special format  he  needs  for  this
+     expression.   The  default  format is always "Gxxx", where xxx is
+     the field width.  If the user wants something else,  he  has  the
+     chance to input it here.  a sample is
+
+          SPECIAL FORMAT?  (Y/<CR>=N/FORMAT) D3P99999XXXXX <CR>                                             _____________ ____
+
+     which will cause a date of the form "11/15" to be printed in this
+     field.
+
+     Field titles were mentioned above.  The user now can input a text
+     string  which  he wants to appear at the top of the page, aligned
+     over this field, by answering the following question:
+
+          FIELD TITLE?  (Y/<CR>=N/TITLE) MONETARY RESOURCES <CR>                                         ________ _________ ____
+
+     A sample input is demonstrated above.  Since a title  may  easily
+     be  longer  than  the  field width, the title is "scrolled", i.e.
+     broken up on different lines, such that each line fits within the
+     field width.  The algorithm the program uses for the scrolling is
+     as follows:
+                                                               Page 14
+
+
+          first, fit as many whole words as possible onto the  current
+          line;   remove  these  words  from  the  rest  of the title,
+          leaving only what is left to be processed;   continue  until
+          the  title has been totally processed.  If, at any time, you
+          have a word too long to fit on one line, you  break  it  and
+          hyphenate  it on the first line, and continue it on the next
+          one.
+
+
+     Thus, if the field length were 19  or  wider,  the  entire  title
+     "MONETARY  RESOURCES"  would  be on one line.  If the field width
+     were between 18 and 10, the title would be broken evenly up  into
+     two  lines, one word per line.  If the field width were less than
+     10, each word would be broken up, and the title would  take  more
+     than two lines, and the words would be hyphenated.
+
+     If the user wants the title of the field to be the  same  as  the
+     expression, he merely has to answer this question with a 'Y', and
+     the program will ask the following question:
+
+               INPUT TITLE (<CR> = EXPRESSION)
+
+     all he has to do then is answer <CR> to this question.
+
+     The user can tell the program where he wants his  titles  divided
+     for  different lines by inserting a slash (/) in the title string
+     wherever he wants a line break.  The way to  indicate  a  literal
+     slash  in  the  title,  since  the  slash  is  used  as a control
+     character and is therefore ignored as text, is  the  construction
+     '^/'.   The  up-arrow  is  a literal flag that protects the slash
+     following  it  from  interpretation  as   a   scrolling   control
+     character.  The up-arrow is of course ignored as text.
+
+     Multiple slashes willte blank lines to appear in the title.
+
+     An automatic control slash is appended to the end of  the  title,
+     so  the  user  does  not  have  to add one to show the end of the
+     title.  If he does add one, the result will appear to be multiple
+     slashes.
+
+     One final note - the program does not allow two titles to butt up
+     against  each  other,  so it automatically leaves one space after
+     each segment of any title.  What this means is that a title of 10
+     characters  will  not fit totally into a field with width 10 - it
+     will be hyphenated and continued to the next line, to prevent  it
+     from running into a title that may possibly be in the next field.
+     So when controlling his own line breaks, the user must take  care
+     never  to input more then (field width - 1) characters before the
+     next control slash, else the rest of the title from that line  on
+     will be truncated and lost.
+
+     The final question the  program  asks  is  whether  or  not  this
+     expression  is  totallable,  a piece of information necessary for
+     the TOTALS section of the program later on.
+                                                               Page 15
+
+
+     The next page contains a sample series of  fields  and  how  they
+     would look on a sample output page.
+                                                               Page 16
+
+
+FIELD #  1:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  LNAME <CR>                                          _____ ____
+
+     FIELD WIDTH -- 6 <CR>                    _ ____
+
+     SPECIAL FORMAT?  (Y/<CR>=N/FORMAT) <CR>                                        ____
+
+     FIELD TITLE?  (Y/<CR>=N/TITLE) LAST NAME <CR>                                    ____ ____ ____
+
+     TOTALLABLE?  (Y/<CR>=N) <CR>                             ____
+
+FIELD #  2:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  "----" <CR>                                          ______ ____
+
+     FIELD WIDTH?  4 <CR>                   _ ____
+
+FIELD #  3:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  INCOME <CR>                                          ______ ____
+
+     FIELD WIDTH -- 6 <CR>                    _ ____
+
+     SPECIAL FORMAT?  (Y/<CR>=N/FORMAT) I6 <CR>                                        __ ____
+
+     FIELD TITLE?  (Y/<CR>=N/TITLE) Y <CR>                                    _ ____
+
+          INPUT TITLE (<CR> = EXPRESSION) <CR>                                          ____
+
+     TOTALLABLE?  (Y/<CR>=N) Y <CR>                             _ ____
+
+FIELD #  4:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  <CR>                                          ____
+
+
+
+
+
+The above series would print out as something like the following page:
+                                                               Page 17
+
+
+LAST      INCO-
+NAME      ME
+----      -----
+
+
+
+.
+.
+.
+
+
+
+BROWN ----100000
+JONES ----120000
+SMITH ---- 40000
+HALL  ---- 15000
+
+
+
+.
+.
+.
+                                                               Page 18
+
+
+                 SUMMARY REPORTING ONLY?  (Y/<CR>=N)
+
+
+A 'Y' answer to this question will cause no detail lines to be printed
+out  in the report output.  Only TOTALS of any sort will be output.  A
+'N' or <CR> answer to this will cause the detail lines to  be  printed
+out.
+                                                               Page 19
+
+
+           TITLES ON ATTRIBUTE CHANGES?  (Y/N/<CR>=DEFAULT)
+
+
+This command enables  text  to  be  printed  when  a  sort  expression
+changes,  notifying the user of this change, and if requested, its new
+value.
+
+
+POSSIBLE RESPONSES:________ _________
+
+
+     'N' - No titles printed when a sort expression changes value.
+     'Y' - User can have his own titles printed.  He  inputs  them  in
+     response  to  a  further  series  of  questions,  driven  by  the
+     sortlist.
+     <CR> - Default case.  Program generates a  title  at  every  sort
+     expression value change, also printing the new value.
+
+
+EXAMPLE:_______
+
+
+TITLES ON ATTRIBUTE CHANGES?  (Y/N/<CR>=DEFAULT) <CR>                                                 ____
+
+If your sort list were COUNTRY STATE CITY, the program would  generate
+the following commands in the report control file:
+
+ON CHANGE COUNTRY PRINT COUNTRY
+     FORMAT "     COUNTRY:  " G /// END.
+ON CHANGE STATE PRINT STATE
+     FORMAT "          STATE:  " G // END.
+ON CHANGE CITY PRINT CITY
+     FORMAT "               CITY:  " G / END.
+
+
+The general default case format is:
+
+ON CHANGE [sort expression] PRINT [sort expression]
+     FORMAT "[AAA][sort expression]:  " G BBB END.
+
+where AAA stands for five spaces indentation per sort level,  and  BBB
+stands for one slash for each sort level above the PRINT command.
+
+
+                                                               Page 20
+
+
+If the user inputs a 'Y' to the initial question, a  dialogue  similar
+to the following will ensue:
+
+
+     ON CHANGE OF 'COUNTRY'?  (Y/N/<CR>=DEFAULT) Y <CR>                                                 _ ____
+
+          INPUT SUBTITLE EXPRESSION:  COUNTRY <CR>                                      _______ ____
+
+          INPUT FORMAT:  (TEXT IN "") "COUNTRY NOW IS:  " G <CR>                                      ________ ___ ___  _ _ ____
+
+     ON CHANGE OF 'STATE'?  (Y/N/<CR>=DEFAULT) N <CR>                                               _ ____
+
+     ON CHANGE OF 'CITY'?  (Y/N/<CR>=DEFAULT) <CR>                                              ____
+
+
+which will cause the following to appear in the report control file:
+
+ON CHANGE COUNTRY PRINT COUNTRY
+     FORMAT "COUNTRY NOW IS:  " G END.
+ON CHANGE CITY PRINT CITY
+     FORMAT "               CITY:  " G / END.
+                                                               Page 21
+
+
+           TOTALS ON ATTRIBUTE CHANGES?  (Y/N/<CR>=DEFAULT)
+
+
+This command enables totals of totallable fields to be printed  within
+that same field, keeping everything columnar.  Totals can be generated
+at any sort level,  of  any  totallable  expression  -  the  user  has
+complete  flexibility.   Plus,  if  there  are  any  totals  he cannot
+generate within this framework, he has the  SUPERTOTALS  option  later
+on.
+
+
+POSSIBLE RESPONSES:________ _________
+
+
+     'N' - No totals of any kind are to be printed.
+     'Y' - User can have his choice of totals, by answering a  further
+     series of questions.
+     <CR>  -  Default  case.   Program  prints  the  total  of   every
+     totallable expression at every sort level.
+
+
+EXAMPLE:_______
+
+
+TOTALS ON ATTRIBUTE CHANGES?  (Y/N/<CR>=DEFAULT) <CR>                                                 ____
+
+If your  sort  list  were  COUNTRY  STATE  CITY  and  your  totallable
+expressions  were INCOME SALARY BONUS, then the program might generate
+the following in the report control file:
+
+ON CHANGE CITY PRINT TOT INCOME TOT SALARY TOT BONUS
+     FORMAT / "TOTAL BY CITY:  " G10 G8 G8 / END.
+ON CHANGE STATE PRINT TOT INCOME TOT SALARY TOT BONUS
+     FORMAT / "TOTAL BY STATE:  " G10 G8 G8 // END.
+ON CHANGE COUNTRY PRINT TOT INCOME TOT SALARY TOT BONUS
+     FORMAT / "TOTAL BY COUNTRY:  " G10 G8 G8 /// END.
+
+
+The general default case format is:
+
+ON CHANGE [sort expression] PRINT TOT ...  TOT ...  TOT ...
+     FORMAT / "TOTAL BY [sort expression]:  " GXXX GXXX ...  BBB END.
+
+where all totallable expressions are mentioned  in  the  ...   on  the
+first line, and a matching format "GXXX" on the second line, where XXX
+is the field width of that expression.  BBB represents one  slash  for
+every sort level below the PRINT command.
+                                                               Page 22
+
+
+If the user inputs a 'Y' to the initial question, a  dialogue  similar
+to the following will occur:
+
+
+     ON CHANGE 'CITY'?  (Y/N/<CR>=DEFAULT) N <CR>                                           _ ____
+
+     ON CHANGE 'STATE'?  (Y/N/<CR>=DEFAULT) <CR>                                            ____
+
+     ON CHANGE 'COUNTRY'?  (Y/N/<CR>=DEFAULT) Y <CR>                                              _ ____
+
+          WANT 'INCOME' TOTALLED?  (Y/<CR>=N) Y <CR>                                              _ ____
+
+               SPECIAL FORMAT?  (Y/<CR>=N/FORMAT) I10 <CR>                                                  ___ ____
+
+          WANT 'SALARY' TOTALLED?  (Y/<CR>=N) <CR>                                              ____
+
+          WANT 'BONUS' TOTALLED?  (Y/<CR>=N) Y <CR>                                             _ ____
+
+               SPECIAL FORMAT?  (Y/<CR>=N/FORMAT) <CR>                                                  ____
+
+          SPECIAL TEXT?  (Y/<CR>=N/TEXT) NO-THANK-YOU <CR>                                         ____________ ____
+
+
+which will cause the following commands to be  placed  in  the  report
+control file:
+
+
+ON CHANGE STATE PRINT TOT INCOME TOT SALARY TOT BONUS
+     FORMAT / "TOTAL BY STATE:  " G10 G8 G8 // END.
+ON CHANGE COUNTRY PRINT TOT INCOME TOT BONUS
+     FORMAT / "NO-THANK-YOU" I10 G8 /// END.
+                                                               Page 23
+
+
+                  GRAND TOTALS?  (Y/N/<CR>=DEFAULT)
+
+
+Grand totals are similar to the TOTALS  described  immediately  above,
+except  that  these  are  printed only once, at the end of the report.
+All the formats and inputs and options are the same as those described
+above.
+
+
+EXAMPLE:_______
+
+
+GRAND TOTALS?  (Y/N/<CR>=DEFAULT> <CR>                                  ____
+
+would cause the following to be placed in the report control file:
+
+ON END PRINT TOT INCOME TOT SALARY TOT BONUS
+     FORMAT / "GRAND TOTAL:  " G10 G8 G8 // END.
+
+
+and the following sequence:
+
+
+GRAND TOTALS?  (Y/N/<CR>=DEFAULT) Y <CR>                                  _ ____
+
+     GRAND TOTAL 'INCOME'?  (Y/<CR>=N) <CR>                                       ____
+
+     GRAND TOTAL 'SALARY'?  (Y/<CR>=N) Y <CR>                                       _ ____
+
+          SPECIAL FORMAT?  (Y/<CR>=N/FORMAT) F6.2 <CR>                                             ____ ____
+
+     GRAND TOTAL 'BONUS'?  (Y/<CR>=N) Y <CR>                                      _ ____
+
+          SPECIAL FORMAT?  (Y/<CR>=N/FORMAT) <CR>                                             ____
+
+     SPECIAL TEXT?  (Y/<CR>=N/TEXT) GRAND-TOTAL-TEXT <CR>                                    ________________ ____
+
+
+would cause the following to be placed in the report control file:
+
+
+ON END PRINT TOT SALARY TOT BONUS
+     FORMAT / "GRAND-TOTAL-TEXT" F6.2 G8 // END.  
+                                                               Page 24
+
+
+                    WANT SUPER TOTALS?  (Y/<CR>=N)
+
+
+The TOTALS options so  far  only  allow  the  TOT  of  an  expression.
+Furthermore,   that  which  can  be  totalled  by  these  commands  is
+restricted to totallable expressions already declared,  and  they  can
+only  be  printed  out  in  their  own fields.  The SUPERTOTALS option
+removes all limitations, by  allowing  TOT,  MEAN,  MAX,  and  MIN  of
+anything  at  all,  and  complete  flexibility in terms of positioning
+these values on the page.  The user has the SUPERTOTALS  option  after
+answering 'Y' to the "TOTALS ON ATTRIBUTE CHANGES" question, and after
+answering <CR> or 'Y' to the "GRAND TOTALS" question.
+
+
+EXAMPLE:_______
+
+
+WANT SUPER TOTALS?  (Y/<CR>=N) Y <CR>                               _ ____
+
+     EXPRESSION:  (<CR> FOR NEW LINE) TOT 1 <CR>                                      ___ _ ____
+
+          FIELD:  (<CR> FOR START/END) <CR>                                       ____
+
+               START:  3 <CR>                       _ ____
+
+               END:  15 <CR>                     __ ____
+
+          TITLE?  (Y/<CR>=N/TITLE) NUMBER OF RECORDS <CR>                                   ______ __ _______ ____
+
+          FORMAT?  (Y/<CR>=N/FORMAT) I3 <CR>                                     __ ____
+
+     EXPRESSION:  (<CR> FOR NEW LINE) <CR>                                      ____
+
+WANT ANOTHER LINE?  (Y/<CR>=N) <CR>                               ____
+
+
+The above would generate a total of the number of records operated  on
+at the time this was evaluated and printed into the report.  The field
+width was set at 13, running from the third to the fifteenth column on
+that  line.   A  title  was placed in this field, above the number and
+underlined, which read "NUMBER OF RECORDS".  The number was printed in
+I3  format.   No  further  expressions  were desired on this line (any
+number of expressions can be placed on any one line) and only one line
+of  SUPERTOTALS  was  desired  (any number of lines can be generated).
+The user must be careful that he does not overlap fields here, as  the
+program  makes  no  check  on  that.   The  user  can  also  input his
+expressions in any order he wants, regardless of  where  on  the  line
+they  are  to go - the program sorts them into the order that they are
+to appear on the line.   Also,  should  the  user  wish  to  have  any
+expressions  printed  out  within  a declared field, he can answer the
+FIELD question above with the field number he wants.
+                                                               Page 25
+
+
+A lengthier example follows:
+
+
+WANT SUPER TOTALS?  (Y/<CR>=N) Y <CR>                               _ ____
+
+SUPER TOTALS LINE #  1:
+
+     EXPRESSION:  (<CR> FOR NEW LINE) MIN SALARY <CR>                                      ___ ______ ____
+
+          FIELD:  (<CR> FOR START/END) 5 <CR>                                       _ ____
+
+          TITLE?  (Y/<CR>=N/TITLE) Y <CR>                                   _ ____
+
+               INPUT TITLE:  (<CR>=EXPRESSION) <CR>                                               ____
+
+          FORMAT?  (Y/<CR>=N/FORMAT) <CR>                                     ____
+
+     EXPRESSION:  (<CR> FOR NEW LINE) MIN BONUS <CR>                                      ___ _____ ____
+
+          FIELD:  (<CR> FOR START/END) 3 <CR>                                       _ ____
+
+          TITLE?  (Y/<CR>=N/TITLE) SMALLEST BONUS <CR>                                   ________ _____ ____
+
+          FORMAT?  (Y/<CR>=N/FORMAT) I6 <CR>                                     __ ____
+
+     EXPRESSION:  (<CR> FOR NEW LINE) <CR>                                      ____
+
+WANT ANOTHER LINE?  (Y/<CR>=N) Y <CR>                               _ ____
+
+SUPER TOTALS LINE #  2:
+
+     EXPRESSION:  (<CR> FOR NEW LINE) MAX COMMISSION <CR>                                      ___ __________ ____
+
+          FIELD:  (<CR> FOR START/END) <CR>                                       ____
+
+               START:  35 <CR>                       __ ____
+
+               END:  42 <CR>                     __ ____
+
+          TITLE?  (Y/<CR>=N/TITLE) <CR>                                   ____
+
+          FORMAT?  (Y/<CR>=N/FORMAT) <CR>                                     ____
+
+     EXPRESSION:  (<CR> FOR NEW LINE) MAX INCOME <CR>                                      ___ ______ ____
+
+          FIELD:  (<CR> FOR START/END) <CR>                                       ____
+
+               START:  20 <CR>                       __ ____
+
+               END:  27 <CR>                     __ ____
+
+          TITLE?  (Y/<CR>=N/TITLE) <CR>                                   ____
+
+          FORMAT?  (Y/<CR>=N/FORMAT) <CR>                                     ____
+                                                               Page 26
+
+
+     EXPRESSION:  (<CR> FOR NEW LINE) <CR>                                      ____
+
+WANT ANOTHER LINE?  (Y/<CR>=N) <CR>                               ____
+
+
+
+would cause the following to be generated in the report control file:
+
+
+
+ON CHANGE ...  PRINT ...
+    MIN BONUS MIN SALARY
+    MAX INCOME MAX COMMISSION
+        FORMAT / "TOTAL BY ...  :" 29T G10 6X G8
+        //
+        "                            SMALLEST        MIN" /
+        "                            BONUS           SALARY" /
+        "                            ---------       -------" /
+        29T I6 45T G8 //
+        20T G8 35T G8 //
+
+
+
+assuming that the first five field widths were, in this case, 15,  13,
+10,  6,  and 8.  The first totallable expression was in field 3, hence
+the skip of 29T to get there.  The fourth field here was a text field,
+hence  the 6X.  Notice that answering 'Y' to the TITLE question allows
+the user to answer <CR> to the following question, thereby  permitting
+him  to  repeat  this  expression  for the title.  Since there were no
+titles to be  printed  on  the  second  SUPERTOTALS  line,  none  were
+printed,  and  no  underlines  were  generated;  only the formats were
+listed.
+
+Titles here may be scrolled just as before,  when  inputting  for  the
+field titles.
+                                                               Page 27
+
+
+                 WANT TO RUN REPORT NOW?  (Y/<CR>=N)
+
+
+The user can ask to have his report generated immediately by answering
+this  question in the affirmative.  This program will cause 1022 to be
+entered, and the report file to be run.  
+
+The user has the further option of remaining in 1022 or exitting  back
+to  the  monitor.   He  must  answer the following question concerning
+this:
+
+     WANT TO BE LEFT IN 1022?  (Y/<CR>=N)
+
+If the user wants to be left in 1022, he answers  'Y'  here,  and  the
+program will enter 1022, run the report, and leave 1022, with a prompt
+to notify the user that he is now in 1022.  Otherwise, he  returns  to
+the monitor.
+                                                               Page 28
+
+
+                          -- EXTRA NOTES --
+
+
+MULTIPLE ANSWERS ON A LINE :________ _______ __ _ ____
+
+
+Multiple answers may be stacked on one input line  by  separating  the
+answers  with semicolons.  Thus, to input a semicolon as text, use the
+construction '^;', the up-arrow being ignored as text, merely  serving
+as  a  quote  character.   Recall  that  the same procedure is used in
+scrolling titles, with the slash, to  keep  a  literal  slash  in  the
+title.   However,  a  plain  slash  will be interpreted as a scrolling
+control character.
+
+Trivially, '^^' is simply a '^' in the text.
+
+Not more than 150 characters can be stacked on any given  input  line,
+the  same as the maximum number of characters that can be typed on any
+input line.
+
+Should an error occur, the stack is emptied automatically.  
+
+
+EXAMPLE:_______
+
+
+[some question]?  ANSWER1;ANSWER2;ANSWER3; <CR>                  ________________________ ____
+
+
+Note that there are four answers  on  this  line:   answer1,  answer2,
+answer3,  and  a  <CR>.   Had  the third semicolon been omitted, there
+would only have been three answers on the line.  The user is warned to
+be careful about loose semicolons at the end of his input string.
+
+
+[some question]?  STRING: ^; / ^^ <CR>                  _______ __ _ __ ____
+
+This always consists of one answer.  In a normal question, the  answer
+would  actually consist of STRING: ; / ^  but had this been the answer
+to a question that was going to scroll its  input,  the  result  would
+have  been  two  lines  of  text  in a title, the first STRING: ;  and
+second, ^.
+
+
+
+INCLUDING SPACES WITHIN SPECIAL FORMATS:_________ ______ ______ _______ _______
+
+
+Since the user is afforded the chance to declare  special  formats,  a
+means to get around having to use a whole field merely for purposes of
+separating adjacent entries on a detail line is available.   Declaring
+a  field  width  of 10 for an expression allows a special format to be
+declared that contains spaces, as long as the total number of  columns
+taken  up  doesn't exceed 10.  For example, if the user wants to print
+out an 8-character name followed by two spaces, he does  not  have  to
+                                                               Page 29
+
+
+declare  an  expression  field of a name of 8 characters followed by a
+text field of two spaces;  rather, he can declare a field of width  10
+and  input a special format of A8 2X  .  The sole thing to remember in
+this case is that this convention must be used every time  this  field
+is  referenced,  as in the "TOTALS ON ATTRIBUTE CHANGES" questions and
+any SUPERTOTALS questions in which the user refers to that field.
+
+The user should be made aware of the fact that if he alters  the  .DMR
+file  in  any  way,  i.e.  by changing a 'Y' answer to a 'N' answer or
+vice versa, a different series of questions would most likely ensue as
+a  result,  and  if the corresponding changes are not added in the log
+file, then the log file will cause errors when it runs.  So, to change
+anything  in  the log file, be careful that you know what extra pieces
+of information to include or disclude, usually on  the  following  few
+lines.
+                                                               Page 30
+
+
+Three sample runs of the  report  generator  follow,  in  successively
+increasing  order  of  difficulty.   The  interactions with the report
+generator, the report control files generated,  and  a  sample  output
+page from each will be given here.
+
+The first report will print out the names  and  salaries  of  all  the
+employees  in each business, where businesses are sorted within cities
+within states.  Incomes are totalled by business, city and state.
+                                                               Page 31
+
+
+A REPORT-GENERATING PROGRAM FOR SYSTEM 1022
+
+INPUT FROM A LOG FILE?  (Y/<CR>=N/FILENAME)  <CR>                                             ____
+
+SPECIFY NAME OF REPORT GENERATOR FILE:  SIMPLE.DMC <CR>                                        __________ ____
+
+SPECIFY NAME OF REPORT OUTPUT FILE:  SIMPLE.OUT <CR>                                     __________ ____
+
+REPORT DESTINATION TTY, LPT, OR OTHER?  (T/L/O)  T <CR>                                                 _ ____
+
+STANDARD PAGE SIZE CONVENTIONS?  (<CR>=Y/N)  <CR>                                             ____
+
+WHAT IS THE NAME OF THE DATA BASE?  SIMPLE.DMS <CR>                                    __________ ____
+
+WANT TO 'FIND' ANYTHING?  (Y/<CR>=N/STRING)  ALL <CR>                                             ___ ____
+
+IS THE DATA BASE ALREADY SORTED?  (Y/ <CR> = N)  <CR>                                                   ____
+
+ENTER SORT ORDER, FROM OUTERMOST TO INNERMOST:
+
+     (<CR> TO END)
+
+     * STATE <CR>       _____ ____
+
+     * CITY <CR>       ____ ____
+
+     * BUSINESS <CR>       ________ ____
+
+     * <CR>        ____
+
+ENTER TEXT FOR COVER PAGE, TERMINATE WITH "DONE":
+
+     * COVER PAGE TEXT LINE 1 <CR>       _____ ____ ____ ____ _ ____
+
+     * DONE <CR>       ____ ____
+
+ENTER TEXT FOR HEADING, TERMINATE WITH "DONE":
+
+     * THIS IS THE HEADING <CR>       ____ __ ___ _______ ____
+
+     * DONE <CR>       ____ ____
+
+WANT A FOOTING?  (Y/<CR>=N)  <CR>                             ____
+
+STANDARD PAGE HEADINGS?  (<CR>=Y/N)  <CR>                                     ____
+
+FIELD #   1:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  LNAME <CR>                                          _____ ____
+
+     FIELD WIDTH:  10 <CR>                   __ ____
+
+     SPECIAL FORMAT?   (Y/<CR>=N/FORMAT)  <CR>                                          ____
+
+     FIELD TITLE?  (Y/<CR>=N/TITLE)  LAST NAME <CR>                                     ____ ____ ____
+                                                               Page 32
+
+
+     TOTALLABLE?  (Y/<CR>=N)  <CR>                                ____
+
+FIELD #   2:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  "   " <CR>                                          _   _ ____
+
+     FIELD WIDTH:  3 <CR>                   _ ____
+
+FIELD #   3:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  FNAME <CR>                                          _____ ____
+
+     FIELD WIDTH:  10 <CR>                   __ ____
+
+     SPECIAL FORMAT?   (Y/<CR>=N/FORMAT)  <CR>                                           ____
+
+     FIELD TITLE?  (Y/<CR>=N/TITLE)  FIRST NAME <CR>                                     _____ ____ ____
+
+     TOTALLABLE?  (Y/<CR>=N)  <CR>                                ____
+
+FIELD #   4:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  "   " <CR>                                          _   _ ____
+
+     FIELD WIDTH:  3 <CR>                   _ ____
+
+FIELD #   5:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  INCOME <CR>                                          ______ ____
+
+     FIELD WIDTH:  6 <CR>                   _ ____
+
+     SPECIAL FORMAT?   (Y/<CR>=N/FORMAT)  I6 <CR>                                          __ ____
+
+     FIELD TITLE?  (Y/<CR>=N/TITLE)  Y <CR>                                     _ ____
+
+          INPUT TITLE (<CR> = EXPRESSION)  <CR>                                            ____
+
+     TOTALLABLE?  (Y/<CR>=N)  Y <CR>                              _ ____
+
+FIELD #   6:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  <CR>                                          ____
+
+SUMMARY REPORTING ONLY?  (Y/ <CR> = N)  <CR>                                         ____
+
+TITLES ON ATTRIBUTE CHANGES? (Y/N/<CR>=DEFAULT)  <CR>                                                 ____
+
+TOTALS ON ATTRIBUTE CHANGES? (Y/N/<CR>=DEFAULT)  <CR>                                                 ____
+
+GRAND TOTALS?  (Y/N/ <CR> = DEFAULT)  <CR>                                       ____
+
+WANT SUPER TOTALS? (Y/<CR> = N)  <CR>                                   ____
+
+WANT TO RUN REPORT NOW?  (Y/<CR>=N)  <CR>                                     ____
+                                                               Page 33
+
+
+The following is the .DMC file that  was  generated  while  the  above
+interaction was taking place:
+
+
+OPEN SIMPLE.DMS.
+INIT 1 SIMPLE.OUT.
+SET FMSG OFF.
+FIND ALL.
+SORT BY STATE CITY BUSINESS.
+REPORT START.
+HEADING PRINT SYSDATE SYSPAGE SYSTIME 
+     FORMAT 1T D1  32T "PAGE " I3  62T G8 
+          26X  "THIS IS THE HEADING"  / 
+        "LAST NAME    FIRST        INCO- " /
+        "             NAME         ME    " /
+        "---------    ---------    ----- "
+        //
+        END.
+PAGE  60.
+ON START PRINT FORMAT $3
+        29(/)
+        25X  "COVER PAGE TEXT LINE 1" /
+     C1 $ $4 END.
+ON CHANGE STATE PRINT STATE
+        FORMAT "     STATE:   " G /// END.
+ON CHANGE CITY PRINT CITY
+        FORMAT "          CITY:   " G // END.
+ON CHANGE BUSINESS PRINT BUSINESS
+        FORMAT "               BUSINESS:   " G / END.
+PRINT LNAME FNAME INCOME 
+        FORMAT G10   "   " G10   "   " I6  END.
+ON CHANGE BUSINESS PRINT TOT INCOME 
+        FORMAT / "TOTAL BY BUSINESS:"  27T G6   
+        / END. 
+ON CHANGE CITY PRINT TOT INCOME 
+        FORMAT / "TOTAL BY CITY:"  27T G6   
+        // END. 
+ON CHANGE STATE PRINT TOT INCOME 
+        FORMAT / "TOTAL BY STATE:"  27T G6   
+        /// END. 
+ON END PRINT TOT INCOME 
+        FORMAT / "GRAND TOTAL:"  27T G6   
+        // END.
+REPORT END.
+                                                               Page 34
+
+
+This is a sample page that might appear in the  output  of  the  above
+report should it be run in 1022:
+
+
+MARCH 11, 1975                    PAGE  3                    11:56:52
+                          THIS IS THE HEADING
+LAST NAME    FIRST        INCO-
+             NAME          ME
+---------    ---------    -----
+
+     STATE:  FLORIDA
+
+
+          CITY:  JACKSONVILLE
+
+               BUSINESS:  ACE MANUFACTURING CO.
+
+BROWN        JOE          102000
+SMITH        ROGER         43000
+JONES        BRIAN         14066
+
+TOTAL BY BUSINESS:        159066
+
+               BUSINESS:  ACME MOVING CO.
+
+COOKMAN      DAVID         54030
+SEEMAN       MELISSA       54321
+BOWDITCH     THURSTON      15040
+
+TOTAL BY BUSINESS:        123391
+
+TOTAL BY CITY:            282457
+
+
+          CITY:  TAMPA
+
+               BUSINESS:  SCHLITZ BREWERIES
+
+COOPER       ALICE        200000
+
+TOTAL BY BUSINESS:        200000
+
+TOTAL BY CITY:            200000
+
+
+TOTAL BY STATE:           641523
+
+
+
+                                                               Page 35
+
+
+The second report involves slightly more complicated things.  The user
+desired  no  detail lines, so he answered 'Y' to the SUMMARY REPORTING
+ONLY question.  Every time the room changed the user wanted the number
+of desks, lamps, chairs, and tables in it printed out.  He didn't care
+about any totals by floor, but he wanted to know how many  chairs  and
+desks  were in each building.  Also, how many lamps and tables were in
+the entire building complex.   Note  that  the  user  cannot  use  the
+default  cases  in  the TOTALS and GRAND TOTALS sections, because they
+would generate the format G10 by default, which would not do what  the
+user  wants,  So  he  has  to  call  for  the single case inputs, thus
+preserving the I6 4X convention manually.  
+                                                               Page 36
+
+
+A REPORT-GENERATING PROGRAM FOR SYSTEM 1022
+
+INPUT FROM A LOG FILE?  (Y/<CR>=N/FILENAME)  <CR>                                             ____
+
+SPECIFY NAME OF REPORT GENERATOR FILE:  MEDIUM.DMC <CR>                                        __________ ____
+
+SPECIFY NAME OF REPORT OUTPUT FILE:  MEDIUM.OUT <CR>                                     __________ ____
+
+REPORT DESTINATION TTY, LPT, OR OTHER?  (T/L/O)  T <CR>                                                 _ ____
+
+STANDARD PAGE SIZE CONVENTIONS?  (<CR>=Y/N)  <CR>                                             ____
+
+WHAT IS THE NAME OF THE DATA BASE?  MEDIUM.DMS <CR>                                    __________ ____
+
+WANT TO 'FIND' ANYTHING?  (Y/<CR>=N/STRING)  ALL <CR>                                             ___ ____
+
+IS THE DATA BASE ALREADY SORTED?  (Y/ <CR> = N)  <CR>                                                 ____
+
+ENTER SORT ORDER, FROM OUTERMOST TO INNERMOST:
+
+     (<CR> TO END)
+
+     * BUILDING <CR>       ________ ____
+
+     * FLOOR <CR>       _____ ____
+
+     * ROOM <CR>       ____ ____
+
+     * <CR>       ____
+
+ENTER TEXT FOR COVER PAGE, TERMINATE WITH "DONE":
+
+     * <CR>       ____
+
+     * <CR>       ____
+
+     * A SLIGHTLY MORE COMPLICATED REPORT. <CR>       _ ________ ____ ___________ _______ ____
+
+     * <CR>       ____
+
+     * DONE <CR>       ____ ____
+
+ENTER TEXT FOR HEADING, TERMINATE WITH "DONE":
+
+     * <CR>       ____
+
+     * <CR>       ____
+
+     * DISCUSSING SOME OF THE MORE ADVANCED FEATURES. <CR>       __________ ____ __ ___ ____ ________ _________ ____
+
+     * <CR>       ____
+
+     * AVAILABLE IN THIS PROGRAM. <CR>       _________ __ ____ ________ ____
+
+     * <CR>       ____
+                                                               Page 37
+
+
+     * DONE <CR>       ____ ____
+
+WANT A FOOTING?  (Y/<CR>=N)  N <CR>                             _ ____
+
+STANDARD PAGE HEADINGS?  (<CR>=Y/N)  N <CR>                                     _ ____
+
+     WANT PAGE NUMBERS?  (<CR>=Y/N)  N <CR>                                     _ ____
+
+     WANT DATE?  (<CR>=Y/N)  N <CR>                             _ ____
+
+     WANT TIME?  (<CR>=Y/N)  N <CR>                             _ ____
+
+     NUMBER OF BLANK LINES AFTER TITLES?  1 <CR>                                          _ ____
+
+FIELD #   1:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  CHAIRS <CR>                                          ______ ____
+
+     FIELD WIDTH:  10 <CR>                   __ ____
+
+     SPECIAL FORMAT?   (Y/<CR>=N/FORMAT)  I6 4X <CR>                                          __ __ ____
+
+     FIELD TITLE?  (Y/<CR>=N/TITLE)  AMOUNT OF CHAIRS <CR>                                     ______ __ ______ ____
+
+     TOTALLABLE?  (Y/<CR>=N)  Y <CR>                              _ ____
+
+FIELD #   2:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  DESKS <CR>                                          _____ ____
+
+     FIELD WIDTH:  10 <CR>                   __ ____
+
+     SPECIAL FORMAT?   (Y/<CR>=N/FORMAT)  I6 4X <CR>                                          __ __ ____
+
+     FIELD TITLE?  (Y/<CR>=N/TITLE)  AMOUNT OF DESKS <CR>                                     ______ __ _____ ____
+
+     TOTALLABLE?  (Y/<CR>=N)  Y <CR>                              _ ____
+
+FIELD #   3:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  LAMPS <CR>                                          _____ ____
+
+     FIELD WIDTH:  10 <CR>                   __ ____
+
+     SPECIAL FORMAT?   (Y/<CR>=N/FORMAT)  I6 4X <CR>                                          __ __ ____
+
+     FIELD TITLE?  (Y/<CR>=N/TITLE)  AMOUNT OF LAMPS <CR>                                     ______ __ _____ ____
+
+     TOTALLABLE?  (Y/<CR>=N)  Y <CR>                              _ ____
+
+FIELD #   4:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  TABLES <CR>                                          ______ ____
+
+     FIELD WIDTH:  10 <CR>                   __ ____
+                                                               Page 38
+
+
+     SPECIAL FORMAT?   (Y/<CR>=N/FORMAT)  I6 4X <CR>                                          __ __ ____
+
+     FIELD TITLE?  (Y/<CR>=N/TITLE)  AMOUNT OF TABLES <CR>                                     ______ __ ______ ____
+
+     TOTALLABLE?  (Y/<CR>=N)  Y <CR>                              _ ____
+
+FIELD #   5:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  <CR>                                          ____
+
+SUMMARY REPORTING ONLY?  (Y/ <CR> = N)  Y <CR>                                        _ ____
+
+TITLES ON ATTRIBUTE CHANGES? (Y/N/<CR>=DEFAULT)  <CR>                                                 ____
+
+TOTALS ON ATTRIBUTE CHANGES? (Y/N/<CR>=DEFAULT)  Y <CR>                                                 _ ____
+
+     ON CHANGE OF 'ROOM'?  (Y/N/<CR>=ALL DEFAULT)  Y <CR>                                                   _ ____
+
+          WANT 'CHAIRS' TOTALLED?  (Y/<CR>=N)  Y <CR>                                               _ ____
+
+          SPECIAL FORMAT?  (Y/<CR>=N/FORMAT)  I6 4X <CR>                                              __ __ ____
+
+          WANT 'DESKS' TOTALLED?  (Y/<CR>=N)  Y <CR>                                              _ ____
+
+          SPECIAL FORMAT?  (Y/<CR>=N/FORMAT)  I6 4X <CR>                                              __ __ ____
+
+          WANT 'LAMPS' TOTALLED?  (Y/<CR>=N)  Y <CR>                                              _ ____
+
+          SPECIAL FORMAT?  (Y/<CR>=N/FORMAT)  I6 4X <CR>                                              __ __ ____
+
+          WANT 'TABLES' TOTALLED?  (Y/<CR>=N)  Y <CR>                                               _ ____
+
+          SPECIAL FORMAT?  (Y/<CR>=N/FORMAT)  I6 4X <CR>                                              __ __ ____
+
+          SPECIAL TEXT?  (Y/<CR>=N/TEXT)  EVERYTHING IN THE ROOMS <CR>                                          __________ __ ___ _____ ____
+
+WANT SUPER TOTALS? (Y/<CR> = N)  <CR>                                   ____
+
+     ON CHANGE OF 'FLOOR'?  (Y/N/<CR>=ALL DEFAULT)  N <CR>                                                    _ ____
+
+     ON CHANGE OF 'BUILDING'?  (Y/N/<CR>=ALL DEFAULT)  Y <CR>                                                       _ ____
+
+          WANT 'CHAIRS' TOTALLED?  (Y/<CR>=N)  Y <CR>                                               _ ____
+
+          SPECIAL FORMAT?  (Y/<CR>=N/FORMAT)  I6 4X <CR>                                              __ __ ____
+
+          WANT 'DESKS' TOTALLED?  (Y/<CR>=N)  Y <CR>                                              _ ____
+
+          SPECIAL FORMAT?  (Y/<CR>=N/FORMAT)  I6 4X <CR>                                              __ __ ____
+
+          WANT 'LAMPS' TOTALLED?  (Y/<CR>=N)  N <CR>                                              _ ____
+
+          WANT 'TABLES' TOTALLED?  (Y/<CR>=N)  N <CR>                                               _ ____
+
+          SPECIAL TEXT?  (Y/<CR>=N/TEXT)  CHAIRS AND DESKS IN BUILDING                                          ______ ___ _____ __ ________
+                                                               Page 39
+
+
+S <CR>_ ____
+
+WANT SUPER TOTALS? (Y/<CR> = N)  <CR>                                   ____
+
+GRAND TOTALS?  (Y/N/ <CR> = DEFAULT)  Y <CR>                                      _ ____
+
+     GRAND TOTAL 'CHAIRS'?  (Y/ <CR> = N)  N <CR>                                           _ ____
+
+     GRAND TOTAL 'DESKS'?  (Y/ <CR> = N)  N <CR>                                          _ ____
+
+     GRAND TOTAL 'LAMPS'?  (Y/ <CR> = N)  Y <CR>                                          _ ____
+
+          SPECIAL FORMAT?  (Y/<CR>=N/FORMAT)  I6 4X <CR>                                              __ __ ____
+
+     GRAND TOTAL 'TABLES'?  (Y/ <CR> = N)  Y <CR>                                           _ ____
+
+          SPECIAL FORMAT?  (Y/<CR>=N/FORMAT)  I6 4X <CR>                                              __ __ ____
+
+     SPECIAL TEXT?  (Y/<CR>=N/TEXT)  GRAND TOTAL LAMPS AND TABLES <CR>                                     _____ _____ _____ ___ ______ ____
+
+WANT SUPER TOTALS? (Y/<CR> = N)  <CR>                                   ____
+
+WANT TO RUN REPORT NOW?  (Y/<CR>=N)  <CR>                                     ____
+                                                               Page 40
+
+
+The following is the corresponding .DMC file:
+
+
+OPEN MEDIUM.DMS.
+INIT 1 MEDIUM.OUT.
+SET FMSG OFF.
+FIND ALL.
+SORT BY BUILDING FLOOR ROOM.
+REPORT START.
+HEADING PRINT 
+     FORMAT 
+        /
+        /
+          13X  "DISCUSSING SOME OF THE MORE ADVANCED FEATURES."  / 
+        /
+          23X  "AVAILABLE IN THIS PROGRAM."  / 
+        /
+        "AMOUNT OF AMOUNT OF AMOUNT OF AMOUNT OF " /
+        "CHAIRS    DESKS     LAMPS     TABLES    " /
+        "--------- --------- --------- --------- "
+        /
+        END.
+PAGE  60.
+ON START PRINT FORMAT $3
+        28(/)
+        /
+        18X  "A SLIGHTLY MORE COMPLICATED REPORT." /
+        /
+     C1 $ $4 END.
+ON CHANGE BUILDING PRINT BUILDING
+        FORMAT "     BUILDING:   " G /// END.
+ON CHANGE FLOOR PRINT FLOOR
+        FORMAT "          FLOOR:   " G // END.
+ON CHANGE ROOM PRINT ROOM
+        FORMAT "               ROOM:   " G / END.
+PRINT.
+ON CHANGE ROOM PRINT TOT CHAIRS TOT DESKS TOT LAMPS TOT TABLES 
+        FORMAT / "EVERYTHING IN THE ROOMS"  /   1T I6 4X I6 4X I6 4X  
+I6 4X 
+        / END. 
+ON CHANGE BUILDING PRINT TOT CHAIRS TOT DESKS 
+        FORMAT / "CHAIRS AND DESKS IN BUILDINGS"  /   1T I6 4X I6 4X  
+10X  10X 
+        /// END. 
+ON END PRINT TOT LAMPS TOT TABLES 
+        FORMAT / "GRAND TOTAL LAMPS AND TABLES"  /  21T I6 4X I6 4X 
+        // END.
+REPORT END.
+
+
+                                                               Page 41
+
+
+A sample output page follows:  
+               DISCUSSING SOME OF THE MORE ADVANCED FEATURES
+
+                       AVAILABLE IN THIS PROGRAM.
+
+AMOUNT OF AMOUNT OF AMOUNT OF AMOUNT OF
+CHAIRS    DESKS     LAMPS     TABLES
+--------- --------- --------- ---------
+
+          FLOOR:  13
+
+               ROOM:  11
+
+EVERYTHING IN THE ROOMS
+     4         3         2         1
+
+               ROOM:  12
+
+EVERYTHING IN THE ROOMS
+     0         2         4         8
+
+               ROOM:  13
+
+EVERYTHING IN THE ROOMS
+     1         1         1         1
+
+          FLOOR:  14
+
+               ROOM:   1
+
+EVERYTHING IN THE ROOMS
+     2         2         3         1
+
+               ROOM:   2
+
+EVERYTHING IN THE ROOMS
+     1        12        18        13
+
+CHAIRS AND DESKS IN BUILDINGS:
+    27        39
+
+
+
+     BUILDING:  3
+
+
+          FLOOR:  1
+
+               ROOM:  1
+
+
+                                                               Page 42
+
+
+This is the most complicated example here.   The  data  base  contains
+twelve records for each of medical, business, and family expenses, for
+each year for each person, that is, one record per  month.   The  user
+didn't  care  about months, but about years, so he had all the monthly
+entries totalled by year for each person.  After  each  year  changed,
+the  smallest,  largest, and total monthly bills were printed for each
+of the three types of bills - medical, business, and family.   Nothing
+was to be printed out after the first name changed, but after the last
+name changed, the total number of people with that last name was to be
+printed.   At  the  end  of  the  report,  the  complete totals of all
+expenses were printed,  as  well  as  the  smallest  medical,  largest
+business, and average family bill for any month in the data base.
+                                                               Page 43
+
+
+A REPORT-GENERATING PROGRAM FOR SYSTEM 1022
+
+INPUT FROM A LOG FILE?  (Y/<CR>=N/FILENAME)  <CR>                                             ____
+
+SPECIFY NAME OF REPORT GENERATOR FILE:  ADVNCD.DMC <CR>                                        __________ ____
+
+SPECIFY NAME OF REPORT OUTPUT FILE:  ADVNCD.OUT <CR>                                     __________ ____
+
+REPORT DESTINATION TTY, LPT, OR OTHER?  (T/L/O)  T <CR>                                                 _ ____
+
+STANDARD PAGE SIZE CONVENTIONS?  (<CR>=Y/N)  <CR>                                             ____
+
+WHAT IS THE NAME OF THE DATA BASE?  ADVNCD.DMS <CR>                                    __________ ____
+
+WANT TO 'FIND' ANYTHING?  (Y/<CR>=N/STRING)  ALL <CR>                                             ___ ____
+
+IS THE DATA BASE ALREADY SORTED?  (Y/ <CR> = N)  <CR>                                                 ____
+
+ENTER SORT ORDER, FROM OUTERMOST TO INNERMOST:
+
+     (<CR> TO END)
+
+     * LNAME <CR>       _____ ____
+
+     * FNAME <CR>       _____ ____
+
+     * YEAR <CR>       ____ ____
+
+     * <CR>       ____
+
+ENTER TEXT FOR COVER PAGE, TERMINATE WITH "DONE":
+
+     * <CR>       ____
+
+     * <CR>       ____
+
+     * THIS REPORT ADDS UP THE MONTHLY EXPENSES IN THE <CR>       ____ ______ ____ __ ___ _______ ________ __ ___ ____
+
+     * AREAS OF MEDICAL, BUSINESS, AND FAMILY EXPENSES <CR>       _____ __ ________ _________ ___ ______ ________ ____
+
+     * AND TOTALS THEM BY YEAR FOR EACH PERSON, <CR>       ___ ______ ____ __ ____ ___ ____ _______ ____
+
+     * LISTED ALPHABETICALLY. <CR>       ______ _______________ ____
+
+     * <CR>       ____
+
+     * <CR>       ____
+
+     * DONE <CR>       ____ ____
+
+ENTER TEXT FOR HEADING, TERMINATE WITH "DONE":
+
+     * <CR>       ____
+
+     * <CR>       ____
+                                                               Page 44
+
+
+     * DONE <CR>       ____ ____
+
+WANT A FOOTING?  (Y/<CR>=N)  N <CR>                             _ ____
+
+STANDARD PAGE HEADINGS?  (<CR>=Y/N)  <CR>                                     ____
+
+FIELD #   1:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  MEDICAL <CR>                                          _______ ____
+
+     FIELD WIDTH:  10 <CR>                   __ ____
+
+     SPECIAL FORMAT?   (Y/<CR>=N/FORMAT)  F7.2 <CR>                                          ____ ____
+
+     FIELD TITLE?  (Y/<CR>=N/TITLE)  MEDICAL EXPENSES <CR>                                     _______ ________ ____
+
+     TOTALLABLE?  (Y/<CR>=N)  Y <CR>                              _ ____
+
+FIELD #   2:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  "   " <CR>                                          _   _ ____
+
+     FIELD WIDTH:  3 <CR>                   _ ____
+
+FIELD #   3:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  BUSINESS <CR>                                          ________ ____
+
+     FIELD WIDTH:  10 <CR>                   __ ____
+
+     SPECIAL FORMAT?   (Y/<CR>=N/FORMAT)  F7.2 <CR>                                          ____ ____
+
+     FIELD TITLE?  (Y/<CR>=N/TITLE)  BUSINESS EXPENSES <CR>                                     ________ ________ ____
+
+     TOTALLABLE?  (Y/<CR>=N)  Y <CR>                              _ ____
+
+FIELD #   4:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  "   " <CR>                                          _   _ ____
+
+     FIELD WIDTH:  3 <CR>                   _ ____
+
+FIELD #   5:
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  FAMILY <CR>                                          ______ ____
+
+     FIELD WIDTH:  10 <CR>                   __ ____
+
+     SPECIAL FORMAT?   (Y/<CR>=N/FORMAT)  F7.2 <CR>                                          ____ ____
+
+     FIELD TITLE?  (Y/<CR>=N/TITLE)  FAMILY EXPENSES <CR>                                     ______ ________ ____
+
+     TOTALLABLE?  (Y/<CR>=N)  Y <CR>                              _ ____
+
+FIELD #   6:
+                                                               Page 45
+
+
+     EXPRESSION, "TEXT", OR <CR> TO END:  <CR>                                          ____
+
+SUMMARY REPORTING ONLY?  (Y/ <CR> = N)  Y <CR>                                        _ ____
+
+TITLES ON ATTRIBUTE CHANGES? (Y/N/<CR>=DEFAULT)  <CR>                                                 ____
+
+TOTALS ON ATTRIBUTE CHANGES? (Y/N/<CR>=DEFAULT)  Y <CR>                                                 _ ____
+
+     ON CHANGE OF 'YEAR'?  (Y/N/<CR>=ALL DEFAULT)  Y <CR>                                                   _ ____
+
+          WANT 'MEDICAL' TOTALLED?  (Y/<CR>=N)  <CR>                                                ____
+
+          WANT 'BUSINESS' TOTALLED?  (Y/<CR>=N)  <CR>                                                 ____
+
+          WANT 'FAMILY' TOTALLED?  (Y/<CR>=N)  <CR>                                               ____
+
+          SPECIAL TEXT?  (Y/<CR>=N/TEXT)  DATA FOR THE YEAR FOLLOWS: <                                          ____ ___ ___ ____ ________ _
+CR>___
+
+WANT SUPER TOTALS? (Y/<CR> = N)  Y <CR>                                 _ ____
+
+SUPER TOTALS LINE #  1:
+
+     EXPRESSION: (<CR> FOR NEW LINE)  MIN MEDICAL <CR>                                      ___ _______ ____
+
+          FIELD: (<CR> FOR START/END)  1 <CR>                                       _ ____
+
+          TITLE?  (Y/<CR>=N/TITLE)  Y <CR>                                    _ ____
+
+               INPUT TITLE:  (<CR> = EXPRESSION)  <CR>                                                  ____
+
+          FORMAT?  (Y/<CR>=N/FORMAT)  F7.2 <CR>                                      ____ ____
+
+     EXPRESSION: (<CR> FOR NEW LINE)  MIN BUSINESS <CR>                                      ___ ________ ____
+
+          FIELD: (<CR> FOR START/END)  3 <CR>                                       _ ____
+
+          TITLE?  (Y/<CR>=N/TITLE)  Y <CR>                                    _ ____
+
+               INPUT TITLE:  (<CR> = EXPRESSION)  <CR>                                                  ____
+
+          FORMAT?  (Y/<CR>=N/FORMAT)  F7.2 <CR>                                      ____ ____
+
+     EXPRESSION: (<CR> FOR NEW LINE)  MIN FAMILY <CR>                                      ___ ______ ____
+
+          FIELD: (<CR> FOR START/END)  5 <CR>                                       _ ____
+
+          TITLE?  (Y/<CR>=N/TITLE)  Y <CR>                                    _ ____
+
+               INPUT TITLE:  (<CR> = EXPRESSION)  <CR>                                                  ____
+
+          FORMAT?  (Y/<CR>=N/FORMAT)  F7.2 <CR>                                      ____ ____
+
+     EXPRESSION: (<CR> FOR NEW LINE)  <CR>                                      ____
+                                                               Page 46
+
+
+WANT ANOTHER LINE?  (Y/<CR> = N)  Y <CR>                                  _ ____
+
+SUPER TOTALS LINE #  2:
+
+     EXPRESSION: (<CR> FOR NEW LINE)  MAX MEDICAL <CR>                                      ___ _______ ____
+
+          FIELD: (<CR> FOR START/END)  1 <CR>                                       _ ____
+
+          TITLE?  (Y/<CR>=N/TITLE)  Y <CR>                                    _ ____
+
+               INPUT TITLE:  (<CR> = EXPRESSION)  <CR>                                                  ____
+
+          FORMAT?  (Y/<CR>=N/FORMAT)  F7.2 <CR>                                      ____ ____
+
+     EXPRESSION: (<CR> FOR NEW LINE)  MAX BUSINESS <CR>                                      ___ ________ ____
+
+          FIELD: (<CR> FOR START/END)  3 <CR>                                       _ ____
+
+          TITLE?  (Y/<CR>=N/TITLE)  Y <CR>                                    _ ____
+
+               INPUT TITLE:  (<CR> = EXPRESSION)  <CR>                                                  ____
+
+          FORMAT?  (Y/<CR>=N/FORMAT)  F7.2 <CR>                                      ____ ____
+
+     EXPRESSION: (<CR> FOR NEW LINE)  MAX FAMILY <CR>                                      ___ ______ ____
+
+          FIELD: (<CR> FOR START/END)  5 <CR>                                       _ ____
+
+          TITLE?  (Y/<CR>=N/TITLE)  Y <CR>                                    _ ____
+
+               INPUT TITLE:  (<CR> = EXPRESSION)  <CR>                                                  ____
+
+          FORMAT?  (Y/<CR>=N/FORMAT)  F7.2 <CR>                                      ____ ____
+
+     EXPRESSION: (<CR> FOR NEW LINE)  <CR>                                      ____
+
+WANT ANOTHER LINE?  (Y/<CR> = N)  Y <CR>                                  _ ____
+
+SUPER TOTALS LINE #  3:
+
+     EXPRESSION: (<CR> FOR NEW LINE)  TOT MEDICAL <CR>                                      ___ _______ ____
+
+          FIELD: (<CR> FOR START/END)  1 <CR>                                       _ ____
+
+          TITLE?  (Y/<CR>=N/TITLE)  Y <CR>                                    _ ____
+
+               INPUT TITLE:  (<CR> = EXPRESSION)  <CR>                                                  ____
+
+          FORMAT?  (Y/<CR>=N/FORMAT)  F7.2 <CR>                                      ____ ____
+
+     EXPRESSION: (<CR> FOR NEW LINE)  TOT BUSINESS <CR>                                      ___ ________ ____
+
+          FIELD: (<CR> FOR START/END)  3 <CR>                                       _ ____
+
+          TITLE?  (Y/<CR>=N/TITLE)  Y <CR>                                    _ ____
+                                                               Page 47
+
+
+               INPUT TITLE:  (<CR> = EXPRESSION)  <CR>                                                  ____
+
+          FORMAT?  (Y/<CR>=N/FORMAT)  F7.2 <CR>                                      ____ ____
+
+     EXPRESSION: (<CR> FOR NEW LINE)  TOT FAMILY <CR>                                      ___ ______ ____
+
+          FIELD: (<CR> FOR START/END)  5 <CR>                                       _ ____
+
+          TITLE?  (Y/<CR>=N/TITLE)  Y <CR>                                    _ ____
+
+               INPUT TITLE:  (<CR> = EXPRESSION)  <CR>                                                  ____
+
+          FORMAT?  (Y/<CR>=N/FORMAT)  F7.2 <CR>                                      ____ ____
+
+     EXPRESSION: (<CR> FOR NEW LINE)  <CR>                                      ____
+
+WANT ANOTHER LINE?  (Y/<CR> = N)  <CR>                                  ____
+
+     ON CHANGE OF 'FNAME'?  (Y/N/<CR>=ALL DEFAULT)  N <CR>                                                    _ ____
+
+     ON CHANGE OF 'LNAME'?  (Y/N/<CR>=ALL DEFAULT)  Y <CR>                                                    _ ____
+
+          WANT 'MEDICAL' TOTALLED?  (Y/<CR>=N)  <CR>                                                ____
+
+          WANT 'BUSINESS' TOTALLED?  (Y/<CR>=N)  <CR>                                                 ____
+
+          WANT 'FAMILY' TOTALLED?  (Y/<CR>=N)  <CR>                                               ____
+
+          SPECIAL TEXT?  (Y/<CR>=N/TEXT)  <CR>                                          ____
+
+WANT SUPER TOTALS? (Y/<CR> = N)  Y <CR>                                 _ ____
+
+SUPER TOTALS LINE #  1:
+
+     EXPRESSION: (<CR> FOR NEW LINE)  TOT 1 <CR>                                      ___ _ ____
+
+          FIELD: (<CR> FOR START/END)  <CR>                                       ____
+
+               START:  30 <CR>                       __ ____
+
+               END:  45 <CR>                     __ ____
+
+          TITLE?  (Y/<CR>=N/TITLE)  NUMBER OF PEOPLE WITH THE SAME LAS                                    ______ __ ______ ____ ___ ____ ___
+T NAME <CR>_ ____ ____
+
+          FORMAT?  (Y/<CR>=N/FORMAT)  I10 <CR>                                      ___ ____
+
+     EXPRESSION: (<CR> FOR NEW LINE)  <CR>                                      ____
+
+WANT ANOTHER LINE?  (Y/<CR> = N)  <CR>                                  ____
+
+GRAND TOTALS?  (Y/N/ <CR> = DEFAULT)  Y <CR>                                      _ ____
+
+     GRAND TOTAL 'MEDICAL'?  (Y/ <CR> = N)  Y <CR>                                            _ ____
+                                                               Page 48
+
+
+          SPECIAL FORMAT?  (Y/<CR>=N/FORMAT)  F7.2 <CR>                                              ____ ____
+
+     GRAND TOTAL 'BUSINESS'?  (Y/ <CR> = N)  Y <CR>                                             _ ____
+
+          SPECIAL FORMAT?  (Y/<CR>=N/FORMAT)  F7.2 <CR>                                              ____ ____
+
+     GRAND TOTAL 'FAMILY'?  (Y/ <CR> = N)  Y <CR>                                           _ ____
+
+          SPECIAL FORMAT?  (Y/<CR>=N/FORMAT)  F7.2 <CR>                                              ____ ____
+
+     SPECIAL TEXT?  (Y/<CR>=N/TEXT)  FINAL TOTALS: <CR>                                     _____ _______ ____
+
+WANT SUPER TOTALS? (Y/<CR> = N)  Y <CR>                                 _ ____
+
+SUPER TOTALS LINE #  1:
+
+     EXPRESSION: (<CR> FOR NEW LINE)  MIN MEDICAL <CR>                                      ___ _______ ____
+
+          FIELD: (<CR> FOR START/END)  1 <CR>                                       _ ____
+
+          TITLE?  (Y/<CR>=N/TITLE)  SMALLEST MEDICAL EXPENSES BILL PAI                                    ________ _______ ________ ____ ___
+D <CR>_ ____
+
+          FORMAT?  (Y/<CR>=N/FORMAT)  F7.2 <CR>                                      ____ ____
+
+     EXPRESSION: (<CR> FOR NEW LINE)  MAX BUSINESS <CR>                                      ___ ________ ____
+
+          FIELD: (<CR> FOR START/END)  3 <CR>                                       _ ____
+
+          TITLE?  (Y/<CR>=N/TITLE)  LARGEST BUSINESS EXPENSES BILL PAI                                    _______ ________ ________ ____ ___
+D <CR>_ ____
+
+          FORMAT?  (Y/<CR>=N/FORMAT)  F7.2 <CR>                                      ____ ____
+
+     EXPRESSION: (<CR> FOR NEW LINE)  MEAN FAMILY <CR>                                      ____ ______ ____
+
+          FIELD: (<CR> FOR START/END)  5 <CR>                                       _ ____
+
+          TITLE?  (Y/<CR>=N/TITLE)  AVERAGE FAMILY EXPENSES BILL PAID                                     _______ ______ ________ ____ ____
+<CR>____
+
+          FORMAT?  (Y/<CR>=N/FORMAT)  F7.2 <CR>                                      ____ ____
+
+     EXPRESSION: (<CR> FOR NEW LINE)  <CR>                                      ____
+
+WANT ANOTHER LINE?  (Y/<CR> = N)  <CR>                                  ____
+
+WANT TO RUN REPORT NOW?  (Y/<CR>=N)  <CR>                                     ____
+                                                               Page 49
+
+
+Notice that to ask only for SUPERTOTALS, one must answer the  question
+ON  CHANGE  OF  'XXX'?   (Y/N/<CR>=DEFAULT)  with  a 'Y', then all the
+following questions with a 'N', till we are asked whether  or  not  we
+want  SUPERTOTALS.   This  situation  occurred  above, just before the
+second series of SUPERTOTALS began, after the question  ON  CHANGE  OF
+'LNAME'?.
+
+
+The .DMC file:
+
+
+OPEN ADVNCD.DMS.
+INIT 1 ADVNCD.OUT.
+SET FMSG OFF.
+FIND ALL.
+SORT BY LNAME FNAME YEAR.
+REPORT START.
+HEADING PRINT SYSDATE SYSPAGE SYSTIME 
+     FORMAT 1T D1  32T "PAGE " I3  62T G8 
+        /
+        /
+        "MEDICAL      BUSINESS     FAMILY    " /
+        "EXPENSES     EXPENSES     EXPENSES  " /
+        "---------    ---------    --------- "
+        //
+        END.
+PAGE  60.
+ON START PRINT FORMAT $3
+        26(/)
+        /
+        /
+        12X  "THIS REPORT ADDS UP THE MONTHLY EXPENSES IN THE" /
+        12X  "AREAS OF MEDICAL, BUSINESS, AND FAMILY EXPENSES" /
+        16X  "AND TOTALS THEM BY YEAR FOR EACH PERSON," /
+        25X  "LISTED ALPHABETICALLY." /
+        /
+        /
+     C1 $ $4 END.
+ON CHANGE LNAME PRINT LNAME
+        FORMAT "     LNAME:   " G /// END.
+ON CHANGE FNAME PRINT FNAME
+        FORMAT "          FNAME:   " G // END.
+ON CHANGE YEAR PRINT YEAR
+        FORMAT "               YEAR:   " G / END.
+PRINT.
+ON CHANGE YEAR PRINT 
+    MIN MEDICAL MIN BUSINESS MIN FAMILY
+    MAX MEDICAL MAX BUSINESS MAX FAMILY
+    TOT MEDICAL TOT BUSINESS TOT FAMILY
+        FORMAT /  "DATA FOR THE YEAR FOLLOWS:" 
+        //
+        "MIN          MIN          MIN" /
+        "MEDICAL      BUSINESS     FAMILY" /
+        "---------    ---------    ---------" /
+          1T F7.2  14T F7.2  27T F7.2  //
+                                                               Page 50
+
+
+        "MAX          MAX          MAX" /
+        "MEDICAL      BUSINESS     FAMILY" /
+        "---------    ---------    ---------" /
+          1T F7.2  14T F7.2  27T F7.2  //
+        "TOT          TOT          TOT" /
+        "MEDICAL      BUSINESS     FAMILY" /
+        "---------    ---------    ---------" /
+          1T F7.2  14T F7.2  27T F7.2  //
+        / END. 
+ON CHANGE LNAME PRINT 
+    TOT 1
+        FORMAT / 
+        //
+        "                             NUMBER OF" /
+        "                             PEOPLE WITH" /
+        "                             THE SAME LAST" /
+        "                             NAME" /
+        "                             ---------------" /
+         30T I10  //
+        /// END. 
+ON END PRINT TOT MEDICAL TOT BUSINESS TOT FAMILY 
+    MIN MEDICAL MAX BUSINESS MEAN FAMILY
+        FORMAT / "FINAL TOTALS:"  /   1T F7.2   3X F7.2   3X F7.2 
+        //
+        "SMALLEST     LARGEST      AVERAGE" /
+        "MEDICAL      BUSINESS     FAMILY" /
+        "EXPENSES     EXPENSES     EXPENSES" /
+        "BILL         BILL         BILL" /
+        "PAID         PAID         PAID" /
+        "---------    ---------    ---------" /
+          1T F7.2  14T F7.2  27T F7.2  //
+        // END.
+REPORT END.
+                                                               Page 51
+
+
+A sample output page:
+
+
+
+MEDICAL      BUSINESS     FAMILY
+EXPENSES     EXPENSES     EXPENSES
+---------    ---------    ---------
+
+     LNAME:  THOREAU
+
+
+          FNAME:  HENRY DAVID
+
+               YEAR:  1882
+
+DATA FOR THE YEAR FOLLOWS:
+
+MIN          MIN          MIN
+MEDICAL      BUSINESS     FAMILY
+---------    ---------    ---------
+   4220.11       330.00       100.00
+
+MAX          MAX          MAX
+MEDICAL      BUSINESS     FAMILY
+---------    ---------    ---------
+   5967.13       467.45       450.36
+
+TOT          TOT          TOT
+MEDICAL      BUSINESS     FAMILY
+---------    ---------    ---------
+  12897.98      1800.76      1600.78
+
+
+
+
+
+                             NUMBER OF
+                             PEOPLE WITH
+                             THE SAME LAST
+                             NAME
+                             ---------------
+                                       1
+
+
+
+
+FINAL TOTALS:
+1234567.89   4325647.44   2983647.56
+
+SMALLEST     LARGEST      AVERAGE
+MEDICAL      BUSINESS     FAMILY
+EXPENSES     EXPENSES     EXPENSES
+BILL         BILL         BILL
+PAID         PAID         PAID
+---------    ---------    ---------
+                                                               Page 52
+
+
+    321.00    360000.00      4367.89
+  f@V
